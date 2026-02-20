@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get a Quote | Kings Group Interactive Pricing</title>
+    <!-- Modern Typefaces are loaded in styles.css -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .pricing-hero {
+            background-color: var(--main-blue);
+            color: var(--bg-white);
+            padding: 6rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .pricing-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+            z-index: -1;
+        }
+
+        .pricing-container {
+            max-width: 800px;
+            margin: -3rem auto 5rem;
+            background: var(--bg-white);
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            padding: 4rem;
+            position: relative;
+            z-index: 20;
+            border: 1px solid var(--border-color);
+        }
+
+        .step {
+            display: none;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: var(--transition);
+        }
+
+        .step.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+            animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .step-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .step-header h2 {
+            font-size: 2.25rem;
+            color: var(--main-blue);
+        }
+
+        /* Grid for choices */
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .choice-card {
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--bg-white);
+        }
+
+        .choice-card:hover {
+            border-color: var(--main-blue);
+            background-color: rgba(10, 37, 64, 0.02);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .choice-card.selected {
+            border-color: var(--main-blue);
+            background-color: var(--main-blue);
+            color: var(--bg-white);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(10, 37, 64, 0.2);
+        }
+
+        .choice-card.selected h3,
+        .choice-card.selected p {
+            color: var(--bg-white);
+        }
+
+        .choice-card h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.35rem;
+            color: var(--text-dark);
+            transition: color 0.3s;
+        }
+
+        /* Experience levels grid */
+        .exp-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 2rem;
+        }
+
+        /* Result formatting */
+        .result-box {
+            background-color: var(--bg-light);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--sec-accent-green);
+        }
+
+        .price-display {
+            font-family: var(--font-header);
+            font-size: 4.5rem;
+            color: var(--main-blue);
+            font-weight: 800;
+            line-height: 1;
+            margin: 1.5rem 0 0.5rem;
+            letter-spacing: -2px;
+            transition: var(--transition);
+        }
+
+        .comparison-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .saving-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(0, 208, 156, 0.1);
+            color: #00A67C;
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .capture-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .capture-form input {
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            transition: var(--transition);
+            background: var(--bg-light);
+        }
+
+        .capture-form input:focus {
+            outline: none;
+            border-color: var(--main-blue);
+            background: var(--bg-white);
+            box-shadow: 0 0 0 4px rgba(10, 37, 64, 0.1);
+        }
+
+        /* Switch UI */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--main-blue);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .pricing-container {
+                padding: 2rem;
+                margin-top: -2rem;
+            }
+
+            .choice-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .exp-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="main-header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">KINGS<span style="color: var(--neutral-yellow);">GROUP</span></a>
+            <div class="nav-section applicant">
+                <a href="index.html" class="btn btn-outline nav-transparent-btn"
+                    style="border: none; padding: 0.5rem 1rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="pricing-hero">
+        <div class="container animate-on-scroll is-visible">
+            <h1 style="color: white; font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 1rem;">Build Your Dream Team
+            </h1>
+            <p style="opacity: 0.9; font-size: 1.2rem; max-width: 650px; margin: 0 auto; color: rgba(255,255,255,0.8);">
+                Use our interactive team builder to get transparency on pricing instantly. Because great talent should
+                be accessible, not a guessing game.</p>
+        </div>
+    </div>
+
+    <div class="pricing-container">
+        <!-- Step 1: Role -->
+        <div class="step active" id="step1">
+            <div class="step-header">
+                <h2>Step 1: What role do you need?</h2>
+                <p style="color: var(--text-muted); font-size: 1.1rem;">Select the primary function for your new team
+                    member.</p>
+            </div>
+            <div class="choice-grid">
+                <div class="choice-card" onclick="selectRole('Administrative', 1000, this)">
+                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                    </div>
+                    <h3>Administrative</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted);">Virtual Assistants, Data Entry, Back-office
+                    </p>
+                </div>
+                <div class="choice-card" onclick="selectRole('Tech & IT', 2500, this)">
+                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Tech & IT</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted);">Developers, QA, DevOps</p>
+                </div>
+                <div class="choice-card" onclick="selectRole('Customer Support', 1200, this)">
+                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                            <path
+                                d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3>Customer Support</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted);">Inbound/Outbound, Technical Support</p>
+                </div>
+                <div class="choice-card" onclick="selectRole('Accounting', 1500, this)">
+                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                    </div>
+                    <h3>Accounting & Finance</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted);">Bookkeeping, CPAs, Financial Analysts</p>
+                </div>
+            </div>
+            <div class="nav-buttons" style="justify-content: flex-end;">
+                <button class="btn btn-primary" onclick="nextStep(2)" id="btnNext1" disabled>
+                    Continue
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Experience -->
+        <div class="step" id="step2">
+            <div class="step-header">
+                <h2>Step 2: Choose Experience Level</h2>
+                <p style="color: var(--text-muted); font-size: 1.1rem;">What level of expertise does this role require?
+                </p>
+            </div>
+            <div class="exp-grid">
+                <div class="choice-card" onclick="selectExperience('Junior', 1.0, this)">
+                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                            </polygon>
+                        </svg>
+                    </div>
+                    <h3>Junior</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">1-3 Years Exp.</p>
+                </div>
+                <div class="choice-card" onclick="selectExperience('Mid-Level', 1.4, this)">
+                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                    </div>
+                    <h3>Mid-Level</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">3-5 Years Exp.</p>
+                </div>
+                <div class="choice-card" onclick="selectExperience('Senior', 1.8, this)">
+                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="7"></circle>
+                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Senior</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">5+ Years Exp.</p>
+                </div>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-outline" onclick="nextStep(1)">Back</button>
+                <button class="btn btn-primary" onclick="calculateResult()" id="btnNext2" disabled>Calculate
+                    Price</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Result -->
+        <div class="step" id="step3">
+            <div class="step-header">
+                <h2>Your Transparent Estimate</h2>
+                <p style="color: var(--text-muted); font-size: 1.1rem;">Based on a full-time <span id="summaryRole"
+                        style="font-weight:700; color:var(--text-dark);"></span> (<span id="summaryExp"
+                        style="font-weight:700; color:var(--text-dark);"></span>) via our cooperative model.</p>
+            </div>
+
+            <div class="result-box">
+                <div
+                    style="font-size: 0.85rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); letter-spacing: 1px;">
+                    Starting At</div>
+                <div class="price-display" id="priceDisplay">$0</div>
+                <div style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.5rem;">USD / month /
+                    full-time resource</div>
+
+                <div class="saving-badge" id="savingsBadge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="margin-right: 0.5rem;">
+                        <path d="m5 12 5 5L20 7" />
+                    </svg>
+                    Save ~70% compared to local hiring
+                </div>
+
+                <div class="comparison-toggle">
+                    <label class="switch">
+                        <input type="checkbox" id="compareToggle" onchange="toggleComparison()">
+                        <span class="slider"></span>
+                    </label>
+                    <span style="font-size: 1.05rem;" id="compareText">Compare to US/UK Local Cost</span>
+                </div>
+            </div>
+
+            <div style="text-align: center; border-top: 1px solid var(--border-color); padding-top: 3rem;">
+                <h3 style="margin-bottom: 2rem; font-size: 1.75rem;">Ready to take the next step?</h3>
+                <form class="capture-form"
+                    onsubmit="event.preventDefault(); alert('Quote requested successfully! Our team will reach out.');">
+                    <input type="text" placeholder="Your Full Name" required>
+                    <input type="email" placeholder="Your Work Email" required>
+                    <button type="submit" class="btn btn-gold"
+                        style="width: 100%; border: none; font-size: 1.15rem; padding: 1.15rem; justify-content: center; box-shadow: 0 10px 25px rgba(255, 209, 102, 0.4);">
+                        Send Me a Detailed Quote
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13" />
+                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg>
+                    </button>
+                </form>
+                <div style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="vertical-align: text-bottom; margin-right: 0.25rem;">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    By submitting, you agree to our privacy policy. No spam, just a transparent quote.
+                </div>
+            </div>
+
+            <div class="nav-buttons" style="border-top: none; padding-top: 1rem;">
+                <button class="btn btn-outline" style="margin: 0 auto; border: none; font-weight: 500;"
+                    onclick="nextStep(2)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                    Edit Requirements
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container animate-on-scroll">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">KINGS<span>GROUP</span></div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem;">Empowering global teams with ethical
+                        Philippine talent through a worker-owned cooperative model.</p>
+                </div>
+
+                <div class="footer-links-col">
+                    <h4>Company</h4>
+                    <a href="story.html">Our Story</a>
+                    <a href="careers.html">Careers</a>
+                    <a href="#">Contact Us</a>
+                </div>
+
+                <div class="footer-links-col">
+                    <h4>Members</h4>
+                    <a href="members.html">Member Portal</a>
+                    <a href="#">Kings Lending</a>
+                    <a href="#">Benefits</a>
+                </div>
+
+                <div class="footer-links-col">
+                    <h4>Legal</h4>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Trust & Safety</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>&copy; 2026 Kings Group Cooperative. All rights reserved.</div>
+                <div class="social-links">
+                    <a href="#">LinkedIn</a>
+                    <a href="#">Twitter</a>
+                    <a href="#">Facebook</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Header scroll effect
+        const header = document.getElementById('main-header');
+        if (header) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        }
+
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.animate-on-scroll:not(.is-visible)').forEach((el) => observer.observe(el));
+
+        let selectedRoleName = '';
+        let selectedRoleBasePrice = 0;
+        let selectedExpName = '';
+        let selectedExpMultiplier = 1;
+        let finalPrice = 0;
+
+        function animateCount(elemId, finalNum) {
+            const el = document.getElementById(elemId);
+            let start = 0;
+            const duration = 500;
+            const stepTime = Math.abs(Math.floor(duration / 30));
+            const increment = finalNum / 30;
+
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= finalNum) {
+                    el.innerText = "$" + finalNum.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    el.innerText = "$" + Math.floor(start).toLocaleString();
+                }
+            }, stepTime);
+        }
+
+        function selectRole(name, price, element) {
+            selectedRoleName = name;
+            selectedRoleBasePrice = price;
+
+            document.querySelectorAll('#step1 .choice-card').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('btnNext1').disabled = false;
+        }
+
+        function selectExperience(name, multiplier, element) {
+            selectedExpName = name;
+            selectedExpMultiplier = multiplier;
+
+            document.querySelectorAll('#step2 .choice-card').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('btnNext2').disabled = false;
+        }
+
+        function nextStep(step) {
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            window.scrollTo({ top: document.querySelector('.pricing-container').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        function calculateResult() {
+            finalPrice = Math.round(selectedRoleBasePrice * selectedExpMultiplier);
+
+            document.getElementById('summaryRole').innerText = selectedRoleName + " Professional";
+            document.getElementById('summaryExp').innerText = selectedExpName;
+
+            document.getElementById('compareToggle').checked = false;
+            updateComparisonUI(false);
+
+            nextStep(3);
+            setTimeout(() => { animateCount('priceDisplay', finalPrice); }, 300);
+        }
+
+        function toggleComparison() {
+            const isChecked = document.getElementById('compareToggle').checked;
+            updateComparisonUI(isChecked);
+        }
+
+        function updateComparisonUI(isComparing) {
+            const usMultiplier = 3.5;
+            const localCost = Math.round(finalPrice * usMultiplier);
+            const badge = document.getElementById('savingsBadge');
+            const priceEl = document.getElementById('priceDisplay');
+
+            if (isComparing) {
+                animateCount('priceDisplay', localCost);
+                priceEl.style.color = 'var(--text-muted)';
+                badge.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Traditional US/UK Agency Cost`;
+                badge.style.background = 'rgba(66, 84, 102, 0.1)';
+                badge.style.color = 'var(--text-muted)';
+            } else {
+                animateCount('priceDisplay', finalPrice);
+                priceEl.style.color = 'var(--main-blue)';
+                badge.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;"><path d="m5 12 5 5L20 7"/></svg> Save ~70% compared to local hiring`;
+                badge.style.background = 'rgba(0, 208, 156, 0.1)';
+                badge.style.color = '#00A67C';
+            }
+        }
+    </script>
+</body>
+
+</html>

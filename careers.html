@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers | Kings Group Cooperative</title>
+    <!-- Modern Typefaces are loaded in styles.css -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .careers-hero {
+            background-color: var(--sec-accent-green);
+            color: var(--bg-white);
+            padding: 6rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .upload-container {
+            max-width: 600px;
+            margin: -3rem auto 5rem;
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            padding: 3rem;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .dropzone {
+            border: 2px dashed rgba(0, 208, 156, 0.4);
+            border-radius: 16px;
+            padding: 3.5rem 2rem;
+            background-color: rgba(0, 208, 156, 0.03);
+            margin-bottom: 2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .dropzone:hover {
+            background-color: rgba(0, 208, 156, 0.08);
+            border-color: var(--sec-accent-green);
+        }
+
+        .dropzone svg {
+            color: var(--sec-accent-green);
+            margin-bottom: 1rem;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .benefit-card {
+            text-align: center;
+            padding: 2.5rem;
+            background: var(--bg-white);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        @media (max-width: 800px) {
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="main-header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">KINGS<span>GROUP</span></a>
+            <div class="nav-section client">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="quote.html" class="nav-link">Hire Talent</a>
+            </div>
+            <div class="nav-section applicant">
+                <a href="members.html" class="btn btn-outline" style="padding: 0.5rem 1.25rem;">Member Log-in</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="careers-hero">
+        <div class="container animate-on-scroll is-visible">
+            <h1 style="color: var(--main-blue); font-size: clamp(2.5rem, 4vw, 3.5rem);">Your Career, Owned by You.</h1>
+            <p style="opacity: 0.9; font-size: 1.2rem; max-width: 650px; margin: 0 auto; color: var(--main-blue);">Join
+                a community where you are a member, not just a number. Fast-track your application to access elite
+                global opportunities.</p>
+        </div>
+    </div>
+
+    <div class="upload-container animate-on-scroll is-visible">
+        <h2 style="color: var(--text-dark); margin-bottom: 0.5rem; font-size: 2rem;">Fast-Track Application</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2.5rem; font-size: 1.1rem;">No long forms. Just drop your CV
+            and let our recruiters find your perfect match.</p>
+
+        <div class="dropzone" onclick="document.getElementById('cv-upload').click()">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="12" y1="18" x2="12" y2="12" />
+                <line x1="9" y1="15" x2="15" y2="15" />
+            </svg>
+            <h3 style="color: var(--main-blue);">Click or Drag your CV here</h3>
+            <p style="font-size: 0.95rem; color: var(--text-muted);">Supports PDF, DOCX up to 5MB</p>
+            <input type="file" id="cv-upload" style="display: none;" accept=".pdf,.doc,.docx"
+                onchange="alert('CV Attached! Ready to submit.')">
+        </div>
+
+        <form style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <input type="email" placeholder="Email Address" required
+                style="padding: 1.1rem; border: 2px solid var(--border-color); border-radius: 12px; font-family: var(--font-body); width: 100%;">
+            <input type="text" placeholder="LinkedIn URL (Optional)"
+                style="padding: 1.1rem; border: 2px solid var(--border-color); border-radius: 12px; font-family: var(--font-body); width: 100%;">
+            <button type="submit" class="btn btn-primary"
+                style="background-color: var(--sec-accent-green); border: none; font-size: 1.15rem; padding: 1.15rem; width: 100%; color: var(--main-blue);"
+                onclick="event.preventDefault(); alert('Application submitted! Welcome to the talent network.');">Submit
+                Profile</button>
+        </form>
+    </div>
+
+    <section class="section section-bg-light" style="padding-top: 2rem;">
+        <div class="container animate-on-scroll">
+            <h2 class="section-title">The Cooperative Advantage</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div style="color: var(--main-blue); margin-bottom: 1.5rem;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <h3 style="font-size: 1.5rem;">True Ownership</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Share in the profit and success of the
+                        company. When the business grows, your wealth grows.</p>
+                </div>
+                <div class="benefit-card">
+                    <div style="color: var(--main-blue); margin-bottom: 1.5rem;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <polyline points="17 11 19 13 23 9"></polyline>
+                        </svg>
+                    </div>
+                    <h3 style="font-size: 1.5rem;">Career Coaching</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Access to premium training and dedicated
+                        career pathways. We build leaders.</p>
+                </div>
+                <div class="benefit-card">
+                    <div style="color: var(--main-blue); margin-bottom: 1.5rem;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                    </div>
+                    <h3 style="font-size: 1.5rem;">Kings Lending</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Internal lending programs designed to
+                        support our members' major life milestones.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container animate-on-scroll">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">KINGS<span>GROUP</span></div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem;">Empowering global teams with ethical
+                        Philippine talent through a worker-owned cooperative model.</p>
+                </div>
+
+                <div class="footer-links-col">
+                    <h4>Company</h4>
+                    <a href="story.html">Our Story</a>
+                    <a href="careers.html">Careers</a>
+                    <a href="#">Contact Us</a>
+                </div>
+
+                <div class="footer-links-col">
+                    <h4>Members</h4>
+                    <a href="members.html">Member Portal</a>
+                    <a href="#">Kings Lending</a>
+                    <a href="#">Benefits</a>
+                </div>
+
+                <div class="footer-links-col">
+                    <h4>Legal</h4>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Trust & Safety</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>&copy; 2026 Kings Group Cooperative. All rights reserved.</div>
+                <div class="social-links">
+                    <a href="#">LinkedIn</a>
+                    <a href="#">Twitter</a>
+                    <a href="#">Facebook</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Header scroll effect
+        const header = document.getElementById('main-header');
+        if (header) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        }
+
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.animate-on-scroll:not(.is-visible)').forEach((el) => observer.observe(el));
+    </script>
+</body>
+
+</html>
