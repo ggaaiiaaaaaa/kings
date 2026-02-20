@@ -165,11 +165,19 @@ header.scrolled .nav-link {
     height: 2px;
     bottom: -4px;
     left: 0;
-    background-color: var(--main-blue);
+    background-color: #ffffff;
     transition: width 0.3s ease;
 }
 
+header.scrolled .nav-link::after {
+    background-color: var(--main-blue);
+}
+
 .nav-link:hover {
+    color: #ffffff;
+}
+
+header.scrolled .nav-link:hover {
     color: var(--main-blue);
 }
 
@@ -236,7 +244,18 @@ header.scrolled .nav-link {
     transition: color 0.4s ease, border-color 0.4s ease;
 }
 
+.nav-transparent-btn:hover {
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
 header.scrolled .nav-transparent-btn {
+    color: var(--main-blue);
+    border-color: var(--border-color);
+}
+
+header.scrolled .nav-transparent-btn:hover {
+    border-color: var(--main-blue);
     color: var(--main-blue);
 }
 
