@@ -283,30 +283,217 @@
 
 <body>
 
+    <!-- Header: Choose Your Path -->
     <header id="main-header">
         <div class="nav-container">
-            <a href="index.html" class="logo">KINGS<span style="color: var(--neutral-yellow);">GROUP</span></a>
-            <div class="nav-section applicant">
-                <a href="index.html" class="btn btn-outline nav-transparent-btn"
-                    style="border: none; padding: 0.5rem 1rem;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 12H5M12 19l-7-7 7-7" />
+            <div class="logo"><a href="index.html"><img src="img/[LOGO] Main Logo White.png" alt="Kings Group Logo"
+                        class="brand-logo"></a></div>
+
+            <!-- Left Side (Client Focus) -->
+            <div class="nav-section client">
+                <!-- Dropdown Menu -->
+                <div class="dropdown">
+                    <button class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                        About
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M7 10L12 15L17 10"></path>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu mega-menu">
+                        <div class="mega-menu-inner">
+
+                            <!-- Main Content Area (70%) -->
+                            <div class="mega-main">
+
+                                <!-- Left Tabs Column -->
+                                <div class="mega-tabs">
+                                    <div class="mega-tab active" data-target="mega-discover">
+                                        <div class="mega-tab-icon bg-blue-light"
+                                            style="background: rgba(10,37,64,0.05); color: var(--main-blue);">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                            </svg>
+                                        </div>
+                                        <span class="mega-tab-text">Discover</span>
+                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="mega-tab" data-target="mega-services"
+                                        onclick="window.location.href='services.html';" style="cursor: pointer;">
+                                        <div class="mega-tab-icon"
+                                            style="background: rgba(255, 209, 102, 0.15); color: #FFD166;">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                            </svg>
+                                        </div>
+                                        <span class="mega-tab-text">Services</span>
+                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="mega-tab" data-target="mega-network">
+                                        <div class="mega-tab-icon"
+                                            style="background: rgba(38, 196, 133, 0.15); color: #26C485;">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="9" cy="7" r="4"></circle>
+                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                            </svg>
+                                        </div>
+                                        <span class="mega-tab-text">Compliance & Network</span>
+                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Center Links Grid (DISCOVER) -->
+                                <div id="mega-discover" class="mega-links-grid active">
+                                    <a href="story.html#history" class="mega-feature-link">
+                                        <div class="feature-link-icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="9" cy="7" r="4"></circle>
+                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="feature-link-text">
+                                            <span class="title">Our History</span>
+                                            <span class="desc">A legacy of empowering workers since 1999.</span>
+                                        </div>
+                                    </a>
+                                    <a href="story.html#vision-mission" class="mega-feature-link">
+                                        <div class="feature-link-icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <polygon
+                                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                                </polygon>
+                                            </svg>
+                                        </div>
+                                        <div class="feature-link-text">
+                                            <span class="title">Mission & Values</span>
+                                            <span class="desc">Discover our cooperative advantage and vision.</span>
+                                        </div>
+                                    </a>
+                                </div>
+
+                                <!-- Center Links Grid (SERVICES) -->
+                                <div id="mega-services" class="mega-links-grid">
+                                    <a href="service-labor.html" class="mega-feature-link">
+                                        <div class="feature-link-icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="feature-link-text">
+                                            <span class="title">Labor Management</span>
+                                            <span class="desc">Managed services & staff leasing.</span>
+                                        </div>
+                                    </a>
+                                    <a href="service-kit.html" class="mega-feature-link">
+                                        <div class="feature-link-icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path d="M12 2L2 7l10 5 10-5-10-5zm0 10l-10 5 10 5 10-5-10-5z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                        <div class="feature-link-text">
+                                            <span class="title">HR & Tech (KIT)</span>
+                                            <span class="desc">Proprietary Kings Information Technology systems.</span>
+                                        </div>
+                                    </a>
+                                </div>
+
+                                <!-- Center Links Grid (NETWORK) -->
+                                <div id="mega-network" class="mega-links-grid">
+                                    <a href="network.html#compliance" class="mega-feature-link">
+                                        <div class="feature-link-icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                        <div class="feature-link-text">
+                                            <span class="title">Certifications</span>
+                                            <span class="desc">Fully compliant with DOLE, CDA, BIR, and more.</span>
+                                        </div>
+                                    </a>
+                                    <a href="network.html#engagements" class="mega-feature-link">
+                                        <div class="feature-link-icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
+                                                </path>
+                                                <polyline points="14 2 14 8 20 8"></polyline>
+                                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                                <polyline points="10 9 9 9 8 9"></polyline>
+                                            </svg>
+                                        </div>
+                                        <div class="feature-link-text">
+                                            <span class="title">Client Engagements</span>
+                                            <span class="desc">Serving a network of over 10,000 members globally.</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- End Dropdown -->
+
+                <a href="#" class="nav-link">Our Roles</a>
+                <a href="quote.html" class="btn btn-gold" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">
+                    Get a Quote
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
-                    Back to Home
+                </a>
+            </div>
+
+            <!-- Right Side (Applicant Focus) -->
+            <div class="nav-section applicant">
+                <a href="careers.html" class="nav-link">Find a Job</a>
+                <a href="members.html" class="nav-link">Member Benefits</a>
+                <a href="members.html" class="btn btn-outline nav-transparent-btn"
+                    style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">
+                    Log-In
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
+                    </svg>
                 </a>
             </div>
         </div>
     </header>
 
-    <div class="pricing-hero">
-        <div class="container animate-on-scroll is-visible">
-            <h1 style="color: white; font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 1rem;">Build Your Dream Team
-            </h1>
-            <p style="opacity: 0.9; font-size: 1.2rem; max-width: 650px; margin: 0 auto; color: rgba(255,255,255,0.8);">
-                Use our interactive team builder to get transparency on pricing instantly. Because great talent should
+    <!-- Modern Premium Hero -->
+    <section class="page-hero" style="min-height: 50vh; padding-bottom: 8rem;">
+        <div class="container">
+            <h1>Build Your Dream Team</h1>
+            <p>Use our interactive team builder to get transparency on pricing instantly. Because great talent should
                 be accessible, not a guessing game.</p>
         </div>
-    </div>
+    </section>
 
     <div class="pricing-container">
         <!-- Step 1: Role -->
@@ -505,7 +692,8 @@
         <div class="container animate-on-scroll">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo">KINGS<span>GROUP</span></div>
+                    <a href="index.html" class="footer-logo"><img src="img/[LOGO] Footer.png"
+                            alt="Kings Group Footer Logo" class="brand-logo-footer"></a>
                     <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem;">Empowering global teams with ethical
                         Philippine talent through a worker-owned cooperative model.</p>
                 </div>
@@ -543,29 +731,8 @@
         </div>
     </footer>
 
+    <script src="script.js"></script>
     <script>
-        // Header scroll effect
-        const header = document.getElementById('main-header');
-        if (header) {
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-            });
-        }
-
-        // Intersection Observer for animations
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    obs.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.15 });
-        document.querySelectorAll('.animate-on-scroll:not(.is-visible)').forEach((el) => observer.observe(el));
 
         let selectedRoleName = '';
         let selectedRoleBasePrice = 0;

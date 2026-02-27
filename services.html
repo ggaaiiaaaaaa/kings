@@ -4,76 +4,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Careers | Kings Group Cooperative</title>
+    <title>Our Services | Kings Group Cooperative</title>
     <!-- Modern Typefaces are loaded in styles.css -->
     <link rel="stylesheet" href="styles.css">
     <style>
-        .careers-hero {
-            background-color: var(--sec-accent-green);
+        .services-hero {
+            background-color: var(--main-blue);
             color: var(--bg-white);
-            padding: 6rem 2rem 5rem;
+            padding: 8rem 2rem 6rem;
             text-align: center;
-            position: relative;
         }
 
-        .upload-container {
-            max-width: 600px;
-            margin: -3rem auto 5rem;
-            background: var(--bg-white);
-            border-radius: 20px;
-            box-shadow: var(--shadow-lg);
+        .services-hero h1 {
+            font-size: clamp(3rem, 5vw, 4.5rem);
+            color: var(--bg-white);
+            margin-bottom: 1.5rem;
+        }
+
+        .service-section {
+            padding: 5rem 0;
+        }
+
+        .service-card-large {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 6rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 24px;
             padding: 3rem;
-            position: relative;
-            z-index: 10;
-            text-align: center;
-        }
-
-        .dropzone {
-            border: 2px dashed rgba(0, 208, 156, 0.4);
-            border-radius: 16px;
-            padding: 3.5rem 2rem;
-            background-color: rgba(0, 208, 156, 0.03);
-            margin-bottom: 2rem;
-            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             transition: var(--transition);
         }
 
-        .dropzone:hover {
-            background-color: rgba(0, 208, 156, 0.08);
-            border-color: var(--sec-accent-green);
+        .service-card-large:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-8px);
         }
 
-        .dropzone svg {
-            color: var(--sec-accent-green);
+        .service-card-large:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .service-content {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .service-image {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .service-image img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .service-content h2 {
+            font-size: 2.5rem;
+            color: var(--main-blue);
+            margin-bottom: 1.5rem;
+        }
+
+        .service-content p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-list-custom {
+            list-style: none;
+            padding: 0;
+            margin-top: 2rem;
+        }
+
+        .feature-list-custom li {
+            position: relative;
+            padding-left: 30px;
             margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+        }
+
+        .feature-list-custom li::before {
+            content: '✔';
+            position: absolute;
+            left: 0;
+            color: var(--sec-accent-green);
+            font-weight: bold;
         }
 
         .benefits-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
-            max-width: 1100px;
-            margin: 0 auto;
+            margin-top: 3rem;
         }
 
         .benefit-card {
-            text-align: center;
-            padding: 2.5rem;
             background: var(--bg-white);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            transition: var(--transition);
-        }
-
-        .benefit-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-        }
-
-        @media (max-width: 800px) {
-            .benefits-grid {
-                grid-template-columns: 1fr;
-            }
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border-top: 4px solid var(--neutral-yellow);
         }
     </style>
 </head>
@@ -270,7 +310,7 @@
 
             <!-- Right Side (Applicant Focus) -->
             <div class="nav-section applicant">
-                <a href="careers.html" class="nav-link" style="font-weight: 700;">Find a Job</a>
+                <a href="careers.html" class="nav-link">Find a Job</a>
                 <a href="members.html" class="nav-link">Member Benefits</a>
                 <a href="members.html" class="btn btn-outline nav-transparent-btn"
                     style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">
@@ -284,83 +324,65 @@
     </header>
 
     <!-- Modern Premium Hero -->
-    <section class="page-hero" style="min-height: 50vh; padding-bottom: 8rem;">
+    <section class="page-hero">
         <div class="container">
-            <h1>Your Career, Owned by You.</h1>
-            <p>Join a community where you are a member, not just a number. Fast-track your application to access elite
-                global opportunities.</p>
+            <h1>What We Offer</h1>
+            <p>Comprehensive solutions designed to empower your business and our members.</p>
         </div>
     </section>
 
-    <div class="upload-container animate-on-scroll is-visible">
-        <h2 style="color: var(--text-dark); margin-bottom: 0.5rem; font-size: 2rem;">Fast-Track Application</h2>
-        <p style="color: var(--text-muted); margin-bottom: 2.5rem; font-size: 1.1rem;">No long forms. Just drop your CV
-            and let our recruiters find your perfect match.</p>
-
-        <div class="dropzone" onclick="document.getElementById('cv-upload').click()">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="12" y1="18" x2="12" y2="12" />
-                <line x1="9" y1="15" x2="15" y2="15" />
-            </svg>
-            <h3 style="color: var(--main-blue);">Click or Drag your CV here</h3>
-            <p style="font-size: 0.95rem; color: var(--text-muted);">Supports PDF, DOCX up to 5MB</p>
-            <input type="file" id="cv-upload" style="display: none;" accept=".pdf,.doc,.docx"
-                onchange="alert('CV Attached! Ready to submit.')">
-        </div>
-
-        <form style="display: flex; flex-direction: column; gap: 1.25rem;">
-            <input type="email" placeholder="Email Address" required
-                style="padding: 1.1rem; border: 2px solid var(--border-color); border-radius: 12px; font-family: var(--font-body); width: 100%;">
-            <input type="text" placeholder="LinkedIn URL (Optional)"
-                style="padding: 1.1rem; border: 2px solid var(--border-color); border-radius: 12px; font-family: var(--font-body); width: 100%;">
-            <button type="submit" class="btn btn-primary"
-                style="background-color: var(--sec-accent-green); border: none; font-size: 1.15rem; padding: 1.15rem; width: 100%; color: var(--main-blue);"
-                onclick="event.preventDefault(); alert('Application submitted! Welcome to the talent network.');">Submit
-                Profile</button>
-        </form>
-    </div>
-
-    <section class="section section-bg-light" style="padding-top: 2rem;">
+    <!-- Labor Management Services -->
+    <section class="section service-section" id="labor">
         <div class="container animate-on-scroll">
-            <h2 class="section-title">The Cooperative Advantage</h2>
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <div style="color: var(--main-blue); margin-bottom: 1.5rem;">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        </svg>
-                    </div>
-                    <h3 style="font-size: 1.5rem;">True Ownership</h3>
-                    <p style="color: var(--text-muted); font-size: 0.95rem;">Share in the profit and success of the
-                        company. When the business grows, your wealth grows.</p>
+
+            <div class="service-card-large">
+                <div class="service-image">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                        alt="Labor Management Services">
                 </div>
-                <div class="benefit-card">
-                    <div style="color: var(--main-blue); margin-bottom: 1.5rem;">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <polyline points="17 11 19 13 23 9"></polyline>
+                <div class="service-content">
+                    <span class="badge badge-blue" style="margin-bottom: 1rem; display: inline-block;">Core
+                        Service</span>
+                    <h2>Labor Management Services</h2>
+                    <p>Our diversified services include Managed Services and Managed Staff Leasing Services. We handle
+                        human resource management, consulting, and benefits administration so you can focus on
+                        revenue-generating activities.</p>
+
+                    <a href="service-labor.html" class="btn btn-outline" style="margin-top: 1.5rem;">
+                        Learn More
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
                         </svg>
-                    </div>
-                    <h3 style="font-size: 1.5rem;">Career Coaching</h3>
-                    <p style="color: var(--text-muted); font-size: 0.95rem;">Access to premium training and dedicated
-                        career pathways. We build leaders.</p>
+                    </a>
                 </div>
-                <div class="benefit-card">
-                    <div style="color: var(--main-blue); margin-bottom: 1.5rem;">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- HR & Payroll System -->
+    <section class="section section-bg-light service-section" id="kit">
+        <div class="container animate-on-scroll">
+            <div class="service-card-large" style="margin-bottom: 0;">
+                <div class="service-image">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                        alt="HR & Payroll Software">
+                </div>
+                <div class="service-content">
+                    <span class="badge badge-green"
+                        style="margin-bottom: 1rem; display: inline-block;">Technology</span>
+                    <h2>HR & Payroll System (KIT)</h2>
+                    <p><strong>Kings Information Technology (KIT)</strong> is our proprietary HRIS software explicitly
+                        created to offer the best solution for Philippine HR demands.</p>
+
+                    <a href="service-kit.html" class="btn btn-outline" style="margin-top: 1.5rem;">
+                        Learn More
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
                         </svg>
-                    </div>
-                    <h3 style="font-size: 1.5rem;">Kings Lending</h3>
-                    <p style="color: var(--text-muted); font-size: 0.95rem;">Internal lending programs designed to
-                        support our members' major life milestones.</p>
+                    </a>
                 </div>
             </div>
         </div>

@@ -4,76 +4,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Careers | Kings Group Cooperative</title>
+    <title>Labor Management Services | Kings Group Cooperative</title>
     <!-- Modern Typefaces are loaded in styles.css -->
     <link rel="stylesheet" href="styles.css">
     <style>
-        .careers-hero {
-            background-color: var(--sec-accent-green);
+        .service-page-hero {
+            background-color: var(--main-blue);
             color: var(--bg-white);
-            padding: 6rem 2rem 5rem;
-            text-align: center;
-            position: relative;
-        }
-
-        .upload-container {
-            max-width: 600px;
-            margin: -3rem auto 5rem;
-            background: var(--bg-white);
-            border-radius: 20px;
-            box-shadow: var(--shadow-lg);
-            padding: 3rem;
-            position: relative;
-            z-index: 10;
+            padding: 8rem 2rem 6rem;
             text-align: center;
         }
 
-        .dropzone {
-            border: 2px dashed rgba(0, 208, 156, 0.4);
-            border-radius: 16px;
-            padding: 3.5rem 2rem;
-            background-color: rgba(0, 208, 156, 0.03);
-            margin-bottom: 2rem;
-            cursor: pointer;
-            transition: var(--transition);
+        .service-page-hero h1 {
+            font-size: clamp(3rem, 5vw, 4.5rem);
+            color: var(--bg-white);
+            margin-bottom: 1.5rem;
         }
 
-        .dropzone:hover {
-            background-color: rgba(0, 208, 156, 0.08);
-            border-color: var(--sec-accent-green);
-        }
-
-        .dropzone svg {
-            color: var(--sec-accent-green);
-            margin-bottom: 1rem;
-        }
-
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            max-width: 1100px;
+        #user-content-area {
+            min-height: 400px;
+            padding: 5rem 2rem;
+            max-width: 1000px;
             margin: 0 auto;
-        }
-
-        .benefit-card {
             text-align: center;
-            padding: 2.5rem;
-            background: var(--bg-white);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            transition: var(--transition);
-        }
-
-        .benefit-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-        }
-
-        @media (max-width: 800px) {
-            .benefits-grid {
-                grid-template-columns: 1fr;
-            }
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            border: 2px dashed rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            margin-top: 4rem;
+            margin-bottom: 4rem;
         }
     </style>
 </head>
@@ -270,7 +229,7 @@
 
             <!-- Right Side (Applicant Focus) -->
             <div class="nav-section applicant">
-                <a href="careers.html" class="nav-link" style="font-weight: 700;">Find a Job</a>
+                <a href="careers.html" class="nav-link">Find a Job</a>
                 <a href="members.html" class="nav-link">Member Benefits</a>
                 <a href="members.html" class="btn btn-outline nav-transparent-btn"
                     style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">
@@ -284,87 +243,18 @@
     </header>
 
     <!-- Modern Premium Hero -->
-    <section class="page-hero" style="min-height: 50vh; padding-bottom: 8rem;">
+    <section class="page-hero">
         <div class="container">
-            <h1>Your Career, Owned by You.</h1>
-            <p>Join a community where you are a member, not just a number. Fast-track your application to access elite
-                global opportunities.</p>
+            <h1>Labor Management Services</h1>
+            <p>Managed Services & Staff Leasing</p>
         </div>
     </section>
 
-    <div class="upload-container animate-on-scroll is-visible">
-        <h2 style="color: var(--text-dark); margin-bottom: 0.5rem; font-size: 2rem;">Fast-Track Application</h2>
-        <p style="color: var(--text-muted); margin-bottom: 2.5rem; font-size: 1.1rem;">No long forms. Just drop your CV
-            and let our recruiters find your perfect match.</p>
-
-        <div class="dropzone" onclick="document.getElementById('cv-upload').click()">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="12" y1="18" x2="12" y2="12" />
-                <line x1="9" y1="15" x2="15" y2="15" />
-            </svg>
-            <h3 style="color: var(--main-blue);">Click or Drag your CV here</h3>
-            <p style="font-size: 0.95rem; color: var(--text-muted);">Supports PDF, DOCX up to 5MB</p>
-            <input type="file" id="cv-upload" style="display: none;" accept=".pdf,.doc,.docx"
-                onchange="alert('CV Attached! Ready to submit.')">
-        </div>
-
-        <form style="display: flex; flex-direction: column; gap: 1.25rem;">
-            <input type="email" placeholder="Email Address" required
-                style="padding: 1.1rem; border: 2px solid var(--border-color); border-radius: 12px; font-family: var(--font-body); width: 100%;">
-            <input type="text" placeholder="LinkedIn URL (Optional)"
-                style="padding: 1.1rem; border: 2px solid var(--border-color); border-radius: 12px; font-family: var(--font-body); width: 100%;">
-            <button type="submit" class="btn btn-primary"
-                style="background-color: var(--sec-accent-green); border: none; font-size: 1.15rem; padding: 1.15rem; width: 100%; color: var(--main-blue);"
-                onclick="event.preventDefault(); alert('Application submitted! Welcome to the talent network.');">Submit
-                Profile</button>
-        </form>
+    <!-- User Content Area Placeholder -->
+    <div id="user-content-area" class="container">
+        <!-- The user will drop their detailed content here -->
+        [Content to be provided by USER]
     </div>
-
-    <section class="section section-bg-light" style="padding-top: 2rem;">
-        <div class="container animate-on-scroll">
-            <h2 class="section-title">The Cooperative Advantage</h2>
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <div style="color: var(--main-blue); margin-bottom: 1.5rem;">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        </svg>
-                    </div>
-                    <h3 style="font-size: 1.5rem;">True Ownership</h3>
-                    <p style="color: var(--text-muted); font-size: 0.95rem;">Share in the profit and success of the
-                        company. When the business grows, your wealth grows.</p>
-                </div>
-                <div class="benefit-card">
-                    <div style="color: var(--main-blue); margin-bottom: 1.5rem;">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <polyline points="17 11 19 13 23 9"></polyline>
-                        </svg>
-                    </div>
-                    <h3 style="font-size: 1.5rem;">Career Coaching</h3>
-                    <p style="color: var(--text-muted); font-size: 0.95rem;">Access to premium training and dedicated
-                        career pathways. We build leaders.</p>
-                </div>
-                <div class="benefit-card">
-                    <div style="color: var(--main-blue); margin-bottom: 1.5rem;">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                    </div>
-                    <h3 style="font-size: 1.5rem;">Kings Lending</h3>
-                    <p style="color: var(--text-muted); font-size: 0.95rem;">Internal lending programs designed to
-                        support our members' major life milestones.</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Footer -->
     <footer>
@@ -401,11 +291,6 @@
 
             <div class="footer-bottom">
                 <div>&copy; 2026 Kings Group Cooperative. All rights reserved.</div>
-                <div class="social-links">
-                    <a href="#">LinkedIn</a>
-                    <a href="#">Twitter</a>
-                    <a href="#">Facebook</a>
-                </div>
             </div>
         </div>
     </footer>
