@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Story | Kings Group Cooperative</title>
+    <link rel="icon" type="image/png" href="img/[LOGO] Main Logo Black.png">
+    <link rel="apple-touch-icon" href="img/[LOGO] Main Logo Black.png">
+
     <!-- Modern Typefaces are loaded in styles.css -->
     <link rel="stylesheet" href="styles.css">
     <style>
@@ -47,43 +50,108 @@
             font-weight: 600;
         }
 
+        /* ── Core Values ─ Feature Grid ── */
         .values-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 4rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            margin-top: 3rem;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: var(--bg-white);
+            box-shadow: var(--shadow-sm);
         }
 
-        .value-card {
-            background: var(--bg-white);
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
+        .value-feature {
+            padding: 2.5rem 2rem;
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             transition: var(--transition);
             position: relative;
-            overflow: hidden;
         }
 
-        .value-card::before {
-            content: '';
+        .value-feature:nth-child(3n) {
+            border-right: none;
+        }
+
+        .value-feature:nth-child(n+7) {
+            border-bottom: none;
+        }
+
+        .value-feature:hover {
+            background: var(--bg-light);
+        }
+
+        .value-feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .value-feature h3 {
+            font-size: 1.15rem;
+            color: var(--main-blue);
+            margin-bottom: 0.6rem;
+            letter-spacing: 0.5px;
+        }
+
+        .value-feature p {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+            margin: 0;
+        }
+
+        .value-feature-num {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background: linear-gradient(90deg, var(--main-blue), var(--sec-accent-green));
-            opacity: 0;
-            transition: var(--transition);
+            top: 1.25rem;
+            right: 1.25rem;
+            font-family: var(--font-header);
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: rgba(10, 37, 64, 0.07);
         }
 
-        .value-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-hover);
+        @media (max-width: 900px) {
+            .values-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .value-feature:nth-child(3n) {
+                border-right: 1px solid var(--border-color);
+            }
+
+            .value-feature:nth-child(2n) {
+                border-right: none;
+            }
+
+            .value-feature:nth-child(n+7) {
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .value-feature:nth-last-child(-n+2) {
+                border-bottom: none;
+            }
         }
 
-        .value-card:hover::before {
-            opacity: 1;
+        @media (max-width: 600px) {
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .value-feature {
+                border-right: none !important;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .value-feature:last-child {
+                border-bottom: none;
+            }
         }
 
         .stats-grid {
@@ -119,19 +187,309 @@
             background: linear-gradient(135deg, rgba(10, 37, 64, 1) 0%, rgba(10, 37, 64, 0.9) 100%);
             color: white;
             text-align: center;
-            padding: 7rem 2rem;
+            padding: 5rem 2rem;
+        }
+
+        /* ── Vision & Mission Grid ── */
+        .vm-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .vm-card {
+            background: var(--bg-white);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .vm-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .vm-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .vm-card h3 {
+            font-size: 1.75rem;
+            color: var(--main-blue);
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .vm-card p {
+            color: var(--text-muted);
+            line-height: 1.8;
+            font-size: 1.05rem;
         }
 
         @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+
+            .vm-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Evolution Timeline ── */
+        .evolution-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 4rem;
+            margin-top: 4rem;
+        }
+
+        .evo-item {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .evo-item.evo-reverse {
+            flex-direction: row-reverse;
+        }
+
+        .evo-image {
+            flex: 1;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            aspect-ratio: 16 / 9;
+        }
+
+        .evo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+
+        .evo-item:hover .evo-image img {
+            transform: scale(1.05);
+        }
+
+        .evo-year-badge {
+            position: absolute;
+            top: 1.25rem;
+            left: 1.25rem;
+            background: var(--main-blue);
+            color: var(--neutral-yellow);
+            font-family: var(--font-header);
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 0.5rem 1.25rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(10, 37, 64, 0.4);
+            letter-spacing: 0.5px;
+        }
+
+        .evo-reverse .evo-year-badge {
+            left: auto;
+            right: 1.25rem;
+        }
+
+        .evo-content {
+            flex: 1;
+            padding: 2.5rem;
+            background: var(--bg-white);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .evo-item:hover .evo-content {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-4px);
+        }
+
+        .evo-content h3 {
+            font-size: 1.75rem;
+            color: var(--main-blue);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            letter-spacing: 1px;
+        }
+
+        .evo-content p {
+            color: var(--text-muted);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        @media (max-width: 900px) {
+            .evo-item,
+            .evo-item.evo-reverse {
+                flex-direction: column;
+            }
+
+            .evo-reverse .evo-year-badge {
+                left: 1.25rem;
+                right: auto;
+            }
+        }
+
+        /* ── Team Cards ── */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .team-card {
+            background: var(--bg-white);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .team-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .team-photo {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 4px 20px rgba(10, 37, 64, 0.15);
+            border: 4px solid var(--bg-light);
+        }
+
+        .team-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .team-card:hover .team-photo img {
+            transform: scale(1.08);
+        }
+
+        .team-info h3 {
+            font-size: 1.5rem;
+            color: var(--main-blue);
+            margin-bottom: 0.5rem;
+            letter-spacing: 1.5px;
+        }
+
+        .team-role {
+            display: inline-block;
+            font-weight: 700;
+            color: var(--sec-accent-green);
+            font-size: 0.95rem;
+            margin-bottom: 1.25rem;
+            padding: 0.35rem 1rem;
+            background: rgba(39, 174, 96, 0.08);
+            border-radius: 20px;
+        }
+
+        .team-credentials {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+        }
+
+        .team-credentials li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        .team-credentials li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--sec-accent-green);
+            font-weight: 700;
+        }
+
+        @media (max-width: 900px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Group of Companies – Static Logo Showcase ── */
+        .companies-showcase {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2.5rem 3rem;
+            margin-top: 3rem;
+            padding: 2rem 0;
+        }
+
+        .company-showcase-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            width: 120px;
+            transition: var(--transition);
+        }
+
+        .company-showcase-item img {
+            width: 78px;
+            height: 78px;
+            object-fit: contain;
+            padding: 14px;
+            background: var(--main-blue);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .company-showcase-item:hover img {
+            transform: scale(1.1) translateY(-4px);
+            box-shadow: 0 8px 24px rgba(10, 37, 64, 0.18);
+        }
+
+        .company-showcase-item span {
+            font-weight: 600;
+            color: var(--main-blue);
+            font-size: 0.82rem;
+            letter-spacing: 0.3px;
+            text-align: center;
+            line-height: 1.3;
+            opacity: 0.65;
+            transition: var(--transition);
+        }
+
+        .company-showcase-item:hover span {
+            opacity: 1;
         }
     </style>
 </head>
 
 <body>
-
     <!-- Header: Choose Your Path -->
     <header id="main-header">
         <div class="nav-container">
@@ -140,6 +498,8 @@
 
             <!-- Left Side (Client Focus) -->
             <div class="nav-section client">
+                <a href="index.html" class="nav-link">Home</a>
+
                 <!-- Dropdown Menu -->
                 <div class="dropdown">
                     <button class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false">
@@ -210,7 +570,7 @@
 
                                 <!-- Center Links Grid (DISCOVER) -->
                                 <div id="mega-discover" class="mega-links-grid active">
-                                    <a href="story.html#history" class="mega-feature-link">
+                                    <a href="story.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                                 stroke="currentColor" stroke-width="2">
@@ -221,7 +581,7 @@
                                             </svg>
                                         </div>
                                         <div class="feature-link-text">
-                                            <span class="title">Our History</span>
+                                            <span class="title">Our Story</span>
                                             <span class="desc">A legacy of empowering workers since 1999.</span>
                                         </div>
                                     </a>
@@ -239,6 +599,7 @@
                                             <span class="desc">Discover our cooperative advantage and vision.</span>
                                         </div>
                                     </a>
+
                                 </div>
 
                                 <!-- Center Links Grid (SERVICES) -->
@@ -310,8 +671,6 @@
                     </div>
                 </div>
                 <!-- End Dropdown -->
-
-                <a href="#" class="nav-link">Our Roles</a>
                 <a href="quote.html" class="btn btn-gold" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">
                     Get a Quote
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -319,11 +678,9 @@
                     </svg>
                 </a>
             </div>
-
             <!-- Right Side (Applicant Focus) -->
             <div class="nav-section applicant">
                 <a href="careers.html" class="nav-link">Find a Job</a>
-                <a href="members.html" class="nav-link">Member Benefits</a>
                 <a href="members.html" class="btn btn-outline nav-transparent-btn"
                     style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">
                     Log-In
@@ -346,23 +703,37 @@
     <!-- Vision & Mission -->
     <section class="section section-bg-light" id="vision-mission">
         <div class="container animate-on-scroll">
-            <div class="split-sections" style="gap: 3rem; flex-direction: row; flex-wrap: wrap;">
-                <div class="info-card client-card" style="flex: 1; min-width: 300px; padding: 3.5rem;">
-                    <h2 style="color: var(--main-blue); font-size: 2.5rem; margin-bottom: 1.5rem;">Our Vision</h2>
-                    <p style="font-size: 1.25rem; line-height: 1.8; color: var(--text-dark);">To be the leading
-                        professional workforce provider with satisfied clients and secured members in the Philippines.
-                    </p>
+            <h2 class="section-title">Vision & Mission</h2>
+            <div class="vm-grid">
+                <div class="vm-card">
+                    <div class="vm-icon" style="background: rgba(10, 37, 64, 0.06); color: var(--main-blue);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="6"></circle>
+                            <circle cx="12" cy="12" r="2"></circle>
+                        </svg>
+                    </div>
+                    <h3>Our Vision</h3>
+                    <p>To be the leading professional workforce provider with satisfied clients and secured members in
+                        the Philippines.</p>
                 </div>
-                <div class="info-card"
-                    style="flex: 1.2; min-width: 300px; padding: 3.5rem; background: var(--main-blue); color: white; border-color: rgba(255,255,255,0.1);">
-                    <h2 style="color: var(--neutral-yellow); font-size: 2.5rem; margin-bottom: 1.5rem;">Our Mission</h2>
-                    <p style="font-size: 1.15rem; line-height: 1.8; color: rgba(255,255,255,0.9);">Driven with passion,
-                        agility, and excellence in everything we do, we are committed to maintain a successful
-                        partnership with our clients as we also help with the needs and aspirations of our members.</p>
-                    <p style="font-size: 1.15rem; line-height: 1.8; color: rgba(255,255,255,0.9); margin-top: 1rem;">
-                        Staying true to our purpose, it is our mission to be a responsible member of the Cooperative
-                        Development Authority in contributing to the growth of the economy by continuously providing
-                        jobs.</p>
+                <div class="vm-card">
+                    <div class="vm-icon" style="background: rgba(255, 209, 102, 0.15); color: var(--neutral-yellow);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                            </polygon>
+                        </svg>
+                    </div>
+                    <h3>Our Mission</h3>
+                    <p>Driven with passion, agility, and excellence in everything we do, we are committed to maintain a
+                        successful partnership with our clients as we also help with the needs and aspirations of our
+                        members.</p>
+                    <p style="margin-top: 0.75rem;">Staying true to our purpose, it is our mission to be a responsible
+                        member of the Cooperative Development Authority in contributing to the growth of the economy by
+                        continuously providing jobs.</p>
                 </div>
             </div>
         </div>
@@ -371,215 +742,227 @@
     <!-- Core Values -->
     <section class="section" id="values">
         <div class="container animate-on-scroll">
-            <h2 class="section-title">Our Core Values</h2>
+            <h2 class="section-title">Core Values</h2>
+            <p class="section-subtitle">The principles that guide everything we do at Kings.</p>
+
             <div class="values-grid">
-                <!-- Member-Centric -->
-                <div class="value-card">
-                    <div
-                        style="background: rgba(10, 37, 64, 0.05); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--main-blue);">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
+                <div class="value-feature">
+                    <span class="value-feature-num">01</span>
+                    <div class="value-feature-icon"
+                        style="background: rgba(10, 37, 64, 0.06); color: var(--main-blue);"><svg width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                             <circle cx="9" cy="7" r="4"></circle>
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                    </div>
-                    <h3 style="font-size: 1.5rem; color: var(--main-blue); margin-bottom: 1rem;">Member-Centric</h3>
-                    <p style="color: var(--text-muted); line-height: 1.6;">Our members’ welfare is our top priority. We
-                        help improve the lives of our members by providing jobs that uplift their dignity.</p>
+                        </svg></div>
+                    <h3>Member-Centric</h3>
+                    <p>Our members' welfare is our top priority. We help improve the lives of our members by providing
+                        jobs that uplift their dignity.</p>
                 </div>
-
-                <!-- Truth -->
-                <div class="value-card">
-                    <div
-                        style="background: rgba(255, 209, 102, 0.15); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--main-blue);">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
+                <div class="value-feature">
+                    <span class="value-feature-num">02</span>
+                    <div class="value-feature-icon"
+                        style="background: rgba(255, 209, 102, 0.15); color: var(--neutral-yellow);"><svg width="24"
+                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        </svg>
-                    </div>
-                    <h3 style="font-size: 1.5rem; color: var(--main-blue); margin-bottom: 1rem;">Truth</h3>
-                    <p style="color: var(--text-muted); line-height: 1.6;">We strive to promote and implement truthful
-                        and
-                        transparent transactions with our Clients and Co-Members.</p>
+                        </svg></div>
+                    <h3>Truth</h3>
+                    <p>We strive to promote and implement truthful and transparent transactions with our Clients and
+                        Co-Members.</p>
                 </div>
-
-                <!-- Quality -->
-                <div class="value-card">
-                    <div
-                        style="background: rgba(10, 37, 64, 0.05); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--main-blue);">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
+                <div class="value-feature">
+                    <span class="value-feature-num">03</span>
+                    <div class="value-feature-icon"
+                        style="background: rgba(10, 37, 64, 0.06); color: var(--main-blue);"><svg width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="8" r="7"></circle>
                             <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-                        </svg>
-                    </div>
-                    <h3 style="font-size: 1.5rem; color: var(--main-blue); margin-bottom: 1rem;">Quality</h3>
-                    <p style="color: var(--text-muted); line-height: 1.6;">What we do, we do well. Delivering only the
-                        best
-                        products and exceptional services for you.</p>
+                        </svg></div>
+                    <h3>Quality</h3>
+                    <p>What we do, we do well. Delivering only the best products and exceptional services for you.</p>
                 </div>
-
-                <!-- Value -->
-                <div class="value-card">
-                    <div
-                        style="background: rgba(0, 208, 156, 0.1); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--sec-accent-green);">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
+                <div class="value-feature">
+                    <span class="value-feature-num">04</span>
+                    <div class="value-feature-icon"
+                        style="background: rgba(0, 208, 156, 0.1); color: var(--sec-accent-green);"><svg width="24"
+                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="12" y1="1" x2="12" y2="23"></line>
                             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                        </svg>
-                    </div>
-                    <h3 style="font-size: 1.5rem; color: var(--sec-accent-green); margin-bottom: 1rem;">Value</h3>
-                    <p style="font-size: 0.95rem; color: var(--text-muted);">Developing systems to ensure the best
-                        possible return on investment for our members, clients and other stakeholders.</p>
+                        </svg></div>
+                    <h3>Value</h3>
+                    <p>Developing systems to ensure the best possible return on investment for our members, clients and
+                        other stakeholders.</p>
                 </div>
-
-                <!-- Integrity -->
-                <div class="value-card">
-                    <div
-                        style="background: rgba(10, 37, 64, 0.05); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--main-blue);">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
+                <div class="value-feature">
+                    <span class="value-feature-num">05</span>
+                    <div class="value-feature-icon"
+                        style="background: rgba(10, 37, 64, 0.06); color: var(--main-blue);"><svg width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                             <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                    </div>
-                    <h3 style="font-size: 1.5rem; color: var(--main-blue); margin-bottom: 1rem;">Integrity</h3>
-                    <p style="font-size: 0.95rem; color: var(--text-muted);">Possessing and practicing fairness and
-                        objectivity and strong moral principles even in the most challenging situations.</p>
+                        </svg></div>
+                    <h3>Integrity</h3>
+                    <p>Possessing and practicing fairness and objectivity and strong moral principles even in the most
+                        challenging situations.</p>
                 </div>
-
-                <!-- Excellence -->
-                <div class="value-card">
-                    <div
-                        style="background: rgba(255, 209, 102, 0.15); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--neutral-yellow);">
-                    </div>
-                    <h3 style="font-size: 1.5rem; color: var(--neutral-yellow); margin-bottom: 1rem;">Excellence</h3>
-                    <p style="font-size: 0.95rem; color: var(--text-muted);">Providing our clients with superb services
-                        and exceptional overall experience, exceeding expectations by working smart and hard.</p>
+                <div class="value-feature">
+                    <span class="value-feature-num">06</span>
+                    <div class="value-feature-icon"
+                        style="background: rgba(255, 209, 102, 0.15); color: var(--neutral-yellow);"><svg width="24"
+                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                            </polygon>
+                        </svg></div>
+                    <h3>Excellence</h3>
+                    <p>Providing our clients with superb services and exceptional overall experience, exceeding
+                        expectations by working smart and hard.</p>
                 </div>
-
-                <!-- Innovation -->
-                <div class="value-card">
-                    <div
-                        style="background: rgba(0, 208, 156, 0.1); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--sec-accent-green);">
-                    </div>
-                    <h3 style="font-size: 1.5rem; color: var(--sec-accent-green); margin-bottom: 1rem;">Innovation</h3>
-                    <p style="font-size: 0.95rem; color: var(--text-muted);">Actively creative and open to all
-                        possibilities in meeting our clients' unique needs.</p>
+                <div class="value-feature">
+                    <span class="value-feature-num">07</span>
+                    <div class="value-feature-icon"
+                        style="background: rgba(0, 208, 156, 0.1); color: var(--sec-accent-green);"><svg width="24"
+                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg></div>
+                    <h3>Innovation</h3>
+                    <p>Actively creative and open to all possibilities in meeting our clients' unique needs.</p>
                 </div>
-
-                <!-- Accountability -->
-                <div class="value-card">
-                    <div
-                        style="background: rgba(10, 37, 64, 0.05); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--main-blue);">
-                    </div>
-                    <h3 style="font-size: 1.5rem; color: var(--main-blue); margin-bottom: 1rem;">Accountability</h3>
-                    <p style="font-size: 0.95rem; color: var(--text-muted);">Demonstrating dependability and personal
-                        ownership necessary in achieving desired results.</p>
+                <div class="value-feature">
+                    <span class="value-feature-num">08</span>
+                    <div class="value-feature-icon"
+                        style="background: rgba(10, 37, 64, 0.06); color: var(--main-blue);"><svg width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg></div>
+                    <h3>Accountability</h3>
+                    <p>Demonstrating dependability and personal ownership necessary in achieving desired results.</p>
                 </div>
-                <!-- Professionalism -->
-                <div class="value-card">
-                    <div
-                        style="background: rgba(255, 209, 102, 0.15); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--neutral-yellow);">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
+                <div class="value-feature">
+                    <span class="value-feature-num">09</span>
+                    <div class="value-feature-icon"
+                        style="background: rgba(255, 209, 102, 0.15); color: var(--neutral-yellow);"><svg width="24"
+                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
                             <circle cx="12" cy="10" r="3"></circle>
                             <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"></path>
-                        </svg>
-                    </div>
-                    <h3 style="font-size: 1.5rem; color: var(--neutral-yellow); margin-bottom: 1rem;">Professionalism
-                    </h3>
-                    <p style="color: var(--text-muted); line-height: 1.6;">Making sure that everyone who seeks our
-                        services is treated with respect, courtesy and efficiency.</p>
+                        </svg></div>
+                    <h3>Professionalism</h3>
+                    <p>Making sure that everyone who seeks our services is treated with respect, courtesy and
+                        efficiency.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Company History -->
+    <!-- Company History / Our Roots -->
     <section class="section section-bg-light" id="history">
         <div class="container animate-on-scroll">
-            <h2 class="section-title">Our Origin</h2>
+            <h2 class="section-title">Our Roots</h2>
             <p class="section-subtitle">Since 1999, Kings has been redefining the staffing industry.</p>
-            <div style="max-width: 800px; margin: 4rem auto; position: relative;">
-                <div
-                    style="position: absolute; left: 20px; top: 0; bottom: 0; width: 4px; background: var(--main-blue);">
+
+            <div class="evolution-timeline">
+
+                <!-- 1999 -->
+                <div class="evo-item animate-on-scroll">
+                    <div class="evo-image">
+                        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450&q=80"
+                            alt="KINGS Lending Corporation founding">
+                        <div class="evo-year-badge">1999</div>
+                    </div>
+                    <div class="evo-content">
+                        <h3>KINGS Lending Corporation</h3>
+                        <p>Founded in Zamboanga City, providing microfinancing services to hardworking Filipinos and laying the foundation for what would become a nationwide cooperative.</p>
+                    </div>
                 </div>
 
-                <div style="position: relative; margin-bottom: 3rem; padding-left: 60px;">
-                    <div
-                        style="position: absolute; left: 10px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--neutral-yellow); border: 4px solid var(--main-blue);">
+                <!-- 2009 -->
+                <div class="evo-item evo-reverse animate-on-scroll">
+                    <div class="evo-image">
+                        <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450&q=80"
+                            alt="KINGS Manpower established">
+                        <div class="evo-year-badge">2009</div>
                     </div>
-                    <h3 style="font-size: 1.75rem; color: var(--main-blue); margin-bottom: 0.5rem;">1999</h3>
-                    <p style="font-size: 1.15rem; font-weight: 600; color: var(--text-dark);">KINGS Lending Corporation
-                    </p>
-                    <p style="color: var(--text-muted);">Founded in Zamboanga City providing microfinancing services.
-                    </p>
-                </div>
-                <div style="position: relative; margin-bottom: 3rem; padding-left: 60px;">
-                    <div
-                        style="position: absolute; left: 10px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--sec-accent-green); border: 4px solid var(--main-blue);">
+                    <div class="evo-content">
+                        <h3>KINGS Manpower Established</h3>
+                        <p>Established in Zamboanga City to provide professional manpower services to different industries across the region.</p>
                     </div>
-                    <h3 style="font-size: 1.75rem; color: var(--main-blue); margin-bottom: 0.5rem;">2009</h3>
-                    <p style="font-size: 1.15rem; font-weight: 600; color: var(--text-dark);">KINGS Manpower</p>
-                    <p style="color: var(--text-muted);">Established to provide manpower services to different
-                        industries in Zamboanga City.</p>
                 </div>
-                <div style="position: relative; margin-bottom: 3rem; padding-left: 60px;">
-                    <div
-                        style="position: absolute; left: 10px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--neutral-yellow); border: 4px solid var(--main-blue);">
+
+                <!-- 2011 -->
+                <div class="evo-item animate-on-scroll">
+                    <div class="evo-image">
+                        <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450&q=80"
+                            alt="Metro Manila skyline expansion">
+                        <div class="evo-year-badge">2011</div>
                     </div>
-                    <h3 style="font-size: 1.75rem; color: var(--main-blue); margin-bottom: 0.5rem;">2011</h3>
-                    <p style="font-size: 1.15rem; font-weight: 600; color: var(--text-dark);">Metro Manila Expansion</p>
-                    <p style="color: var(--text-muted);">Expanded footprint to the capital, establishing KINGS
-                        Headquarters with offices in Parañaque, Manila, Makati, and BGC.</p>
-                </div>
-                <div style="position: relative; margin-bottom: 3rem; padding-left: 60px;">
-                    <div
-                        style="position: absolute; left: 10px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--sec-accent-green); border: 4px solid var(--main-blue);">
+                    <div class="evo-content">
+                        <h3>Metro Manila Expansion</h3>
+                        <p>KINGS Manpower expanded to Metro Manila, establishing offices in Parañaque, Manila, Makati and BGC.</p>
                     </div>
-                    <h3 style="font-size: 1.75rem; color: var(--main-blue); margin-bottom: 0.5rem;">2016</h3>
-                    <p style="font-size: 1.15rem; font-weight: 600; color: var(--text-dark);">Visayas Expansion</p>
-                    <p style="color: var(--text-muted);">KINGS Manpower expands footprint further into the Visayas
-                        region.</p>
                 </div>
-                <div style="position: relative; margin-bottom: 3rem; padding-left: 60px;">
-                    <div
-                        style="position: absolute; left: 10px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--neutral-yellow); border: 4px solid var(--main-blue);">
+
+                <!-- 2016 -->
+                <div class="evo-item evo-reverse animate-on-scroll">
+                    <div class="evo-image">
+                        <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450&q=80"
+                            alt="Home Culinary and Technical School">
+                        <div class="evo-year-badge">2016</div>
                     </div>
-                    <h3 style="font-size: 1.75rem; color: var(--main-blue); margin-bottom: 0.5rem;">2017</h3>
-                    <p style="font-size: 1.15rem; font-weight: 600; color: var(--text-dark);">KINGS Group of Companies
-                    </p>
-                    <p style="color: var(--text-muted);">Consolidated our diverse entities into the unified Kings Group
-                        of Companies.</p>
-                </div>
-                <div style="position: relative; margin-bottom: 3rem; padding-left: 60px;">
-                    <div
-                        style="position: absolute; left: 10px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--sec-accent-green); border: 4px solid var(--main-blue);">
+                    <div class="evo-content">
+                        <h3>Home Culinary & Technical School</h3>
+                        <p>Established to offer livelihood and educational programs to Kings Members. Subsequently accredited by TESDA as a Training and Assessment Center for Bread and Pastry Production NC II, Cookery NC II, Food and Beverage Services NC II, Housekeeping NC II, and Culinary Arts.</p>
                     </div>
-                    <h3 style="font-size: 1.75rem; color: var(--main-blue); margin-bottom: 0.5rem;">2019</h3>
-                    <p style="font-size: 1.15rem; font-weight: 600; color: var(--text-dark);">10,000 Members & KINGS
-                        City</p>
-                    <p style="color: var(--text-muted);">Reached the 10,000 member milestone. Expanded to serviced
-                        offices, coworking space, and KINGS City.</p>
                 </div>
-                <div style="position: relative; margin-bottom: 3rem; padding-left: 60px;">
-                    <div
-                        style="position: absolute; left: 10px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--neutral-yellow); border: 4px solid var(--main-blue);">
+
+                <!-- 2017 -->
+                <div class="evo-item animate-on-scroll">
+                    <div class="evo-image">
+                        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450&q=80"
+                            alt="Visayas expansion">
+                        <div class="evo-year-badge">2017</div>
                     </div>
-                    <h3 style="font-size: 1.75rem; color: var(--main-blue); margin-bottom: 0.5rem;">2020</h3>
-                    <p style="font-size: 1.15rem; font-weight: 600; color: var(--text-dark);">Home Culinary & Technical
-                        School</p>
-                    <p style="color: var(--text-muted);">Established a TESDA-accredited training center to offer
-                        livelihood and educational programs directly to KINGS Members.</p>
+                    <div class="evo-content">
+                        <h3>Visayas Expansion</h3>
+                        <p>KINGS Manpower expanded its reach into the Visayas region, strengthening the cooperative’s nationwide presence and connecting even more Filipino professionals with meaningful opportunities.</p>
+                    </div>
                 </div>
+
+                <!-- 2019 -->
+                <div class="evo-item evo-reverse animate-on-scroll">
+                    <div class="evo-image">
+                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450&q=80"
+                            alt="KINGS Headquarters">
+                        <div class="evo-year-badge">2019</div>
+                    </div>
+                    <div class="evo-content">
+                        <h3>KINGS Headquarters</h3>
+                        <p>Reached the 10,000 member mark and expanded services to include serviced offices, meeting rooms and private offices.</p>
+                    </div>
+                </div>
+
+                <!-- 2020 -->
+                <div class="evo-item animate-on-scroll">
+                    <div class="evo-image">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450&q=80"
+                            alt="KINGS City">
+                        <div class="evo-year-badge">2020</div>
+                    </div>
+                    <div class="evo-content">
+                        <h3>KINGS City</h3>
+                        <p>Launched an events place, bigger meeting rooms, coworking space and The Culinary Boutique — an internship hub for our students.</p>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
+
+
 
     <!-- Leadership Team -->
     <section class="section" id="leadership">
@@ -587,98 +970,109 @@
             <h2 class="section-title">Kings Team</h2>
             <p class="section-subtitle">Meet the visionary leaders driving our cooperative.</p>
 
-            <div style="display: flex; flex-direction: column; gap: 4rem; margin-top: 4rem;">
+            <div class="team-grid">
 
                 <!-- Neil -->
-                <div style="display: flex; gap: 3rem; align-items: flex-start; flex-wrap: wrap;">
-                    <div style="flex: 0 0 250px;">
+                <div class="team-card animate-on-scroll">
+                    <div class="team-photo">
                         <img src="https://images.unsplash.com/photo-1556157382-97eda2d62296?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                            alt="Neil John S. Makasiar"
-                            style="width: 100%; border-radius: 12px; box-shadow: var(--shadow-md);">
+                            alt="Neil John S. Makasiar">
                     </div>
-                    <div style="flex: 1; min-width: 300px;">
-                        <h3 style="font-size: 2rem; color: var(--main-blue); margin-bottom: 0.5rem;">Neil John S.
-                            Makasiar</h3>
-                        <p
-                            style="font-weight: 700; color: var(--sec-accent-green); margin-bottom: 1rem; font-size: 1.1rem;">
-                            Managing Director</p>
-                        <ul style="list-style: none; padding: 0; color: var(--text-muted); line-height: 1.6;">
-                            <li style="margin-bottom: 0.5rem;">✔ Director, Makenter Construction & Development Corp</li>
-                            <li style="margin-bottom: 0.5rem;">✔ Vice President, Human Services Cluster, CDA Region IX
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">✔ Charter Vice President, REBAP - Zamboanga City</li>
-                            <li style="margin-bottom: 0.5rem;">✔ Corporate Secretary, ZC Tierra Verde Corporation</li>
-                            <li style="margin-bottom: 0.5rem;">✔ Former President, Happy Kings Corporation</li>
-                            <li style="margin-bottom: 0.5rem;">✔ Member, Rotary Club of Makati</li>
-                            <li style="margin-bottom: 0.5rem;">✔ Bachelor’s Degree, De La Salle University – Manila</li>
+                    <div class="team-info">
+                        <h3>Neil John S. Makasiar</h3>
+                        <span class="team-role">Managing Director</span>
+                        <ul class="team-credentials">
+                            <li>Director, Makenter Construction & Development Corp</li>
+                            <li>Vice President, Human Services Cluster, CDA Region IX</li>
+                            <li>Charter Vice President, REBAP - Zamboanga City</li>
+                            <li>Corporate Secretary, ZC Tierra Verde Corporation</li>
+                            <li>Former President, Happy Kings Corporation</li>
+                            <li>Member, Rotary Club of Makati</li>
+                            <li>Bachelor's Degree, De La Salle University – Manila</li>
                         </ul>
                     </div>
                 </div>
 
                 <!-- Camille -->
-                <div
-                    style="display: flex; gap: 3rem; align-items: flex-start; flex-wrap: wrap; flex-direction: row-reverse;">
-                    <div style="flex: 0 0 250px;">
+                <div class="team-card animate-on-scroll">
+                    <div class="team-photo">
                         <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                            alt="Camille Navarro Makasiar"
-                            style="width: 100%; border-radius: 12px; box-shadow: var(--shadow-md);">
+                            alt="Camille Navarro Makasiar">
                     </div>
-                    <div style="flex: 1; min-width: 300px;">
-                        <h3 style="font-size: 2rem; color: var(--main-blue); margin-bottom: 0.5rem;">Camille Navarro
-                            Makasiar</h3>
-                        <p
-                            style="font-weight: 700; color: var(--sec-accent-green); margin-bottom: 1rem; font-size: 1.1rem;">
-                            Founder and Executive Director</p>
-                        <ul style="list-style: none; padding: 0; color: var(--text-muted); line-height: 1.6;">
-                            <li style="margin-bottom: 0.5rem;">✔ Master in Entrep, Ateneo de Manila University GSB</li>
-                            <li style="margin-bottom: 0.5rem;">✔ Member, Entrepreneurs Organization (EO) PH South
-                                Chapter</li>
-                            <li style="margin-bottom: 0.5rem;">✔ Trustee, Bayan Innovation Group, Inc. & Bayan Academy
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">✔ Charter President, Inner Wheel Club of Metro Manila
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">✔ Knowledge Management, University of Oxford</li>
-                            <li style="margin-bottom: 0.5rem;">✔ Strategic Management, Imperial College London</li>
-                            <li style="margin-bottom: 0.5rem;">✔ Bachelor’s Degree, Southville International School &
-                                Colleges</li>
+                    <div class="team-info">
+                        <h3>Camille Navarro Makasiar</h3>
+                        <span class="team-role">Founder and Executive Director</span>
+                        <ul class="team-credentials">
+                            <li>Master in Entrep, Ateneo de Manila University GSB</li>
+                            <li>Member, Entrepreneurs Organization (EO) PH South Chapter</li>
+                            <li>Trustee, Bayan Innovation Group, Inc. & Bayan Academy</li>
+                            <li>Charter President, Inner Wheel Club of Metro Manila</li>
+                            <li>Knowledge Management, University of Oxford</li>
+                            <li>Strategic Management, Imperial College London</li>
+                            <li>Bachelor's Degree, Southville International School & Colleges</li>
                         </ul>
                     </div>
                 </div>
 
                 <!-- Cory -->
-                <div style="display: flex; gap: 3rem; align-items: flex-start; flex-wrap: wrap;">
-                    <div style="flex: 0 0 250px;">
+                <div class="team-card animate-on-scroll">
+                    <div class="team-photo">
                         <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                            alt="Cory DV Navarro"
-                            style="width: 100%; border-radius: 12px; box-shadow: var(--shadow-md);">
+                            alt="Cory DV Navarro">
                     </div>
-                    <div style="flex: 1; min-width: 300px;">
-                        <h3 style="font-size: 2rem; color: var(--main-blue); margin-bottom: 0.5rem;">Cory DV Navarro
-                        </h3>
-                        <p
-                            style="font-weight: 700; color: var(--sec-accent-green); margin-bottom: 1rem; font-size: 1.1rem;">
-                            Founder, Kings Group of Companies</p>
-                        <ul style="list-style: none; padding: 0; color: var(--text-muted); line-height: 1.6;">
-                            <li style="margin-bottom: 0.5rem;">✔ Hall of Famer, Manila’s Best Dressed & Zamboanga’s Best
-                                Dressed</li>
-                            <li style="margin-bottom: 0.5rem;">✔ Huwarang Ina Awardee (2017) & Empowered Women of the PH
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">✔ Charter President, Ambassador Charter Club, Melbourne
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">✔ Past Chairman, PH National Red Cross – Zamboanga City
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">✔ Past President, Rotary Club of Makati EDSA</li>
-                            <li style="margin-bottom: 0.5rem;">✔ Member, MAP & PH Chamber of Commerce and Industry</li>
-                            <li style="margin-bottom: 0.5rem;">✔ Bachelor’s Degree, Pioneer Nursing Batch of Ateneo de
-                                Zamboanga</li>
+                    <div class="team-info">
+                        <h3>Cory DV Navarro</h3>
+                        <span class="team-role">Founder, Kings Group of Companies</span>
+                        <ul class="team-credentials">
+                            <li>Hall of Famer, Manila's Best Dressed & Zamboanga's Best Dressed</li>
+                            <li>Huwarang Ina Awardee (2017) & Empowered Women of the PH</li>
+                            <li>Charter President, Ambassador Charter Club, Melbourne</li>
+                            <li>Past Chairman, PH National Red Cross – Zamboanga City</li>
+                            <li>Past President, Rotary Club of Makati EDSA</li>
+                            <li>Member, MAP & PH Chamber of Commerce and Industry</li>
+                            <li>Bachelor's Degree, Pioneer Nursing Batch of Ateneo de Zamboanga</li>
                         </ul>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
 
 
+
+    <!-- Group of Companies -->
+    <section class="section section-bg-light" id="group-companies">
+        <div class="container animate-on-scroll">
+            <h2 class="section-title">Group of Companies</h2>
+            <p class="section-subtitle">A unified ecosystem of businesses powering the Kings network.</p>
+
+            <div class="companies-showcase">
+                <div class="company-showcase-item"><img src="assets/KingsCooperative.png"
+                        alt="Kings Cooperative"><span>Kings Cooperative</span></div>
+                <div class="company-showcase-item"><img src="assets/KingsAsiaPacific.png"
+                        alt="Kings Asia Pacific"><span>Kings Asia Pacific</span></div>
+                <div class="company-showcase-item"><img src="assets/KingsLending.png" alt="Kings Lending"><span>Kings
+                        Lending</span></div>
+                <div class="company-showcase-item"><img src="assets/Makenter.png" alt="Makenter"><span>Makenter</span>
+                </div>
+                <div class="company-showcase-item"><img src="assets/HomeCulinary.png" alt="Home Culinary"><span>Home
+                        Culinary</span></div>
+                <div class="company-showcase-item"><img src="assets/MarianPalazz.png" alt="Marian Palazz"><span>Marian
+                        Palazz</span></div>
+                <div class="company-showcase-item"><img src="assets/NavishiShell.png" alt="Navishi Shell"><span>Navishi
+                        Shell</span></div>
+                <div class="company-showcase-item"><img src="assets/PacificWater.png" alt="Pacific Water"><span>Pacific
+                        Water</span></div>
+                <div class="company-showcase-item"><img src="assets/PrintArtist.png" alt="Print Artist"><span>Print
+                        Artist</span></div>
+                <div class="company-showcase-item"><img src="assets/RNFoundation.png" alt="RN Foundation"><span>RN
+                        Foundation</span></div>
+                <div class="company-showcase-item"><img src="assets/RPSMigration.png" alt="RPS Migration"><span>RPS
+                        Migration</span></div>
+            </div>
+        </div>
+    </section>
 
     <div class="cta-bottom">
         <div class="container animate-on-scroll">
