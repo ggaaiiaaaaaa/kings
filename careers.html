@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -10,75 +10,7 @@
 
     <!-- Modern Typefaces are loaded in styles.css -->
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .careers-hero {
-            background-color: var(--sec-accent-green);
-            color: var(--bg-white);
-            padding: 6rem 2rem 5rem;
-            text-align: center;
-            position: relative;
-        }
 
-        .upload-container {
-            max-width: 600px;
-            margin: -3rem auto 5rem;
-            background: var(--bg-white);
-            border-radius: 20px;
-            box-shadow: var(--shadow-lg);
-            padding: 3rem;
-            position: relative;
-            z-index: 10;
-            text-align: center;
-        }
-
-        .dropzone {
-            border: 2px dashed rgba(0, 208, 156, 0.4);
-            border-radius: 16px;
-            padding: 3.5rem 2rem;
-            background-color: rgba(0, 208, 156, 0.03);
-            margin-bottom: 2rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .dropzone:hover {
-            background-color: rgba(0, 208, 156, 0.08);
-            border-color: var(--sec-accent-green);
-        }
-
-        .dropzone svg {
-            color: var(--sec-accent-green);
-            margin-bottom: 1rem;
-        }
-
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .benefit-card {
-            text-align: center;
-            padding: 2.5rem;
-            background: var(--bg-white);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            transition: var(--transition);
-        }
-
-        .benefit-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-        }
-
-        @media (max-width: 800px) {
-            .benefits-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -108,61 +40,11 @@
                             <!-- Main Content Area (70%) -->
                             <div class="mega-main">
 
-                                <!-- Left Tabs Column -->
-                                <div class="mega-tabs">
-                                    <div class="mega-tab active" data-target="mega-discover">
-                                        <div class="mega-tab-icon bg-blue-light"
-                                            style="background: rgba(10,37,64,0.05); color: var(--main-blue);">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Discover</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                    <div class="mega-tab" data-target="mega-services"
-                                        onclick="window.location.href='services.html';" style="cursor: pointer;">
-                                        <div class="mega-tab-icon"
-                                            style="background: rgba(255, 209, 102, 0.15); color: #FFD166;">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Services</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                    <div class="mega-tab" data-target="mega-network">
-                                        <div class="mega-tab-icon"
-                                            style="background: rgba(38, 196, 133, 0.15); color: #26C485;">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                                <circle cx="9" cy="7" r="4"></circle>
-                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Compliance & Network</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <!-- Center Links Grid (DISCOVER) -->
-                                <div id="mega-discover" class="mega-links-grid active">
+                                <!-- Column 1: Company -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Company</h4>
                                     <a href="story.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -192,11 +74,13 @@
                                             <span class="desc">Discover our cooperative advantage and vision.</span>
                                         </div>
                                     </a>
-
                                 </div>
 
-                                <!-- Center Links Grid (SERVICES) -->
-                                <div id="mega-services" class="mega-links-grid">
+                                <!-- Column 2: Solutions -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Solutions</h4>
                                     <a href="service-labor.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -225,22 +109,12 @@
                                     </a>
                                 </div>
 
-                                <!-- Center Links Grid (NETWORK) -->
-                                <div id="mega-network" class="mega-links-grid">
-                                    <a href="network.html#compliance" class="mega-feature-link">
-                                        <div class="feature-link-icon">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z">
-                                                </path>
-                                            </svg>
-                                        </div>
-                                        <div class="feature-link-text">
-                                            <span class="title">Certifications</span>
-                                            <span class="desc">Fully compliant with DOLE, CDA, BIR, and more.</span>
-                                        </div>
-                                    </a>
-                                    <a href="network.html#engagements" class="mega-feature-link">
+                                <!-- Column 3: Network -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Network</h4>
+                                    <a href="network.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                                 stroke="currentColor" stroke-width="2">
@@ -274,7 +148,8 @@
 
             <!-- Right Side (Applicant Focus) -->
             <div class="nav-section applicant">
-                <a href="careers.html" class="nav-link" style="font-weight: 700;">Find a Job</a>
+                <a href="benefits.html" class="nav-link">Member Benefits</a>
+                <a href="careers.html" class="nav-link">Find a Job</a>
                 <a href="members.html" class="btn btn-outline nav-transparent-btn"
                     style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">
                     Log-In
@@ -287,7 +162,7 @@
     </header>
 
     <!-- Modern Premium Hero -->
-    <section class="page-hero" style="min-height: 50vh; padding-bottom: 8rem;">
+    <section class="page-hero">
         <div class="container">
             <h1>Your Career, Owned by You.</h1>
             <p>Join a community where you are a member, not just a number. Fast-track your application to access elite

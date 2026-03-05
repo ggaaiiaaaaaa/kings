@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -10,483 +10,7 @@
 
     <!-- Modern Typefaces are loaded in styles.css -->
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .story-hero {
-            background-color: var(--main-blue);
-            color: var(--bg-white);
-            padding: 8rem 2rem 6rem;
-            text-align: center;
-        }
 
-        .story-hero h1 {
-            font-size: clamp(3rem, 5vw, 4.5rem);
-            color: var(--bg-white);
-            margin-bottom: 1.5rem;
-        }
-
-        .content-block {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 5rem 2rem;
-            font-size: 1.15rem;
-        }
-
-        .content-block p {
-            margin-bottom: 2rem;
-            color: var(--text-muted);
-            line-height: 1.8;
-        }
-
-        .highlight-quote {
-            border-left: 4px solid var(--neutral-yellow);
-            padding: 2.5rem;
-            background-color: var(--bg-light);
-            font-size: 1.75rem;
-            color: var(--main-blue);
-            margin: 4rem 0;
-            border-radius: 0 16px 16px 0;
-            line-height: 1.4;
-            font-family: var(--font-header);
-            font-weight: 600;
-        }
-
-        /* ── Core Values ─ Feature Grid ── */
-        .values-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0;
-            margin-top: 3rem;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            background: var(--bg-white);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .value-feature {
-            padding: 2.5rem 2rem;
-            border-right: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .value-feature:nth-child(3n) {
-            border-right: none;
-        }
-
-        .value-feature:nth-child(n+7) {
-            border-bottom: none;
-        }
-
-        .value-feature:hover {
-            background: var(--bg-light);
-        }
-
-        .value-feature-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.25rem;
-        }
-
-        .value-feature h3 {
-            font-size: 1.15rem;
-            color: var(--main-blue);
-            margin-bottom: 0.6rem;
-            letter-spacing: 0.5px;
-        }
-
-        .value-feature p {
-            font-size: 0.92rem;
-            color: var(--text-muted);
-            line-height: 1.65;
-            margin: 0;
-        }
-
-        .value-feature-num {
-            position: absolute;
-            top: 1.25rem;
-            right: 1.25rem;
-            font-family: var(--font-header);
-            font-weight: 800;
-            font-size: 1.1rem;
-            color: rgba(10, 37, 64, 0.07);
-        }
-
-        @media (max-width: 900px) {
-            .values-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .value-feature:nth-child(3n) {
-                border-right: 1px solid var(--border-color);
-            }
-
-            .value-feature:nth-child(2n) {
-                border-right: none;
-            }
-
-            .value-feature:nth-child(n+7) {
-                border-bottom: 1px solid var(--border-color);
-            }
-
-            .value-feature:nth-last-child(-n+2) {
-                border-bottom: none;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .values-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .value-feature {
-                border-right: none !important;
-                border-bottom: 1px solid var(--border-color);
-            }
-
-            .value-feature:last-child {
-                border-bottom: none;
-            }
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin: 5rem 0;
-            text-align: center;
-        }
-
-        .stat-card {
-            padding: 3rem 2rem;
-            background: var(--bg-white);
-            border-radius: 20px;
-            box-shadow: var(--shadow-sm);
-            border-top: 4px solid var(--main-blue);
-            transition: var(--transition);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .stat-card h2 {
-            font-size: 3.5rem;
-            color: var(--main-blue);
-            margin-bottom: 0.5rem;
-            line-height: 1;
-        }
-
-        .cta-bottom {
-            background: linear-gradient(135deg, rgba(10, 37, 64, 1) 0%, rgba(10, 37, 64, 0.9) 100%);
-            color: white;
-            text-align: center;
-            padding: 5rem 2rem;
-        }
-
-        /* ── Vision & Mission Grid ── */
-        .vm-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2.5rem;
-            margin-top: 3rem;
-        }
-
-        .vm-card {
-            background: var(--bg-white);
-            padding: 3rem;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .vm-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .vm-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .vm-card h3 {
-            font-size: 1.75rem;
-            color: var(--main-blue);
-            margin-bottom: 1rem;
-            letter-spacing: 1px;
-        }
-
-        .vm-card p {
-            color: var(--text-muted);
-            line-height: 1.8;
-            font-size: 1.05rem;
-        }
-
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .vm-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ── Evolution Timeline ── */
-        .evolution-timeline {
-            display: flex;
-            flex-direction: column;
-            gap: 4rem;
-            margin-top: 4rem;
-        }
-
-        .evo-item {
-            display: flex;
-            align-items: center;
-            gap: 3rem;
-        }
-
-        .evo-item.evo-reverse {
-            flex-direction: row-reverse;
-        }
-
-        .evo-image {
-            flex: 1;
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            aspect-ratio: 16 / 9;
-        }
-
-        .evo-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.6s ease;
-        }
-
-        .evo-item:hover .evo-image img {
-            transform: scale(1.05);
-        }
-
-        .evo-year-badge {
-            position: absolute;
-            top: 1.25rem;
-            left: 1.25rem;
-            background: var(--main-blue);
-            color: var(--neutral-yellow);
-            font-family: var(--font-header);
-            font-size: 1.5rem;
-            font-weight: 700;
-            padding: 0.5rem 1.25rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(10, 37, 64, 0.4);
-            letter-spacing: 0.5px;
-        }
-
-        .evo-reverse .evo-year-badge {
-            left: auto;
-            right: 1.25rem;
-        }
-
-        .evo-content {
-            flex: 1;
-            padding: 2.5rem;
-            background: var(--bg-white);
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-        }
-
-        .evo-item:hover .evo-content {
-            box-shadow: var(--shadow-hover);
-            transform: translateY(-4px);
-        }
-
-        .evo-content h3 {
-            font-size: 1.75rem;
-            color: var(--main-blue);
-            margin-bottom: 1rem;
-            line-height: 1.2;
-            letter-spacing: 1px;
-        }
-
-        .evo-content p {
-            color: var(--text-muted);
-            line-height: 1.8;
-            font-size: 1.05rem;
-        }
-
-        @media (max-width: 900px) {
-            .evo-item,
-            .evo-item.evo-reverse {
-                flex-direction: column;
-            }
-
-            .evo-reverse .evo-year-badge {
-                left: 1.25rem;
-                right: auto;
-            }
-        }
-
-        /* ── Team Cards ── */
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2.5rem;
-            margin-top: 3rem;
-        }
-
-        .team-card {
-            background: var(--bg-white);
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            padding: 2.5rem 2rem;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .team-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .team-photo {
-            width: 160px;
-            height: 160px;
-            border-radius: 50%;
-            overflow: hidden;
-            margin: 0 auto 1.5rem;
-            box-shadow: 0 4px 20px rgba(10, 37, 64, 0.15);
-            border: 4px solid var(--bg-light);
-        }
-
-        .team-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .team-card:hover .team-photo img {
-            transform: scale(1.08);
-        }
-
-        .team-info h3 {
-            font-size: 1.5rem;
-            color: var(--main-blue);
-            margin-bottom: 0.5rem;
-            letter-spacing: 1.5px;
-        }
-
-        .team-role {
-            display: inline-block;
-            font-weight: 700;
-            color: var(--sec-accent-green);
-            font-size: 0.95rem;
-            margin-bottom: 1.25rem;
-            padding: 0.35rem 1rem;
-            background: rgba(39, 174, 96, 0.08);
-            border-radius: 20px;
-        }
-
-        .team-credentials {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            text-align: left;
-        }
-
-        .team-credentials li {
-            position: relative;
-            padding-left: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-muted);
-            font-size: 0.92rem;
-            line-height: 1.5;
-        }
-
-        .team-credentials li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: var(--sec-accent-green);
-            font-weight: 700;
-        }
-
-        @media (max-width: 900px) {
-            .team-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ── Group of Companies – Static Logo Showcase ── */
-        .companies-showcase {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 2.5rem 3rem;
-            margin-top: 3rem;
-            padding: 2rem 0;
-        }
-
-        .company-showcase-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.75rem;
-            width: 120px;
-            transition: var(--transition);
-        }
-
-        .company-showcase-item img {
-            width: 78px;
-            height: 78px;
-            object-fit: contain;
-            padding: 14px;
-            background: var(--main-blue);
-            border-radius: 50%;
-            transition: var(--transition);
-        }
-
-        .company-showcase-item:hover img {
-            transform: scale(1.1) translateY(-4px);
-            box-shadow: 0 8px 24px rgba(10, 37, 64, 0.18);
-        }
-
-        .company-showcase-item span {
-            font-weight: 600;
-            color: var(--main-blue);
-            font-size: 0.82rem;
-            letter-spacing: 0.3px;
-            text-align: center;
-            line-height: 1.3;
-            opacity: 0.65;
-            transition: var(--transition);
-        }
-
-        .company-showcase-item:hover span {
-            opacity: 1;
-        }
-    </style>
 </head>
 
 <body>
@@ -515,61 +39,11 @@
                             <!-- Main Content Area (70%) -->
                             <div class="mega-main">
 
-                                <!-- Left Tabs Column -->
-                                <div class="mega-tabs">
-                                    <div class="mega-tab active" data-target="mega-discover">
-                                        <div class="mega-tab-icon bg-blue-light"
-                                            style="background: rgba(10,37,64,0.05); color: var(--main-blue);">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Discover</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                    <div class="mega-tab" data-target="mega-services"
-                                        onclick="window.location.href='services.html';" style="cursor: pointer;">
-                                        <div class="mega-tab-icon"
-                                            style="background: rgba(255, 209, 102, 0.15); color: #FFD166;">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Services</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                    <div class="mega-tab" data-target="mega-network">
-                                        <div class="mega-tab-icon"
-                                            style="background: rgba(38, 196, 133, 0.15); color: #26C485;">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                                <circle cx="9" cy="7" r="4"></circle>
-                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Compliance & Network</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <!-- Center Links Grid (DISCOVER) -->
-                                <div id="mega-discover" class="mega-links-grid active">
+                                <!-- Column 1: Company -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Company</h4>
                                     <a href="story.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -599,11 +73,13 @@
                                             <span class="desc">Discover our cooperative advantage and vision.</span>
                                         </div>
                                     </a>
-
                                 </div>
 
-                                <!-- Center Links Grid (SERVICES) -->
-                                <div id="mega-services" class="mega-links-grid">
+                                <!-- Column 2: Solutions -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Solutions</h4>
                                     <a href="service-labor.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -632,22 +108,12 @@
                                     </a>
                                 </div>
 
-                                <!-- Center Links Grid (NETWORK) -->
-                                <div id="mega-network" class="mega-links-grid">
-                                    <a href="network.html#compliance" class="mega-feature-link">
-                                        <div class="feature-link-icon">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z">
-                                                </path>
-                                            </svg>
-                                        </div>
-                                        <div class="feature-link-text">
-                                            <span class="title">Certifications</span>
-                                            <span class="desc">Fully compliant with DOLE, CDA, BIR, and more.</span>
-                                        </div>
-                                    </a>
-                                    <a href="network.html#engagements" class="mega-feature-link">
+                                <!-- Column 3: Network -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Network</h4>
+                                    <a href="network.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                                 stroke="currentColor" stroke-width="2">
@@ -680,6 +146,7 @@
             </div>
             <!-- Right Side (Applicant Focus) -->
             <div class="nav-section applicant">
+                <a href="benefits.html" class="nav-link">Member Benefits</a>
                 <a href="careers.html" class="nav-link">Find a Job</a>
                 <a href="members.html" class="btn btn-outline nav-transparent-btn"
                     style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">
@@ -693,20 +160,21 @@
     </header>
 
     <!-- Modern Premium Hero -->
-    <section class="page-hero">
+    <section class="page-hero story-bg">
         <div class="container">
             <h1>Our Story</h1>
             <p>A legacy of empowering the hardworking Filipino since 1999.</p>
         </div>
     </section>
 
-    <!-- Vision & Mission -->
-    <section class="section section-bg-light" id="vision-mission">
+    <!-- Our Vision -->
+    <section class="section section-bg-light" id="vision" style="padding-bottom: 2rem;">
         <div class="container animate-on-scroll">
-            <h2 class="section-title">Vision & Mission</h2>
+            <h2 class="section-title">Our Vision</h2>
             <div class="vm-grid">
-                <div class="vm-card">
-                    <div class="vm-icon" style="background: rgba(10, 37, 64, 0.06); color: var(--main-blue);">
+                <div class="vm-card" style="text-align: center;">
+                    <div class="vm-icon"
+                        style="background: rgba(10, 37, 64, 0.06); color: var(--main-blue); margin: 0 auto 1.5rem;">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
@@ -714,12 +182,23 @@
                             <circle cx="12" cy="12" r="2"></circle>
                         </svg>
                     </div>
-                    <h3>Our Vision</h3>
-                    <p>To be the leading professional workforce provider with satisfied clients and secured members in
+                    <!-- Our Vision content -->
+                    <p style="font-size: 1.15rem; color: var(--text-dark);">To be the leading professional workforce
+                        provider with satisfied clients and secured members in
                         the Philippines.</p>
                 </div>
-                <div class="vm-card">
-                    <div class="vm-icon" style="background: rgba(255, 209, 102, 0.15); color: var(--neutral-yellow);">
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Mission -->
+    <section class="section" id="mission" style="padding-top: 2rem;">
+        <div class="container animate-on-scroll">
+            <h2 class="section-title">Our Mission</h2>
+            <div class="vm-grid">
+                <div class="vm-card" style="text-align: center;">
+                    <div class="vm-icon"
+                        style="background: rgba(255, 209, 102, 0.15); color: var(--neutral-yellow); margin: 0 auto 1.5rem;">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <polygon
@@ -727,11 +206,13 @@
                             </polygon>
                         </svg>
                     </div>
-                    <h3>Our Mission</h3>
-                    <p>Driven with passion, agility, and excellence in everything we do, we are committed to maintain a
+                    <!-- Our Mission content -->
+                    <p style="font-size: 1.15rem; color: var(--text-dark);">Driven with passion, agility, and excellence
+                        in everything we do, we are committed to maintain a
                         successful partnership with our clients as we also help with the needs and aspirations of our
                         members.</p>
-                    <p style="margin-top: 0.75rem;">Staying true to our purpose, it is our mission to be a responsible
+                    <p style="margin-top: 1.25rem; font-size: 1.15rem; color: var(--text-dark);">Staying true to our
+                        purpose, it is our mission to be a responsible
                         member of the Cooperative Development Authority in contributing to the growth of the economy by
                         continuously providing jobs.</p>
                 </div>
@@ -876,7 +357,8 @@
                     </div>
                     <div class="evo-content">
                         <h3>KINGS Lending Corporation</h3>
-                        <p>Founded in Zamboanga City, providing microfinancing services to hardworking Filipinos and laying the foundation for what would become a nationwide cooperative.</p>
+                        <p>Founded in Zamboanga City, providing microfinancing services to hardworking Filipinos and
+                            laying the foundation for what would become a nationwide cooperative.</p>
                     </div>
                 </div>
 
@@ -889,7 +371,8 @@
                     </div>
                     <div class="evo-content">
                         <h3>KINGS Manpower Established</h3>
-                        <p>Established in Zamboanga City to provide professional manpower services to different industries across the region.</p>
+                        <p>Established in Zamboanga City to provide professional manpower services to different
+                            industries across the region.</p>
                     </div>
                 </div>
 
@@ -902,7 +385,8 @@
                     </div>
                     <div class="evo-content">
                         <h3>Metro Manila Expansion</h3>
-                        <p>KINGS Manpower expanded to Metro Manila, establishing offices in Parañaque, Manila, Makati and BGC.</p>
+                        <p>KINGS Manpower expanded to Metro Manila, establishing offices in Parañaque, Manila, Makati
+                            and BGC.</p>
                     </div>
                 </div>
 
@@ -915,7 +399,10 @@
                     </div>
                     <div class="evo-content">
                         <h3>Home Culinary & Technical School</h3>
-                        <p>Established to offer livelihood and educational programs to Kings Members. Subsequently accredited by TESDA as a Training and Assessment Center for Bread and Pastry Production NC II, Cookery NC II, Food and Beverage Services NC II, Housekeeping NC II, and Culinary Arts.</p>
+                        <p>Established to offer livelihood and educational programs to Kings Members. Subsequently
+                            accredited by TESDA as a Training and Assessment Center for Bread and Pastry Production NC
+                            II, Cookery NC II, Food and Beverage Services NC II, Housekeeping NC II, and Culinary Arts.
+                        </p>
                     </div>
                 </div>
 
@@ -928,7 +415,9 @@
                     </div>
                     <div class="evo-content">
                         <h3>Visayas Expansion</h3>
-                        <p>KINGS Manpower expanded its reach into the Visayas region, strengthening the cooperative’s nationwide presence and connecting even more Filipino professionals with meaningful opportunities.</p>
+                        <p>KINGS Manpower expanded its reach into the Visayas region, strengthening the cooperative’s
+                            nationwide presence and connecting even more Filipino professionals with meaningful
+                            opportunities.</p>
                     </div>
                 </div>
 
@@ -941,7 +430,8 @@
                     </div>
                     <div class="evo-content">
                         <h3>KINGS Headquarters</h3>
-                        <p>Reached the 10,000 member mark and expanded services to include serviced offices, meeting rooms and private offices.</p>
+                        <p>Reached the 10,000 member mark and expanded services to include serviced offices, meeting
+                            rooms and private offices.</p>
                     </div>
                 </div>
 
@@ -954,7 +444,8 @@
                     </div>
                     <div class="evo-content">
                         <h3>KINGS City</h3>
-                        <p>Launched an events place, bigger meeting rooms, coworking space and The Culinary Boutique — an internship hub for our students.</p>
+                        <p>Launched an events place, bigger meeting rooms, coworking space and The Culinary Boutique —
+                            an internship hub for our students.</p>
                     </div>
                 </div>
 
@@ -1042,34 +533,45 @@
 
 
     <!-- Group of Companies -->
-    <section class="section section-bg-light" id="group-companies">
+    <section class="section" id="group-companies">
         <div class="container animate-on-scroll">
             <h2 class="section-title">Group of Companies</h2>
             <p class="section-subtitle">A unified ecosystem of businesses powering the Kings network.</p>
 
             <div class="companies-showcase">
-                <div class="company-showcase-item"><img src="assets/KingsCooperative.png"
-                        alt="Kings Cooperative"><span>Kings Cooperative</span></div>
-                <div class="company-showcase-item"><img src="assets/KingsAsiaPacific.png"
-                        alt="Kings Asia Pacific"><span>Kings Asia Pacific</span></div>
-                <div class="company-showcase-item"><img src="assets/KingsLending.png" alt="Kings Lending"><span>Kings
-                        Lending</span></div>
-                <div class="company-showcase-item"><img src="assets/Makenter.png" alt="Makenter"><span>Makenter</span>
+                <div class="company-showcase-item">
+                    <img src="assets/KingsCooperative.png" alt="Kings Cooperative">
                 </div>
-                <div class="company-showcase-item"><img src="assets/HomeCulinary.png" alt="Home Culinary"><span>Home
-                        Culinary</span></div>
-                <div class="company-showcase-item"><img src="assets/MarianPalazz.png" alt="Marian Palazz"><span>Marian
-                        Palazz</span></div>
-                <div class="company-showcase-item"><img src="assets/NavishiShell.png" alt="Navishi Shell"><span>Navishi
-                        Shell</span></div>
-                <div class="company-showcase-item"><img src="assets/PacificWater.png" alt="Pacific Water"><span>Pacific
-                        Water</span></div>
-                <div class="company-showcase-item"><img src="assets/PrintArtist.png" alt="Print Artist"><span>Print
-                        Artist</span></div>
-                <div class="company-showcase-item"><img src="assets/RNFoundation.png" alt="RN Foundation"><span>RN
-                        Foundation</span></div>
-                <div class="company-showcase-item"><img src="assets/RPSMigration.png" alt="RPS Migration"><span>RPS
-                        Migration</span></div>
+                <div class="company-showcase-item">
+                    <img src="assets/KingsAsiaPacific.png" alt="Kings Asia Pacific">
+                </div>
+                <div class="company-showcase-item">
+                    <img src="assets/KingsLending.png" alt="Kings Lending">
+                </div>
+                <div class="company-showcase-item">
+                    <img src="assets/Makenter.png" alt="Makenter">
+                </div>
+                <div class="company-showcase-item">
+                    <img src="assets/HomeCulinary.png" alt="Home Culinary">
+                </div>
+                <div class="company-showcase-item">
+                    <img src="assets/MarianPalazz.png" alt="Marian Palazz">
+                </div>
+                <div class="company-showcase-item">
+                    <img src="assets/NavishiShell.png" alt="Navishi Shell">
+                </div>
+                <div class="company-showcase-item">
+                    <img src="assets/PacificWater.png" alt="Pacific Water">
+                </div>
+                <div class="company-showcase-item">
+                    <img src="assets/PrintArtist.png" alt="Print Artist">
+                </div>
+                <div class="company-showcase-item">
+                    <img src="assets/RNFoundation.png" alt="RN Foundation">
+                </div>
+                <div class="company-showcase-item">
+                    <img src="assets/RPSMigration.png" alt="RPS Migration">
+                </div>
             </div>
         </div>
     </section>

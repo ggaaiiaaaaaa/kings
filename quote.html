@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -10,278 +10,7 @@
 
     <!-- Modern Typefaces are loaded in styles.css -->
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .pricing-hero {
-            background-color: var(--main-blue);
-            color: var(--bg-white);
-            padding: 6rem 2rem 5rem;
-            text-align: center;
-            position: relative;
-            z-index: 10;
-        }
 
-        .pricing-hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
-            z-index: -1;
-        }
-
-        .pricing-container {
-            max-width: 800px;
-            margin: -3rem auto 5rem;
-            background: var(--bg-white);
-            border-radius: 24px;
-            box-shadow: var(--shadow-lg);
-            padding: 4rem;
-            position: relative;
-            z-index: 20;
-            border: 1px solid var(--border-color);
-        }
-
-        .step {
-            display: none;
-            opacity: 0;
-            transform: translateX(20px);
-            transition: var(--transition);
-        }
-
-        .step.active {
-            display: block;
-            opacity: 1;
-            transform: translateX(0);
-            animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        .step-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .step-header h2 {
-            font-size: 2.25rem;
-            color: var(--main-blue);
-        }
-
-        /* Grid for choices */
-        .choice-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .choice-card {
-            border: 2px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2rem 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-            background: var(--bg-white);
-        }
-
-        .choice-card:hover {
-            border-color: var(--main-blue);
-            background-color: rgba(10, 37, 64, 0.02);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .choice-card.selected {
-            border-color: var(--main-blue);
-            background-color: var(--main-blue);
-            color: var(--bg-white);
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(10, 37, 64, 0.2);
-        }
-
-        .choice-card.selected h3,
-        .choice-card.selected p {
-            color: var(--bg-white);
-        }
-
-        .choice-card h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1.35rem;
-            color: var(--text-dark);
-            transition: color 0.3s;
-        }
-
-        /* Experience levels grid */
-        .exp-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.25rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 3rem;
-            border-top: 1px solid var(--border-color);
-            padding-top: 2rem;
-        }
-
-        /* Result formatting */
-        .result-box {
-            background-color: var(--bg-light);
-            border-radius: 16px;
-            padding: 3rem 2rem;
-            text-align: center;
-            border: 2px solid var(--border-color);
-            margin-bottom: 2.5rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .result-box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--sec-accent-green);
-        }
-
-        .price-display {
-            font-family: var(--font-header);
-            font-size: 4.5rem;
-            color: var(--main-blue);
-            font-weight: 800;
-            line-height: 1;
-            margin: 1.5rem 0 0.5rem;
-            letter-spacing: -2px;
-            transition: var(--transition);
-        }
-
-        .comparison-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .saving-badge {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(0, 208, 156, 0.1);
-            color: #00A67C;
-            padding: 0.5rem 1.25rem;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-            transition: var(--transition);
-        }
-
-        .capture-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-            max-width: 450px;
-            margin: 0 auto;
-        }
-
-        .capture-form input {
-            padding: 1rem 1.25rem;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            font-family: var(--font-body);
-            font-size: 1.1rem;
-            transition: var(--transition);
-            background: var(--bg-light);
-        }
-
-        .capture-form input:focus {
-            outline: none;
-            border-color: var(--main-blue);
-            background: var(--bg-white);
-            box-shadow: 0 0 0 4px rgba(10, 37, 64, 0.1);
-        }
-
-        /* Switch UI */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 28px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #cbd5e1;
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked+.slider {
-            background-color: var(--main-blue);
-        }
-
-        input:checked+.slider:before {
-            transform: translateX(22px);
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .pricing-container {
-                padding: 2rem;
-                margin-top: -2rem;
-            }
-
-            .choice-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .exp-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -311,61 +40,11 @@
                             <!-- Main Content Area (70%) -->
                             <div class="mega-main">
 
-                                <!-- Left Tabs Column -->
-                                <div class="mega-tabs">
-                                    <div class="mega-tab active" data-target="mega-discover">
-                                        <div class="mega-tab-icon bg-blue-light"
-                                            style="background: rgba(10,37,64,0.05); color: var(--main-blue);">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Discover</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                    <div class="mega-tab" data-target="mega-services"
-                                        onclick="window.location.href='services.html';" style="cursor: pointer;">
-                                        <div class="mega-tab-icon"
-                                            style="background: rgba(255, 209, 102, 0.15); color: #FFD166;">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Services</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                    <div class="mega-tab" data-target="mega-network">
-                                        <div class="mega-tab-icon"
-                                            style="background: rgba(38, 196, 133, 0.15); color: #26C485;">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                                <circle cx="9" cy="7" r="4"></circle>
-                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Compliance & Network</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <!-- Center Links Grid (DISCOVER) -->
-                                <div id="mega-discover" class="mega-links-grid active">
+                                <!-- Column 1: Company -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Company</h4>
                                     <a href="story.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -395,11 +74,13 @@
                                             <span class="desc">Discover our cooperative advantage and vision.</span>
                                         </div>
                                     </a>
-
                                 </div>
 
-                                <!-- Center Links Grid (SERVICES) -->
-                                <div id="mega-services" class="mega-links-grid">
+                                <!-- Column 2: Solutions -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Solutions</h4>
                                     <a href="service-labor.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -428,22 +109,12 @@
                                     </a>
                                 </div>
 
-                                <!-- Center Links Grid (NETWORK) -->
-                                <div id="mega-network" class="mega-links-grid">
-                                    <a href="network.html#compliance" class="mega-feature-link">
-                                        <div class="feature-link-icon">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z">
-                                                </path>
-                                            </svg>
-                                        </div>
-                                        <div class="feature-link-text">
-                                            <span class="title">Certifications</span>
-                                            <span class="desc">Fully compliant with DOLE, CDA, BIR, and more.</span>
-                                        </div>
-                                    </a>
-                                    <a href="network.html#engagements" class="mega-feature-link">
+                                <!-- Column 3: Network -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Network</h4>
+                                    <a href="network.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                                 stroke="currentColor" stroke-width="2">
@@ -476,6 +147,7 @@
             </div>
             <!-- Right Side (Applicant Focus) -->
             <div class="nav-section applicant">
+                <a href="benefits.html" class="nav-link">Member Benefits</a>
                 <a href="careers.html" class="nav-link">Find a Job</a>
                 <a href="members.html" class="btn btn-outline nav-transparent-btn"
                     style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">
@@ -489,7 +161,7 @@
     </header>
 
     <!-- Modern Premium Hero -->
-    <section class="page-hero" style="min-height: 50vh; padding-bottom: 8rem;">
+    <section class="page-hero">
         <div class="container">
             <h1>Build Your Dream Team</h1>
             <p>Use our interactive team builder to get transparency on pricing instantly. Because great talent should
@@ -497,197 +169,242 @@
         </div>
     </section>
 
-    <div class="pricing-container">
-        <!-- Step 1: Role -->
-        <div class="step active" id="step1">
-            <div class="step-header">
-                <h2>Step 1: What role do you need?</h2>
-                <p style="color: var(--text-muted); font-size: 1.1rem;">Select the primary function for your new team
-                    member.</p>
-            </div>
-            <div class="choice-grid">
-                <div class="choice-card" onclick="selectRole('Administrative', 1000, this)">
-                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                            <line x1="8" y1="21" x2="16" y2="21"></line>
-                            <line x1="12" y1="17" x2="12" y2="21"></line>
-                        </svg>
+
+    <div class="team-builder-wrapper">
+        <div class="container animate-on-scroll">
+            <div class="builder-grid-single">
+
+                <!-- Main Screen: The Cart -->
+                <div class="builder-cart">
+                    <div class="cart-header"
+                        style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="color: white; margin: 0; display: flex; align-items: center;">
+                            <svg style="margin-right: 0.5rem;" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            Your Team Selection
+                        </h3>
+                        <button class="btn btn-gold" onclick="openRoleModal()"
+                            style="padding: 0.4rem 1rem; font-size: 0.9rem;">
+                            + Add Member
+                        </button>
                     </div>
-                    <h3>Administrative</h3>
-                    <p style="font-size: 0.95rem; color: var(--text-muted);">Virtual Assistants, Data Entry, Back-office
-                    </p>
-                </div>
-                <div class="choice-card" onclick="selectRole('Tech & IT', 2500, this)">
-                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="16 18 22 12 16 6"></polyline>
-                            <polyline points="8 6 2 12 8 18"></polyline>
-                        </svg>
+
+                    <div class="cart-items" id="cartContainer">
+                        <div class="cart-empty-state" id="cartEmpty">
+                            <div class="empty-state-image">
+                                <!-- Using placeholder image from Unsplash for the empty state -->
+                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600"
+                                    alt="Team member smiling">
+                                <div class="empty-state-divider"></div>
+                            </div>
+                            <h2>Build your offshore team with Kings Group.</h2>
+                            <button class="btn btn-gold btn-large mt-4" onclick="openRoleModal()">
+                                Get started
+                            </button>
+                        </div>
                     </div>
-                    <h3>Tech & IT</h3>
-                    <p style="font-size: 0.95rem; color: var(--text-muted);">Developers, QA, DevOps</p>
-                </div>
-                <div class="choice-card" onclick="selectRole('Customer Support', 1200, this)">
-                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                            <path
-                                d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
-                            </path>
-                        </svg>
+
+                    <div class="cart-summary">
+                        <div class="summary-row">
+                            <span>Team Size:</span>
+                            <span id="summaryTotalQty" style="font-weight:bold; color:var(--text-dark);">0</span>
+                        </div>
+                        <div class="summary-row" style="color:var(--main-blue);">
+                            <span>Est. Monthly Base:</span>
+                            <span id="summaryTotalBase">$0</span>
+                        </div>
+                        <div class="savings-alert" id="savingsAlert" style="display:none;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" style="margin-right: 0.5rem;">
+                                <path d="m5 12 5 5L20 7" />
+                            </svg>
+                            Saving ~<span id="summarySavings" style="margin-left: 0.25rem;">0</span> vs. local hire
+                        </div>
+                        <div class="summary-total">
+                            <span>Estimated Total</span>
+                            <div class="total-price" id="cartTotal">$0</div>
+                        </div>
                     </div>
-                    <h3>Customer Support</h3>
-                    <p style="font-size: 0.95rem; color: var(--text-muted);">Inbound/Outbound, Technical Support</p>
-                </div>
-                <div class="choice-card" onclick="selectRole('Accounting', 1500, this)">
-                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" y1="20" x2="18" y2="10"></line>
-                            <line x1="12" y1="20" x2="12" y2="4"></line>
-                            <line x1="6" y1="20" x2="6" y2="14"></line>
-                        </svg>
+
+                    <div class="cart-action">
+                        <form onsubmit="event.preventDefault(); submitQuote();">
+                            <input type="text" id="quoteName" placeholder="Your Full Name" required>
+                            <input type="email" id="quoteEmail" placeholder="Your Work Email" required>
+                            <button type="submit" class="btn btn-gold" id="btnSubmitQuote" disabled>
+                                Request Detailed Quote
+                            </button>
+                        </form>
                     </div>
-                    <h3>Accounting & Finance</h3>
-                    <p style="font-size: 0.95rem; color: var(--text-muted);">Bookkeeping, CPAs, Financial Analysts</p>
+
                 </div>
-            </div>
-            <div class="nav-buttons" style="justify-content: flex-end;">
-                <button class="btn btn-primary" onclick="nextStep(2)" id="btnNext1" disabled>
-                    Continue
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                </button>
+
             </div>
         </div>
-
-        <!-- Step 2: Experience -->
-        <div class="step" id="step2">
-            <div class="step-header">
-                <h2>Step 2: Choose Experience Level</h2>
-                <p style="color: var(--text-muted); font-size: 1.1rem;">What level of expertise does this role require?
-                </p>
-            </div>
-            <div class="exp-grid">
-                <div class="choice-card" onclick="selectExperience('Junior', 1.0, this)">
-                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polygon
-                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                            </polygon>
-                        </svg>
-                    </div>
-                    <h3>Junior</h3>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">1-3 Years Exp.</p>
-                </div>
-                <div class="choice-card" onclick="selectExperience('Mid-Level', 1.4, this)">
-                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                        </svg>
-                    </div>
-                    <h3>Mid-Level</h3>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">3-5 Years Exp.</p>
-                </div>
-                <div class="choice-card" onclick="selectExperience('Senior', 1.8, this)">
-                    <div style="color: var(--main-blue); margin-bottom: 1rem;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="8" r="7"></circle>
-                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-                        </svg>
-                    </div>
-                    <h3>Senior</h3>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">5+ Years Exp.</p>
-                </div>
-            </div>
-            <div class="nav-buttons">
-                <button class="btn btn-outline" onclick="nextStep(1)">Back</button>
-                <button class="btn btn-primary" onclick="calculateResult()" id="btnNext2" disabled>Calculate
-                    Price</button>
-            </div>
-        </div>
-
-        <!-- Step 3: Result -->
-        <div class="step" id="step3">
-            <div class="step-header">
-                <h2>Your Transparent Estimate</h2>
-                <p style="color: var(--text-muted); font-size: 1.1rem;">Based on a full-time <span id="summaryRole"
-                        style="font-weight:700; color:var(--text-dark);"></span> (<span id="summaryExp"
-                        style="font-weight:700; color:var(--text-dark);"></span>) via our cooperative model.</p>
-            </div>
-
-            <div class="result-box">
-                <div
-                    style="font-size: 0.85rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); letter-spacing: 1px;">
-                    Starting At</div>
-                <div class="price-display" id="priceDisplay">$0</div>
-                <div style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.5rem;">USD / month /
-                    full-time resource</div>
-
-                <div class="saving-badge" id="savingsBadge">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        style="margin-right: 0.5rem;">
-                        <path d="m5 12 5 5L20 7" />
-                    </svg>
-                    Save ~70% compared to local hiring
-                </div>
-
-                <div class="comparison-toggle">
-                    <label class="switch">
-                        <input type="checkbox" id="compareToggle" onchange="toggleComparison()">
-                        <span class="slider"></span>
-                    </label>
-                    <span style="font-size: 1.05rem;" id="compareText">Compare to US/UK Local Cost</span>
-                </div>
-            </div>
-
-            <div style="text-align: center; border-top: 1px solid var(--border-color); padding-top: 3rem;">
-                <h3 style="margin-bottom: 2rem; font-size: 1.75rem;">Ready to take the next step?</h3>
-                <form class="capture-form"
-                    onsubmit="event.preventDefault(); alert('Quote requested successfully! Our team will reach out.');">
-                    <input type="text" placeholder="Your Full Name" required>
-                    <input type="email" placeholder="Your Work Email" required>
-                    <button type="submit" class="btn btn-gold"
-                        style="width: 100%; border: none; font-size: 1.15rem; padding: 1.15rem; justify-content: center; box-shadow: 0 10px 25px rgba(255, 209, 102, 0.4);">
-                        Send Me a Detailed Quote
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <line x1="22" y1="2" x2="11" y2="13" />
-                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                        </svg>
-                    </button>
-                </form>
-                <div style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        style="vertical-align: text-bottom; margin-right: 0.25rem;">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                    By submitting, you agree to our privacy policy. No spam, just a transparent quote.
-                </div>
-            </div>
-
-            <div class="nav-buttons" style="border-top: none; padding-top: 1rem;">
-                <button class="btn btn-outline" style="margin: 0 auto; border: none; font-weight: 500;"
-                    onclick="nextStep(2)">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                    </svg>
-                    Edit Requirements
-                </button>
-            </div>
-        </div>
-
     </div>
+
+    <!-- Role Selection Modal -->
+    <div id="roleModalOverlay" class="role-modal-overlay" onclick="handleModalClick(event)">
+        <div class="role-modal-container">
+            <div class="role-modal-header">
+                <h3>Select a Role</h3>
+                <button class="role-modal-close" onclick="closeRoleModal()">&times;</button>
+            </div>
+            <div class="role-modal-body">
+                <div class="roles-catalog">
+
+                    <div class="role-category">
+                        <h3>Administrative & Support</h3>
+                        <div class="role-list">
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Virtual Assistant</h4>
+                                        <p>Data Entry, Email Management, Back-office</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Virtual Assistant', 1000); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    Add
+                                </button>
+                            </div>
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                                            <path
+                                                d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Customer Support Agent</h4>
+                                        <p>Inbound/Outbound, Technical Support</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Customer Support Agent', 1200); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="role-category">
+                        <h3>Technology & IT</h3>
+                        <div class="role-list">
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <polyline points="16 18 22 12 16 6"></polyline>
+                                            <polyline points="8 6 2 12 8 18"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Software Developer</h4>
+                                        <p>Frontend, Backend, Full Stack web development</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Software Developer', 2500); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    Add
+                                </button>
+                            </div>
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                                            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                                            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Database Administrator</h4>
+                                        <p>SQL, NoSQL, data management and optimization</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Database Administrator', 2300); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="role-category">
+                        <h3>Finance & Accounting</h3>
+                        <div class="role-list">
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Accountant / CPA</h4>
+                                        <p>Bookkeeping, tax prep, comprehensive accounting</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Accountant', 1600); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Footer -->
     <footer>
@@ -734,93 +451,142 @@
     </footer>
 
     <script src="script.js"></script>
+
+
     <script>
+        const cartData = [];
 
-        let selectedRoleName = '';
-        let selectedRoleBasePrice = 0;
-        let selectedExpName = '';
-        let selectedExpMultiplier = 1;
-        let finalPrice = 0;
-
-        function animateCount(elemId, finalNum) {
-            const el = document.getElementById(elemId);
-            let start = 0;
-            const duration = 500;
-            const stepTime = Math.abs(Math.floor(duration / 30));
-            const increment = finalNum / 30;
-
-            const timer = setInterval(() => {
-                start += increment;
-                if (start >= finalNum) {
-                    el.innerText = "$" + finalNum.toLocaleString();
-                    clearInterval(timer);
-                } else {
-                    el.innerText = "$" + Math.floor(start).toLocaleString();
-                }
-            }, stepTime);
+        function openRoleModal() {
+            document.getElementById('roleModalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
 
-        function selectRole(name, price, element) {
-            selectedRoleName = name;
-            selectedRoleBasePrice = price;
-
-            document.querySelectorAll('#step1 .choice-card').forEach(el => el.classList.remove('selected'));
-            element.classList.add('selected');
-            document.getElementById('btnNext1').disabled = false;
+        function closeRoleModal() {
+            document.getElementById('roleModalOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
         }
 
-        function selectExperience(name, multiplier, element) {
-            selectedExpName = name;
-            selectedExpMultiplier = multiplier;
-
-            document.querySelectorAll('#step2 .choice-card').forEach(el => el.classList.remove('selected'));
-            element.classList.add('selected');
-            document.getElementById('btnNext2').disabled = false;
-        }
-
-        function nextStep(step) {
-            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
-            document.getElementById(`step${step}`).classList.add('active');
-            window.scrollTo({ top: document.querySelector('.pricing-container').offsetTop - 100, behavior: 'smooth' });
-        }
-
-        function calculateResult() {
-            finalPrice = Math.round(selectedRoleBasePrice * selectedExpMultiplier);
-
-            document.getElementById('summaryRole').innerText = selectedRoleName + " Professional";
-            document.getElementById('summaryExp').innerText = selectedExpName;
-
-            document.getElementById('compareToggle').checked = false;
-            updateComparisonUI(false);
-
-            nextStep(3);
-            setTimeout(() => { animateCount('priceDisplay', finalPrice); }, 300);
-        }
-
-        function toggleComparison() {
-            const isChecked = document.getElementById('compareToggle').checked;
-            updateComparisonUI(isChecked);
-        }
-
-        function updateComparisonUI(isComparing) {
-            const usMultiplier = 3.5;
-            const localCost = Math.round(finalPrice * usMultiplier);
-            const badge = document.getElementById('savingsBadge');
-            const priceEl = document.getElementById('priceDisplay');
-
-            if (isComparing) {
-                animateCount('priceDisplay', localCost);
-                priceEl.style.color = 'var(--text-muted)';
-                badge.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Traditional US/UK Agency Cost`;
-                badge.style.background = 'rgba(66, 84, 102, 0.1)';
-                badge.style.color = 'var(--text-muted)';
-            } else {
-                animateCount('priceDisplay', finalPrice);
-                priceEl.style.color = 'var(--main-blue)';
-                badge.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;"><path d="m5 12 5 5L20 7"/></svg> Save ~70% compared to local hiring`;
-                badge.style.background = 'rgba(0, 208, 156, 0.1)';
-                badge.style.color = '#00A67C';
+        function handleModalClick(e) {
+            if (e.target.id === 'roleModalOverlay') {
+                closeRoleModal();
             }
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cartContainer');
+            const emptyState = document.getElementById('cartEmpty');
+            const btnSubmit = document.getElementById('btnSubmitQuote');
+
+            // Clear existing
+            Array.from(container.children).forEach(child => {
+                if (child.id !== 'cartEmpty') child.remove();
+            });
+
+            if (cartData.length === 0) {
+                emptyState.style.display = 'block';
+                btnSubmit.disabled = true;
+                updateTotals();
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            btnSubmit.disabled = false;
+
+            cartData.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item fade-in';
+
+                const itemPrice = Math.round(item.basePrice * item.multiplier * item.qty);
+
+                itemDiv.innerHTML = `
+                    <div class="cart-item-header">
+                        <div class="cart-item-title">${item.role}</div>
+                        <button class="cart-remove-btn" onclick="removeFromCart(${index})" title="Remove">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
+                    <div class="cart-item-controls">
+                        <select class="cart-level-select" onchange="updateLevel(${index}, this.value)">
+                            <option value="1.0" ${item.multiplier == 1.0 ? 'selected' : ''}>Junior</option>
+                            <option value="1.4" ${item.multiplier == 1.4 ? 'selected' : ''}>Mid-Level</option>
+                            <option value="1.8" ${item.multiplier == 1.8 ? 'selected' : ''}>Senior</option>
+                        </select>
+                        <div class="cart-qty-control">
+                            <button class="cart-qty-btn" type="button" onclick="updateQty(${index}, -1)">–</button>
+                            <span class="cart-qty-display">${item.qty}</span>
+                            <button class="cart-qty-btn" type="button" onclick="updateQty(${index}, 1)">+</button>
+                        </div>
+                        <div class="cart-item-price">$${itemPrice.toLocaleString()}/mo</div>
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+
+            updateTotals();
+        }
+
+        function addRoleToCart(roleName, basePrice) {
+            const existing = cartData.find(i => i.role === roleName && i.multiplier == 1.0);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cartData.push({
+                    role: roleName,
+                    basePrice: basePrice,
+                    multiplier: 1.0,
+                    qty: 1
+                });
+            }
+            updateCartUI();
+        }
+
+        function removeFromCart(index) {
+            cartData.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateLevel(index, newMultiplier) {
+            cartData[index].multiplier = parseFloat(newMultiplier);
+            updateCartUI();
+        }
+
+        function updateQty(index, delta) {
+            const item = cartData[index];
+            item.qty += delta;
+            if (item.qty < 1) item.qty = 1;
+            updateCartUI();
+        }
+
+        function updateTotals() {
+            let totalQty = 0;
+            let totalPrice = 0;
+
+            cartData.forEach(item => {
+                totalQty += item.qty;
+                totalPrice += (item.basePrice * item.multiplier * item.qty);
+            });
+
+            document.getElementById('summaryTotalQty').innerText = totalQty;
+            document.getElementById('cartTotal').innerText = "$" + Math.round(totalPrice).toLocaleString();
+            document.getElementById('summaryTotalBase').innerText = "$" + Math.round(totalPrice).toLocaleString();
+
+            const savingsAlert = document.getElementById('savingsAlert');
+            if (totalQty > 0) {
+                const usCost = totalPrice * 3.5;
+                const savings = usCost - totalPrice;
+                document.getElementById('summarySavings').innerText = "$" + Math.round(savings).toLocaleString();
+                savingsAlert.style.display = 'flex';
+            } else {
+                savingsAlert.style.display = 'none';
+            }
+        }
+
+        function submitQuote() {
+            alert("Thanks! Your team configuration has been successfully submitted to Kings.");
+            cartData.length = 0;
+            document.getElementById('quoteName').value = '';
+            document.getElementById('quoteEmail').value = '';
+            updateCartUI();
         }
     </script>
 </body>

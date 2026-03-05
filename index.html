@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -39,61 +39,11 @@
                             <!-- Main Content Area (70%) -->
                             <div class="mega-main">
 
-                                <!-- Left Tabs Column -->
-                                <div class="mega-tabs">
-                                    <div class="mega-tab active" data-target="mega-discover">
-                                        <div class="mega-tab-icon bg-blue-light"
-                                            style="background: rgba(10,37,64,0.05); color: var(--main-blue);">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Discover</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                    <div class="mega-tab" data-target="mega-services"
-                                        onclick="window.location.href='services.html';" style="cursor: pointer;">
-                                        <div class="mega-tab-icon"
-                                            style="background: rgba(255, 209, 102, 0.15); color: #FFD166;">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Services</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                    <div class="mega-tab" data-target="mega-network">
-                                        <div class="mega-tab-icon"
-                                            style="background: rgba(38, 196, 133, 0.15); color: #26C485;">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                                <circle cx="9" cy="7" r="4"></circle>
-                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Compliance & Network</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <!-- Center Links Grid (DISCOVER) -->
-                                <div id="mega-discover" class="mega-links-grid active">
+                                <!-- Column 1: Company -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Company</h4>
                                     <a href="story.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -123,11 +73,13 @@
                                             <span class="desc">Discover our cooperative advantage and vision.</span>
                                         </div>
                                     </a>
-
                                 </div>
 
-                                <!-- Center Links Grid (SERVICES) -->
-                                <div id="mega-services" class="mega-links-grid">
+                                <!-- Column 2: Solutions -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Services</h4>
                                     <a href="service-labor.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -156,22 +108,12 @@
                                     </a>
                                 </div>
 
-                                <!-- Center Links Grid (NETWORK) -->
-                                <div id="mega-network" class="mega-links-grid">
-                                    <a href="network.html#compliance" class="mega-feature-link">
-                                        <div class="feature-link-icon">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z">
-                                                </path>
-                                            </svg>
-                                        </div>
-                                        <div class="feature-link-text">
-                                            <span class="title">Certifications</span>
-                                            <span class="desc">Fully compliant with DOLE, CDA, BIR, and more.</span>
-                                        </div>
-                                    </a>
-                                    <a href="network.html#engagements" class="mega-feature-link">
+                                <!-- Column 3: Network -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Network</h4>
+                                    <a href="network.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                                 stroke="currentColor" stroke-width="2">
@@ -204,6 +146,7 @@
             </div>
             <!-- Right Side (Applicant Focus) -->
             <div class="nav-section applicant">
+                <a href="benefits.html" class="nav-link">Member Benefits</a>
                 <a href="careers.html" class="nav-link">Find a Job</a>
                 <a href="members.html" class="btn btn-outline nav-transparent-btn"
                     style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">
@@ -251,7 +194,7 @@
     </section>
 
     <!-- Trust Bar -->
-    <section class="trust-bar">
+    <section class="trust-bar animate-on-scroll">
         <div class="trust-bar-label">Trusted by leading organizations worldwide</div>
         <div class="trust-logos-track">
             <img src="img/adidas.png" alt="Adidas">
@@ -318,151 +261,199 @@
         </div>
     </section>
 
-    <!-- High-Converting Copy Sections (Dual Info Cards) -->
+    <!-- High-Converting Copy Sections -->
     <section class="section section-bg-light">
         <div class="container animate-on-scroll">
-            <h2 class="section-title" style="color: var(--main-blue);">A Different Kind of Staffing</h2>
-            <p class="section-subtitle">Bridging the gap between a traditional agency and a modern global talent
+            <h2 class="section-title" style="color: var(--main-blue); margin-bottom: 0.5rem;">A Different Kind of
+                Staffing</h2>
+            <p class="section-subtitle" style="margin-bottom: 4.5rem;">Bridging the gap between a traditional agency and
+                a modern global talent
                 platform to serve businesses and career-seekers alike.</p>
         </div>
 
-        <div class="split-sections">
+        <div class="container" style="display: flex; flex-direction: column; gap: 3.5rem; padding-top: 0.5rem;">
             <!-- For Clients: The Kings Advantage -->
-            <div class="info-card client-card animate-on-scroll">
-                <div class="info-card-content">
-                    <span class="badge badge-blue">For Clients</span>
-                    <h2>Your Dedicated Philippine HQ<br>Without the Overhead.</h2>
-                    <p><strong>Stop "outsourcing" and start "building."</strong></p>
-                    <p>Access elite Filipino talent through a worker-owned cooperative with over 10,000 members. Since
-                        1999, every team member has been
-                        personally invested in your growth.</p>
-                    <div style="margin-top: 2.5rem;">
-                        <a href="quote.html" class="btn btn-primary">
+            <div class="staffing-split animate-on-scroll"
+                style="display: flex; align-items: center; gap: 3rem; flex-wrap: wrap;">
+                <div class="staffing-content" style="flex: 1; min-width: 300px;">
+                    <h2
+                        style="font-size: 2rem; font-family: var(--font-header); color: var(--main-blue); margin-bottom: 0.75rem; line-height: 1.2;">
+                        Your Dedicated Philippine HQ<br>Without the Overhead.</h2>
+                    <p style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 0.5rem; font-weight: 500;">
+                        Stop
+                        "outsourcing" and start "building."</p>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5; font-size: 0.95rem;">
+                        Access elite Filipino talent through a worker-owned cooperative with over 10,000 members. Since
+                        1999, every team member has been personally invested in your growth.</p>
+
+                    <div class="feature-folders">
+                        <div class="folder-item">
+                            <div class="folder-header">
+                                <div class="folder-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="folder-title">Owner-Level Commitment</h3>
+                            </div>
+                            <div class="folder-body">
+                                <div class="folder-content-inner">
+                                    <p>They aren't just "working for a paycheck." They have a literal stake in the
+                                        company's success.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="folder-item">
+                            <div class="folder-header">
+                                <div class="folder-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                    </svg>
+                                </div>
+                                <h3 class="folder-title">The "Zero-Hassle" Guarantee</h3>
+                            </div>
+                            <div class="folder-body">
+                                <div class="folder-content-inner">
+                                    <p>We handle strict DOLE compliance, premium hardware, and operations so you can
+                                        focus on leadership.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="folder-item">
+                            <div class="folder-header">
+                                <div class="folder-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                                        <path
+                                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <h3 class="folder-title">Ethical Global Sourcing</h3>
+                            </div>
+                            <div class="folder-body">
+                                <div class="folder-content-inner">
+                                    <p>Care about ESG? By hiring through Kings, you support an ethical, worker-centric
+                                        business model that empowers the local community.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="quote.html" class="btn btn-primary" style="padding: 0.85rem 2rem; font-size: 1rem;">
                             Start Hiring Now
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" style="margin-left: 0.5rem;">
                                 <path d="M5 12h14M12 5l7 7-7 7" />
                             </svg>
                         </a>
                     </div>
                 </div>
 
-                <div class="info-card-features">
-                    <ul class="feature-list">
-                        <li>
-                            <div class="feature-icon">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                </svg>
-                            </div>
-                            <strong>Owner-Level Commitment</strong>
-                            <span>
-                                <div>They aren't just "working for a paycheck." They have a literal stake in the
-                                    company's success, leading to 3x higher retention rates than the industry average.
-                                </div>
-                            </span>
-                        </li>
-                        <li>
-                            <div class="feature-icon">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                                </svg>
-                            </div>
-                            <strong>The "Zero-Hassle" Guarantee</strong>
-                            <span>
-                                <div>We handle strictly compliant DOLE and CDA regulations, tax matters, high-spec
-                                    office hardware, and
-                                    premium fiber internet—so you can focus on leadership.</div>
-                            </span>
-                        </li>
-                        <li>
-                            <div class="feature-icon">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                                    <path
-                                        d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <strong>Ethical Global Sourcing</strong>
-                            <span>
-                                <div>Care about ESG? By hiring through Kings, you support an ethical, worker-centric
-                                    business model that empowers the local community.</div>
-                            </span>
-                        </li>
-                    </ul>
+                <div class="staffing-image" style="flex: 1; min-width: 300px; position: relative;">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                        alt="Professional team meeting in a modern office"
+                        style="position: relative; z-index: 1; border-radius: var(--card-radius-lg); box-shadow: var(--shadow-lg); width: 100%; object-fit: cover; aspect-ratio: 4/3; border: 1px solid var(--border-color);">
                 </div>
             </div>
 
             <!-- For Applicants: More Than Just a Job -->
-            <div class="info-card applicant-card animate-on-scroll" style="transition-delay: 0.1s;">
-                <div class="info-card-content">
-                    <span class="badge badge-green">For Talent</span>
-                    <h2>"Your Career,<br>Owned by You."</h2>
-                    <p><strong>Join a community where you are a member, not just a number.</strong></p>
-                    <p>Get access to premium benefits, career coaching, and the stability of a worker-owned cooperative.
+            <div class="staffing-split animate-on-scroll"
+                style="display: flex; align-items: center; gap: 3rem; flex-wrap: wrap; flex-direction: row-reverse; margin-top: 0;">
+                <div class="staffing-content" style="flex: 1; min-width: 300px;">
+                    <h2
+                        style="font-size: 2rem; font-family: var(--font-header); color: var(--main-blue); margin-bottom: 0.75rem; line-height: 1.2;">
+                        "Your Career,<br>Owned by You."</h2>
+                    <p style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 0.5rem; font-weight: 500;">
+                        Join
+                        a community where you are a member, not just a number.</p>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5; font-size: 0.95rem;">
+                        Get
+                        access to premium benefits, career coaching, and the stability of a worker-owned cooperative.
                         It's built for you, by people like you.</p>
-                    <div style="margin-top: 2.5rem;">
+
+                    <div class="feature-folders">
+                        <div class="folder-item talent">
+                            <div class="folder-header">
+                                <div class="folder-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                    </svg>
+                                </div>
+                                <h3 class="folder-title">Fast-Track Application</h3>
+                            </div>
+                            <div class="folder-body">
+                                <div class="folder-content-inner">
+                                    <p>No long forms. Just drop your CV and let our recruiters find your perfect match
+                                        in our global network.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="folder-item talent">
+                            <div class="folder-header">
+                                <div class="folder-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                                    </svg>
+                                </div>
+                                <h3 class="folder-title">Kings Lending Access</h3>
+                            </div>
+                            <div class="folder-body">
+                                <div class="folder-content-inner">
+                                    <p>Need a boost? Our internal lending program is exclusively designed to support our
+                                        members' major life milestones.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="folder-item talent">
+                            <div class="folder-header">
+                                <div class="folder-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                        <polyline points="17 6 23 6 23 12"></polyline>
+                                    </svg>
+                                </div>
+                                <h3 class="folder-title">Wealth Building</h3>
+                            </div>
+                            <div class="folder-body">
+                                <div class="folder-content-inner">
+                                    <p>Build true financial security. Share in the true economic success we create
+                                        together as a cooperative.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
                         <a href="careers.html" class="btn btn-outline"
-                            style="border-color: var(--sec-accent-green); color: var(--text-dark);">
+                            style="border-color: var(--sec-accent-green); color: var(--text-dark); padding: 0.85rem 2rem; font-size: 1rem;">
                             Drop your CV Today
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" style="margin-left: 0.5rem;">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
                             </svg>
                         </a>
                     </div>
                 </div>
 
-                <div class="info-card-features">
-                    <ul class="feature-list">
-                        <li>
-                            <div class="feature-icon">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                                </svg>
-                            </div>
-                            <strong>Fast-Track Application</strong>
-                            <span>
-                                <div>No long forms. Just drop your CV and let our recruiters find your perfect match in
-                                    our global network.</div>
-                            </span>
-                        </li>
-                        <li>
-                            <div class="feature-icon">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                                    <line x1="1" y1="10" x2="23" y2="10"></line>
-                                </svg>
-                            </div>
-                            <strong>Kings Lending Access</strong>
-                            <span>
-                                <div>Need a boost? Our internal lending program is exclusively designed to support our
-                                    members' major life milestones.</div>
-                            </span>
-                        </li>
-                        <li>
-                            <div class="feature-icon">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                    <polyline points="17 6 23 6 23 12"></polyline>
-                                </svg>
-                            </div>
-                            <strong>Wealth Building</strong>
-                            <span>
-                                <div>Build true financial security. By being part of the cooperative, you share in the
-                                    true economic success we create together.</div>
-                            </span>
-                        </li>
-                    </ul>
+                <div class="staffing-image" style="flex: 1; min-width: 300px; position: relative;">
+                    <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                        alt="Empowered professionals collaborating globally"
+                        style="position: relative; z-index: 1; border-radius: var(--card-radius-lg); box-shadow: var(--shadow-lg); width: 100%; object-fit: cover; aspect-ratio: 4/3; border: 1px solid var(--border-color);">
                 </div>
             </div>
         </div>
@@ -479,183 +470,278 @@
                 <div class="testimonials-track" id="testimonials-track">
                     <!-- Testimonial 1 -->
                     <div class="testimonial-card slide active">
-                        <div class="quote-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                            </svg>
-                        </div>
-                        <div class="rating">
-                            <!-- 5 Stars -->
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                        </div>
-                        <p class="testimonial-text">"Kings Group fundamentally transformed how we structure our customer
-                            service in Asia. The worker-owned model means our team operates with an unparalleled sense
-                            of ownership and dedication."</p>
-                        <div class="testimonial-author">
-                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
-                                alt="David K." class="author-image">
+                        <div class="testimonial-content-wrapper">
+                            <div class="quote-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                                </svg>
+                            </div>
+                            <div class="rating">
+                                <!-- 5 Stars -->
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                            </div>
+                            <p class="testimonial-text">"Kings Group fundamentally transformed how we structure our
+                                customer
+                                service in Asia. The worker-owned model means our team operates with an unparalleled
+                                sense
+                                of ownership and dedication."</p>
+
                             <div class="author-info">
                                 <h4>David K.</h4>
                                 <span>COO, Global Logistics Tech</span>
                             </div>
                         </div>
+
+                        <div class="testimonial-image-large">
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                alt="David K.">
+                        </div>
                     </div>
 
                     <!-- Testimonial 2 -->
                     <div class="testimonial-card slide">
-                        <div class="quote-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                            </svg>
-                        </div>
-                        <div class="rating">
-                            <!-- 5 Stars -->
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                        </div>
-                        <p class="testimonial-text">"Before Kings, my career was just a series of jobs. Now, as a
-                            member-owner, I have access to lending programs, real benefits, and a voice in how we
-                            operate. It's life-changing."</p>
-                        <div class="testimonial-author">
-                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
-                                alt="Maria S." class="author-image">
+                        <div class="testimonial-content-wrapper">
+                            <div class="quote-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                                </svg>
+                            </div>
+                            <div class="rating">
+                                <!-- 5 Stars -->
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                            </div>
+                            <p class="testimonial-text">"Before Kings, my career was just a series of jobs. Now, as a
+                                member-owner, I have access to lending programs, real benefits, and a voice in how we
+                                operate. It's life-changing."</p>
+
                             <div class="author-info">
                                 <h4>Maria S.</h4>
                                 <span>Senior Technical Support</span>
                             </div>
                         </div>
+
+                        <div class="testimonial-image-large">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                alt="Maria S.">
+                        </div>
                     </div>
 
                     <!-- Testimonial 3 -->
                     <div class="testimonial-card slide">
-                        <div class="quote-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                            </svg>
-                        </div>
-                        <div class="rating">
-                            <!-- 5 Stars -->
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                        </div>
-                        <p class="testimonial-text">"Zero hassle, absolute compliance, and incredible talent. We tapped
-                            into Kings network three years ago and scaled from 5 to 150 members without a single HR
-                            headache."</p>
-                        <div class="testimonial-author">
-                            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
-                                alt="James T." class="author-image">
+                        <div class="testimonial-content-wrapper">
+                            <div class="quote-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                                </svg>
+                            </div>
+                            <div class="rating">
+                                <!-- 5 Stars -->
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                            </div>
+                            <p class="testimonial-text">"Zero hassle, absolute compliance, and incredible talent. We
+                                tapped
+                                into Kings network three years ago and scaled from 5 to 150 members without a single HR
+                                headache."</p>
+
                             <div class="author-info">
                                 <h4>James T.</h4>
                                 <span>VP Operations, FinServ</span>
                             </div>
                         </div>
+
+                        <div class="testimonial-image-large">
+                            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                alt="James T.">
+                        </div>
                     </div>
 
                     <!-- Testimonial 4 -->
                     <div class="testimonial-card slide">
-                        <div class="quote-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                            </svg>
-                        </div>
-                        <div class="rating">
-                            <!-- 5 Stars -->
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                        </div>
-                        <p class="testimonial-text">"The training programs and community support I've received as a
-                            Kings cooperative member are unmatched. It feels amazing to be truly valued by an employer."
-                        </p>
-                        <div class="testimonial-author">
-                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
-                                alt="Sarah J." class="author-image">
+                        <div class="testimonial-content-wrapper">
+                            <div class="quote-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                                </svg>
+                            </div>
+                            <div class="rating">
+                                <!-- 5 Stars -->
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                            </div>
+                            <p class="testimonial-text">"The training programs and community support I've received as a
+                                Kings cooperative member are unmatched. It feels amazing to be truly valued by an
+                                employer."
+                            </p>
+
                             <div class="author-info">
                                 <h4>Sarah J.</h4>
                                 <span>UX Designer</span>
                             </div>
+                        </div>
+
+                        <div class="testimonial-image-large">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                alt="Sarah J.">
                         </div>
                     </div>
                 </div>
 
                 <div class="slider-controls">
                     <div class="slider-dots" id="testi-dots"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Affiliated Brands / Network Section -->
+    <section class="affiliates-section animate-on-scroll">
+        <div class="container">
+            <div class="affiliates-header text-center">
+                <h2>Our Network</h2>
+                <p>Explore our affiliated brands and communities.</p>
+            </div>
+
+            <div class="affiliates-showcase-container">
+                <!-- Brand 1: The Kings City -->
+                <div class="affiliate-showcase animate-on-scroll">
+                    <div class="affiliate-showcase-image">
+                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                            alt="The Kings City">
+                    </div>
+                    <div class="affiliate-showcase-content">
+                        <h3>The Kings City</h3>
+                        <p>Our premier coworking and flex-office brand. We provide modern, inspiring workspaces designed
+                            to foster collaboration, innovation, and productivity for professionals in the heart of the
+                            business district.</p>
+                        <a href="#" class="btn btn-primary" style="margin-top: 1rem;">
+                            Discover Kings City
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Brand 2: The Social Manila -->
+                <div class="affiliate-showcase reverse animate-on-scroll">
+                    <div class="affiliate-showcase-image">
+                        <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                            alt="The Social Manila">
+                    </div>
+                    <div class="affiliate-showcase-content">
+                        <h3>The Social Manila</h3>
+                        <p>The premier events, lifestyle, and community engagement hub. We host corporate functions,
+                            team-building events, and exclusive gatherings designed to connect leaders and ignite
+                            culture.</p>
+                        <a href="#" class="btn btn-outline" style="margin-top: 1rem;">
+                            Explore The Social
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Brand 3: The Home Culinary School -->
+                <div class="affiliate-showcase animate-on-scroll">
+                    <div class="affiliate-showcase-image">
+                        <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                            alt="The Home Culinary School">
+                    </div>
+                    <div class="affiliate-showcase-content">
+                        <h3>The Home Culinary School</h3>
+                        <p>Professional culinary training and certification programs. Equipping the next generation of
+                            chefs and hospitality professionals with world-class skills, discipline, and ethical
+                            standards.</p>
+                        <a href="#" class="btn btn-primary" style="margin-top: 1rem;">
+                            Start Cooking
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

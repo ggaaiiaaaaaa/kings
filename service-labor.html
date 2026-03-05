@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -10,34 +10,7 @@
 
     <!-- Modern Typefaces are loaded in styles.css -->
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .service-page-hero {
-            background-color: var(--main-blue);
-            color: var(--bg-white);
-            padding: 8rem 2rem 6rem;
-            text-align: center;
-        }
 
-        .service-page-hero h1 {
-            font-size: clamp(3rem, 5vw, 4.5rem);
-            color: var(--bg-white);
-            margin-bottom: 1.5rem;
-        }
-
-        #user-content-area {
-            min-height: 400px;
-            padding: 5rem 2rem;
-            max-width: 1000px;
-            margin: 0 auto;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 1.25rem;
-            border: 2px dashed rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-            margin-top: 4rem;
-            margin-bottom: 4rem;
-        }
-    </style>
 </head>
 
 <body>
@@ -67,61 +40,11 @@
                             <!-- Main Content Area (70%) -->
                             <div class="mega-main">
 
-                                <!-- Left Tabs Column -->
-                                <div class="mega-tabs">
-                                    <div class="mega-tab active" data-target="mega-discover">
-                                        <div class="mega-tab-icon bg-blue-light"
-                                            style="background: rgba(10,37,64,0.05); color: var(--main-blue);">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Discover</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                    <div class="mega-tab" data-target="mega-services"
-                                        onclick="window.location.href='services.html';" style="cursor: pointer;">
-                                        <div class="mega-tab-icon"
-                                            style="background: rgba(255, 209, 102, 0.15); color: #FFD166;">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Services</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                    <div class="mega-tab" data-target="mega-network">
-                                        <div class="mega-tab-icon"
-                                            style="background: rgba(38, 196, 133, 0.15); color: #26C485;">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                                <circle cx="9" cy="7" r="4"></circle>
-                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="mega-tab-text">Compliance & Network</span>
-                                        <svg class="mega-tab-chevron" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <!-- Center Links Grid (DISCOVER) -->
-                                <div id="mega-discover" class="mega-links-grid active">
+                                <!-- Column 1: Company -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Company</h4>
                                     <a href="story.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -151,11 +74,13 @@
                                             <span class="desc">Discover our cooperative advantage and vision.</span>
                                         </div>
                                     </a>
-
                                 </div>
 
-                                <!-- Center Links Grid (SERVICES) -->
-                                <div id="mega-services" class="mega-links-grid">
+                                <!-- Column 2: Solutions -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Services</h4>
                                     <a href="service-labor.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -184,22 +109,12 @@
                                     </a>
                                 </div>
 
-                                <!-- Center Links Grid (NETWORK) -->
-                                <div id="mega-network" class="mega-links-grid">
-                                    <a href="network.html#compliance" class="mega-feature-link">
-                                        <div class="feature-link-icon">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z">
-                                                </path>
-                                            </svg>
-                                        </div>
-                                        <div class="feature-link-text">
-                                            <span class="title">Certifications</span>
-                                            <span class="desc">Fully compliant with DOLE, CDA, BIR, and more.</span>
-                                        </div>
-                                    </a>
-                                    <a href="network.html#engagements" class="mega-feature-link">
+                                <!-- Column 3: Network -->
+                                <div class="mega-links-col">
+                                    <h4
+                                        style="margin-bottom: 0.75rem; color: var(--main-blue); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 1rem;">
+                                        Network</h4>
+                                    <a href="network.html" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                                 stroke="currentColor" stroke-width="2">
@@ -232,6 +147,7 @@
             </div>
             <!-- Right Side (Applicant Focus) -->
             <div class="nav-section applicant">
+                <a href="benefits.html" class="nav-link">Member Benefits</a>
                 <a href="careers.html" class="nav-link">Find a Job</a>
                 <a href="members.html" class="btn btn-outline nav-transparent-btn"
                     style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">
@@ -244,19 +160,576 @@
         </div>
     </header>
 
-    <!-- Modern Premium Hero -->
-    <section class="page-hero">
-        <div class="container">
-            <h1>Labor Management Services</h1>
-            <p>Managed Services & Staff Leasing</p>
+    <!-- Premium Animated Hero -->
+    <section class="labor-hero">
+        <div class="hero-inner">
+            <h1>Managed Services &<br>Offshore Staff Leasing</h1>
+            <p class="hero-sub">End-to-end workforce solutions powered by the Philippines' leading worker-owned
+                cooperative. From recruitment to payroll — we handle it all.</p>
         </div>
     </section>
 
-    <!-- User Content Area Placeholder -->
-    <div id="user-content-area" class="container">
-        <!-- The user will drop their detailed content here -->
-        [Content to be provided by USER]
-    </div>
+    <!-- Main Content Area -->
+    <main class="service-content container">
+        <div class="service-intro animate-on-scroll">
+            <div class="service-intro-text">
+                <h2 class="intro-lead">Empowering your business with Managed Services &amp; Offshore Staff Leasing.</h2>
+                <p>Human resource management, consulting and benefits administration are crucial aspects of the
+                    business that The Kings can manage for you. Payroll and HR Experts from The Kings, who are familiar
+                    with the local laws and taxations will handle your employees so you can focus on the revenue-
+                    generating activities of your business. They can either be placed in your office or work from our
+                    own corporate offices in Parañaque City, Philippines.</p>
+
+                <div class="pills-container">
+                    <span class="pill-item"><span style="color:var(--sec-accent-green); margin-right: 0.5rem;">✓</span>
+                        Recruitment &amp; Deployment</span>
+                    <span class="pill-item"><span style="color:var(--sec-accent-green); margin-right: 0.5rem;">✓</span>
+                        Orientation &amp; Training</span>
+                    <span class="pill-item"><span style="color:var(--sec-accent-green); margin-right: 0.5rem;">✓</span>
+                        Timekeeping &amp; Payroll</span>
+                    <span class="pill-item"><span style="color:var(--sec-accent-green); margin-right: 0.5rem;">✓</span>
+                        Compensation Programs</span>
+                    <span class="pill-item"><span style="color:var(--sec-accent-green); margin-right: 0.5rem;">✓</span>
+                        Legal Processes</span>
+                </div>
+            </div>
+
+            <div class="service-intro-image">
+                <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                    alt="Corporate team strategy meeting">
+            </div>
+        </div>
+
+        <!-- Section A: Managed Services -->
+        <section class="animate-on-scroll" id="managed-services" style="margin-bottom: 6rem;">
+            <div class="comparison-header">
+                <h3>A. Managed Services</h3>
+                <p style="color: var(--text-muted); font-size: 1.15rem; max-width: 700px; margin: 0 auto;">Focused on
+                    local companies in the Philippines, providing an innovative <strong>Manpower Service
+                        Cooperative</strong> model to maximize contractual worker productivity.</p>
+            </div>
+
+            <!-- 2x2 Feature Grid -->
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-image">
+                        <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                            alt="Team synergy">
+                    </div>
+                    <div class="feature-card-content">
+                        <h4>Owner-Members</h4>
+                        <p>Owned by professionals and workers bound by a common aim of providing sustainable livelihood
+                            opportunities for each member.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-card-image">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                            alt="Self employed workers">
+                    </div>
+                    <div class="feature-card-content">
+                        <h4>Self-Employed Status</h4>
+                        <p>As owner-members, individuals are self-employed. We operate independently, meaning we are
+                            neither
+                            traditional employees nor employers.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-card-image">
+                        <img src="https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                            alt="Flexible engagement tracking">
+                    </div>
+                    <div class="feature-card-content">
+                        <h4>Flexible Engagement</h4>
+                        <p>Keep our services as long as necessary without absorbing members as regular employees,
+                            breaking
+                            the tedious cycle of recruitment and termination.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-card-image">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                            alt="Analytics and productivity">
+                    </div>
+                    <div class="feature-card-content">
+                        <h4>Maximized Productivity</h4>
+                        <p>Increase productivity by up to 70% through continuous engagement of learned skills while
+                            bringing
+                            down administrative costs.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Split Content Section -->
+            <div class="split-content" style="margin-top: 5rem;">
+                <div class="split-text">
+                    <h3>Total Manpower Solutions</h3>
+                    <p>We are committed to providing total solutions to our clients’ manpower outsourcing concerns and
+                        our candidates’ successful entry.</p>
+                    <p>We may absorb the client’s existing people or look for your needed manpower force, freeing your
+                        company from the hassles of manpower attention and supervision. We move as you desire.</p>
+                    <p>Our goal is to exceed expectations by offering outstanding services, increased flexibility, and
+                        greater value. Thriving on partnerships, The Kings has been serving with excellence and passion
+                        through the years.</p>
+                </div>
+                <div class="image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                        alt="Professional meeting" class="image-placeholder">
+                </div>
+            </div>
+
+            <!-- Premium Comparison Table -->
+            <div class="comparison-container">
+                <div class="comparison-header">
+                    <h3>The Cooperative Advantage</h3>
+                    <p style="color: var(--text-muted);">Comparing Direct Hire, Agency, and The Kings model.</p>
+                </div>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Direct Hire</th>
+                                <th>From Agency</th>
+                                <th class="col-kings">From Kings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Affiliation</td>
+                                <td>Employee</td>
+                                <td>Employee</td>
+                                <td class="col-kings-td">Member</td>
+                            </tr>
+                            <tr>
+                                <td>ER-EE Relationship</td>
+                                <td><svg class="icon-check" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg></td>
+                                <td><svg class="icon-check" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg></td>
+                                <td class="col-kings-td"><svg class="icon-cross" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg></td>
+                            </tr>
+                            <tr>
+                                <td>VAT / EWT</td>
+                                <td><svg class="icon-check" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg></td>
+                                <td><svg class="icon-check" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg></td>
+                                <td class="col-kings-td"><svg class="icon-cross" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg></td>
+                            </tr>
+                            <tr>
+                                <td>Separation Pay</td>
+                                <td>Required</td>
+                                <td>Required</td>
+                                <td class="col-kings-td"><span
+                                        style="color: var(--sec-accent-green); font-weight: 700;">Dividends /
+                                        Refund</span></td>
+                            </tr>
+                            <tr>
+                                <td>Future Labor Cases</td>
+                                <td>Possible</td>
+                                <td>Prone</td>
+                                <td class="col-kings-td"><svg class="icon-check" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg> Minimal-None</td>
+                            </tr>
+                            <tr>
+                                <td>Credit Loan Facility</td>
+                                <td><svg class="icon-cross" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg></td>
+                                <td><svg class="icon-cross" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg></td>
+                                <td class="col-kings-td"><svg class="icon-check" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg></td>
+                            </tr>
+                            <tr>
+                                <td>Savings Program</td>
+                                <td><svg class="icon-cross" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg></td>
+                                <td><svg class="icon-cross" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg></td>
+                                <td class="col-kings-td"><svg class="icon-check" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg></td>
+                            </tr>
+                            <tr>
+                                <td>Govt Benefits</td>
+                                <td>Required</td>
+                                <td><svg class="icon-dash" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Maybe</td>
+                                <td class="col-kings-td"><svg class="icon-check" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg></td>
+                            </tr>
+                            <tr>
+                                <td>Insurance / HMO</td>
+                                <td><svg class="icon-dash" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Maybe</td>
+                                <td><svg class="icon-cross" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg></td>
+                                <td class="col-kings-td"><svg class="icon-check" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg></td>
+                            </tr>
+                            <tr>
+                                <td>Culinary & Training</td>
+                                <td><svg class="icon-cross" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg></td>
+                                <td><svg class="icon-cross" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg></td>
+                                <td class="col-kings-td"><svg class="icon-check" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section B: Managed Staff Leasing Services -->
+        <section class="animate-on-scroll" id="managed-staff-leasing" style="margin-bottom: 6rem;">
+            <div class="comparison-header">
+                <h3>B. Managed Staff Leasing Services</h3>
+                <p style="color: var(--text-muted); font-size: 1.15rem; max-width: 700px; margin: 0 auto;">Primarily for
+                    our Offshore Clients in countries such as Australia and the United States of America.</p>
+            </div>
+
+            <div class="split-content" style="margin-top: 4rem;">
+                <div class="split-text">
+                    <h3>1. How Does Offshore Staff Leasing Work?</h3>
+                    <p>Managed Staff Leasing is a business delivery where we take care of recruiting staff for your
+                        particular needs, providing equipment, and overseeing operations to ensure your leased staff
+                        deliver expected quality.</p>
+                    <p><strong>It is your team.</strong> With offshore managed staff leasing, you have full control of
+                        your members without worrying about facilities, operations, or local regulations in the
+                        Philippines. We take care of everything on the ground while you focus on business processes and
+                        expanding your core business.</p>
+                </div>
+                <!-- Placeholder Image for Remote Teams -->
+                <div class="image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                        alt="Remote offshore team" class="image-placeholder">
+                </div>
+            </div>
+
+            <div class="split-content reverse" style="margin-top: 5rem;">
+                <div class="split-text">
+                    <h3>2. Improving Your Manpower</h3>
+                    <p>We source, recruit, and onboard your offshore team in line with your business needs, handling all
+                        administrative requirements. This frees you to focus on income-generating activities.</p>
+
+                    <ul style="list-style:none; padding:0; margin-top:2rem;">
+                        <li style="margin-bottom: 1.5rem; display:flex; align-items:flex-start;">
+                            <span style="color:var(--sec-accent-green); margin-right:1rem; margin-top:0.25rem;"><svg
+                                    width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg></span>
+                            <div><strong>Cost Efficient:</strong> Save overhead costs on equipment, space, and training
+                                for additional employees.</div>
+                        </li>
+                        <li style="margin-bottom: 1.5rem; display:flex; align-items:flex-start;">
+                            <span style="color:var(--sec-accent-green); margin-right:1rem; margin-top:0.25rem;"><svg
+                                    width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg></span>
+                            <div><strong>Complete Set Up:</strong> We provide your offshore team with space, facilities,
+                                equipment, and everything they need.</div>
+                        </li>
+                        <li style="display:flex; align-items:flex-start;">
+                            <span style="color:var(--sec-accent-green); margin-right:1rem; margin-top:0.25rem;"><svg
+                                    width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg></span>
+                            <div><strong>Extensive HR & Payroll:</strong> Optimize talent management and cost-saving
+                                measures while retaining full oversight.</div>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Placeholder Image for Office Setup -->
+                <div class="image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                        alt="Modern office workspace" class="image-placeholder">
+                </div>
+            </div>
+
+            <div class="comparison-header" style="margin-top: 8rem;">
+                <h3>3. The Onboarding Journey</h3>
+                <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">Your team in the Philippines is
+                    legally employed and managed by The Kings, but they report directly to you. Here is how we get
+                    started.</p>
+            </div>
+
+            <!-- Horizontal Timeline: Step 1-10 -->
+            <div class="timeline-container">
+                <!-- Row 1: Steps 1–5 -->
+                <div class="timeline-row">
+                    <div class="timeline-step">
+                        <div class="timeline-dot">1</div>
+                        <div class="timeline-content">
+                            <h4>Inquiry</h4>
+                            <p>Business Development</p>
+                        </div>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="timeline-dot">2</div>
+                        <div class="timeline-content">
+                            <h4>Negotiation</h4>
+                            <p>Business Development</p>
+                        </div>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="timeline-dot">3</div>
+                        <div class="timeline-content">
+                            <h4>Contract Signing</h4>
+                            <p>Business Development</p>
+                        </div>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="timeline-dot">4</div>
+                        <div class="timeline-content">
+                            <h4>Alignment of Policies</h4>
+                            <p>People &amp; Culture, Operations</p>
+                        </div>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="timeline-dot">5</div>
+                        <div class="timeline-content">
+                            <h4>Manpower Requisition</h4>
+                            <p>People &amp; Culture, Operations</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Steps 6–10 -->
+                <div class="timeline-row">
+                    <div class="timeline-step">
+                        <div class="timeline-dot">6</div>
+                        <div class="timeline-content">
+                            <h4>Verification of Hours</h4>
+                            <p>Operations</p>
+                        </div>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="timeline-dot">7</div>
+                        <div class="timeline-content">
+                            <h4>Payment for Services</h4>
+                            <p>Accounting &amp; Finance</p>
+                        </div>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="timeline-dot">8</div>
+                        <div class="timeline-content">
+                            <h4>Satisfaction Survey</h4>
+                            <p>Audit &amp; Business Dev</p>
+                        </div>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="timeline-dot">9</div>
+                        <div class="timeline-content">
+                            <h4>Offering Other Services</h4>
+                            <p>Business Development</p>
+                        </div>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="timeline-dot">10</div>
+                        <div class="timeline-content">
+                            <h4>Contract Renewal</h4>
+                            <p>Business Dev &amp; People</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Table: BPO vs Kings vs Incorporation -->
+            <div class="comparison-container" style="margin-top: 8rem;">
+                <div class="comparison-header">
+                    <h3>Difference against BPO & Incorporation</h3>
+                    <p style="color: var(--text-muted);">See why Kings Managed Staff Leasing stands out.</p>
+                </div>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Outsourcing (BPO)</th>
+                                <th>Incorporating</th>
+                                <th class="col-kings">Kings Staff Leasing</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Start-up Costs</td>
+                                <td><span style="color: var(--sec-accent-green); font-weight: 700;">Low</span></td>
+                                <td><span style="color: var(--accent-red); font-weight: 700;">High</span></td>
+                                <td class="col-kings-td"><span
+                                        style="color: var(--sec-accent-green); font-weight: 700;">None</span></td>
+                            </tr>
+                            <tr>
+                                <td>Longer Term Costs</td>
+                                <td><span style="color: var(--accent-red); font-weight: 700;">High</span></td>
+                                <td><span style="color: var(--neutral-yellow); font-weight: 700;">Medium</span></td>
+                                <td class="col-kings-td"><span
+                                        style="color: var(--sec-accent-green); font-weight: 700;">Low</span></td>
+                            </tr>
+                            <tr>
+                                <td>Philippine Expertise</td>
+                                <td><svg class="icon-check" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg> High</td>
+                                <td><svg class="icon-cross" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg> Low</td>
+                                <td class="col-kings-td"><svg class="icon-check" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg> High</td>
+                            </tr>
+                            <tr>
+                                <td>Process Expertise</td>
+                                <td><svg class="icon-check" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg> High</td>
+                                <td><svg class="icon-dash" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Varies</td>
+                                <td class="col-kings-td"><svg class="icon-dash" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Varies</td>
+                            </tr>
+                            <tr>
+                                <td>Operational Flexibility</td>
+                                <td><svg class="icon-check" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg> High</td>
+                                <td><svg class="icon-cross" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg> Low</td>
+                                <td class="col-kings-td"><svg class="icon-check" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg> High</td>
+                            </tr>
+                            <tr>
+                                <td>Operational Control</td>
+                                <td><svg class="icon-cross" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg> Low</td>
+                                <td><svg class="icon-check" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg> High</td>
+                                <td class="col-kings-td"><svg class="icon-check" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg> High</td>
+                            </tr>
+                            <tr>
+                                <td>Client Resistance</td>
+                                <td><svg class="icon-cross" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg> High</td>
+                                <td><svg class="icon-dash" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Medium</td>
+                                <td class="col-kings-td"><svg class="icon-dash" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Medium</td>
+                            </tr>
+                            <tr>
+                                <td>Employee Resistance</td>
+                                <td><svg class="icon-cross" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg> High</td>
+                                <td><svg class="icon-dash" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Medium</td>
+                                <td class="col-kings-td"><svg class="icon-dash" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Medium</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
 
     <!-- Footer -->
     <footer>

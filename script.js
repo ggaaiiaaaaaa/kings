@@ -6,15 +6,38 @@ const brandLogo = document.querySelector('.brand-logo');
 const logoWhitePath = "img/[LOGO] Main Logo White.png";
 const logoBlackPath = "img/[LOGO] Main Logo Black.png";
 
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        if (header) header.classList.add('scrolled');
-        if (brandLogo) brandLogo.src = logoBlackPath;
+// Determine if we are on the homepage (or a page with a dark hero section)
+const isDarkHeroPage = document.querySelector('.hero') || document.querySelector('.page-hero') || document.querySelector('.labor-hero') || document.querySelector('.kit-hero');
+
+function updateHeader() {
+    if (window.scrollY > 50 || !isDarkHeroPage) {
+        if (header) {
+            header.classList.add('scrolled');
+            header.style.paddingTop = '0.5rem';
+            header.style.paddingBottom = '0.5rem';
+        }
+        if (brandLogo) {
+            brandLogo.src = logoBlackPath;
+            brandLogo.style.height = '40px';
+        }
     } else {
-        if (header) header.classList.remove('scrolled');
-        if (brandLogo) brandLogo.src = logoWhitePath;
+        if (header) {
+            header.classList.remove('scrolled');
+            header.style.paddingTop = '1.25rem';
+            header.style.paddingBottom = '1.25rem';
+        }
+        if (brandLogo) {
+            brandLogo.src = logoWhitePath;
+            brandLogo.style.height = '48px';
+        }
     }
-});
+}
+
+// Initial check on page load
+updateHeader();
+
+// Check on scroll
+window.addEventListener('scroll', updateHeader);
 
 // Intersection Observer for scroll animations
 const observerOptions = {
