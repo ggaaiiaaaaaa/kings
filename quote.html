@@ -161,20 +161,81 @@
     </header>
 
     <!-- Modern Premium Hero -->
-    <section class="page-hero">
-        <div class="container">
-            <h1>Build Your Dream Team</h1>
-            <p>Use our interactive team builder to get transparency on pricing instantly. Because great talent should
-                be accessible, not a guessing game.</p>
+    <section class="page-hero"
+        style="background-image: linear-gradient(rgba(10, 37, 64, 0.7), rgba(10, 37, 64, 0.7)), url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');">
+        <div class="container text-center">
+            <h1>Build Your Team</h1>
+            <p>Get a custom quote for managed services, staff leasing, or HR tech solutions.</p>
         </div>
     </section>
 
+
+    <!-- How It Works Section -->
+    <section class="section section-bg-light" style="padding: 5rem 0 4rem;">
+        <div class="container">
+
+            <!-- Centred Section Header -->
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <p
+                    style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; color: var(--gold); font-weight: 700; margin-bottom: 0.75rem;">
+                    How It Works</p>
+                <h2 style="color: var(--main-blue); font-size: 2.2rem; margin-bottom: 1rem;">Estimate Your Monthly
+                    Investment</h2>
+                <p
+                    style="color: var(--text-muted); font-size: 1.05rem; max-width: 560px; margin: 0 auto; line-height: 1.7;">
+                    Select the roles you need, adjust experience levels, and instantly see a transparent baseline for
+                    your offshore team.</p>
+            </div>
+
+            <!-- 3-Step Flow -->
+            <div
+                style="display: flex; align-items: flex-start; justify-content: center; position: relative; max-width: 860px; margin: 0 auto;">
+                <!-- Connecting line -->
+                <div
+                    style="position: absolute; top: 32px; left: calc(16.67% + 20px); right: calc(16.67% + 20px); height: 2px; background: linear-gradient(to right, var(--main-blue), var(--gold), var(--main-blue)); opacity: 0.35; z-index: 0;">
+                </div>
+
+                <!-- Step 1 -->
+                <div style="flex: 1; text-align: center; padding: 0 1.5rem; position: relative; z-index: 1;">
+                    <div
+                        style="width: 64px; height: 64px; border-radius: 50%; background: var(--main-blue); color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 1.35rem; font-weight: 800; border: 4px solid white; box-shadow: 0 4px 16px rgba(10,37,64,0.18);">
+                        1</div>
+                    <h4 style="color: var(--main-blue); font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem;">
+                        Select Roles</h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin: 0;">Browse our
+                        catalog and add the professionals you need.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div style="flex: 1; text-align: center; padding: 0 1.5rem; position: relative; z-index: 1;">
+                    <div
+                        style="width: 64px; height: 64px; border-radius: 50%; background: var(--gold); color: var(--main-blue); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 1.35rem; font-weight: 800; border: 4px solid white; box-shadow: 0 4px 16px rgba(196,160,84,0.25);">
+                        2</div>
+                    <h4 style="color: var(--main-blue); font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem;">
+                        Review Estimate</h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin: 0;">See real-time
+                        monthly costs with full transparency.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div style="flex: 1; text-align: center; padding: 0 1.5rem; position: relative; z-index: 1;">
+                    <div
+                        style="width: 64px; height: 64px; border-radius: 50%; background: var(--main-blue); color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 1.35rem; font-weight: 800; border: 4px solid white; box-shadow: 0 4px 16px rgba(10,37,64,0.18);">
+                        3</div>
+                    <h4 style="color: var(--main-blue); font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem;">
+                        Get Your Quote</h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin: 0;">Submit your
+                        details and receive a full proposal from our team.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
 
     <div class="team-builder-wrapper">
         <div class="container animate-on-scroll">
             <div class="builder-grid-single">
 
-                <!-- Main Screen: The Cart -->
                 <div class="builder-cart">
                     <div class="cart-header"
                         style="display: flex; justify-content: space-between; align-items: center;">
@@ -194,18 +255,36 @@
                         </button>
                     </div>
 
-                    <div class="cart-items" id="cartContainer">
+                    <div id="cartContainer" style="width: 100%;">
                         <div class="cart-empty-state" id="cartEmpty">
                             <div class="empty-state-image">
-                                <!-- Using placeholder image from Unsplash for the empty state -->
-                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600"
-                                    alt="Team member smiling">
-                                <div class="empty-state-divider"></div>
+                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400"
+                                    alt="Team member">
                             </div>
-                            <h2>Build your offshore team with Kings Group.</h2>
+                            <h2 style="font-size: 1.3rem; margin: 0;">Build your offshore team with Kings Group.</h2>
+                            <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 380px; margin: 0;">Select
+                                roles below and instantly see a transparent monthly estimate.</p>
                             <button class="btn btn-gold btn-large mt-4" onclick="openRoleModal()">
                                 Get started
                             </button>
+                        </div>
+
+
+                        <div class="cart-table-wrapper" id="cartTableWrapper" style="display: none;">
+                            <table class="cart-table">
+                                <thead>
+                                    <tr>
+                                        <th>Role Function</th>
+                                        <th>Experience Level</th>
+                                        <th style="text-align: center;">Headcount</th>
+                                        <th style="text-align: right;">Est. Monthly</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cartTableBody">
+                                    <!-- Table items injected here -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -258,31 +337,31 @@
                 <div class="roles-catalog">
 
                     <div class="role-category">
-                        <h3>Administrative & Support</h3>
+                        <h3>Operations & Management</h3>
                         <div class="role-list">
                             <div class="builder-role-card">
                                 <div class="builder-role-info">
                                     <div class="builder-role-icon">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2">
-                                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                                            <line x1="8" y1="21" x2="16" y2="21"></line>
-                                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="9" cy="7" r="4"></circle>
+                                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                         </svg>
                                     </div>
                                     <div class="builder-role-text">
-                                        <h4>Virtual Assistant</h4>
-                                        <p>Data Entry, Email Management, Back-office</p>
+                                        <h4>Operations Head</h4>
+                                        <p>Strategic oversight and operational management</p>
                                     </div>
                                 </div>
                                 <button class="builder-add-btn"
-                                    onclick="addRoleToCart('Virtual Assistant', 1000); closeRoleModal();">
+                                    onclick="addRoleToCart('Operations Head', 2500); closeRoleModal();">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2">
                                         <line x1="12" y1="5" x2="12" y2="19"></line>
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                    Add
+                                    </svg> Add
                                 </button>
                             </div>
                             <div class="builder-role-card">
@@ -290,55 +369,22 @@
                                     <div class="builder-role-icon">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2">
-                                            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                                            <path
-                                                d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
-                                            </path>
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="9" y1="3" x2="9" y2="21"></line>
                                         </svg>
                                     </div>
                                     <div class="builder-role-text">
-                                        <h4>Customer Support Agent</h4>
-                                        <p>Inbound/Outbound, Technical Support</p>
+                                        <h4>Building Administrator</h4>
+                                        <p>Facility management and tenant relations</p>
                                     </div>
                                 </div>
                                 <button class="builder-add-btn"
-                                    onclick="addRoleToCart('Customer Support Agent', 1200); closeRoleModal();">
+                                    onclick="addRoleToCart('Building Administrator', 1500); closeRoleModal();">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2">
                                         <line x1="12" y1="5" x2="12" y2="19"></line>
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                    Add
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="role-category">
-                        <h3>Technology & IT</h3>
-                        <div class="role-list">
-                            <div class="builder-role-card">
-                                <div class="builder-role-info">
-                                    <div class="builder-role-icon">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2">
-                                            <polyline points="16 18 22 12 16 6"></polyline>
-                                            <polyline points="8 6 2 12 8 18"></polyline>
-                                        </svg>
-                                    </div>
-                                    <div class="builder-role-text">
-                                        <h4>Software Developer</h4>
-                                        <p>Frontend, Backend, Full Stack web development</p>
-                                    </div>
-                                </div>
-                                <button class="builder-add-btn"
-                                    onclick="addRoleToCart('Software Developer', 2500); closeRoleModal();">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2">
-                                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                    Add
+                                    </svg> Add
                                 </button>
                             </div>
                             <div class="builder-role-card">
@@ -346,24 +392,25 @@
                                     <div class="builder-role-icon">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2">
-                                            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-                                            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-                                            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                                            <line x1="6" y1="1" x2="6" y2="4"></line>
+                                            <line x1="10" y1="1" x2="10" y2="4"></line>
+                                            <line x1="14" y1="1" x2="14" y2="4"></line>
                                         </svg>
                                     </div>
                                     <div class="builder-role-text">
-                                        <h4>Database Administrator</h4>
-                                        <p>SQL, NoSQL, data management and optimization</p>
+                                        <h4>Culinary Administrator</h4>
+                                        <p>Food service operations and culinary management</p>
                                     </div>
                                 </div>
                                 <button class="builder-add-btn"
-                                    onclick="addRoleToCart('Database Administrator', 2300); closeRoleModal();">
+                                    onclick="addRoleToCart('Culinary Administrator', 1600); closeRoleModal();">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2">
                                         <line x1="12" y1="5" x2="12" y2="19"></line>
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                    Add
+                                    </svg> Add
                                 </button>
                             </div>
                         </div>
@@ -377,24 +424,275 @@
                                     <div class="builder-role-icon">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2">
+                                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Accounting and Finance Head</h4>
+                                        <p>Financial strategy, reporting, and team leadership</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Accounting and Finance Head', 2500); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Add
+                                </button>
+                            </div>
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Accounting Manager</h4>
+                                        <p>Account management and financial operations</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Accounting Manager', 2000); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Add
+                                </button>
+                            </div>
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                                            <polyline points="10 9 9 9 8 9"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Accounting Supervisor</h4>
+                                        <p>Supervise accounting staff and daily operations</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Accounting Supervisor', 1500); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Add
+                                </button>
+                            </div>
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Billing and Collection Officer</h4>
+                                        <p>Invoicing, collections, and accounts receivable</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Billing and Collection Officer', 1200); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="role-category">
+                        <h3>Human Resources</h3>
+                        <div class="role-list">
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="9" cy="7" r="4"></circle>
+                                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>HR Coordinator</h4>
+                                        <p>Employee relations, onboarding, and HR support</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('HR Coordinator', 1100); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Add
+                                </button>
+                            </div>
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Recruitment Officer</h4>
+                                        <p>Talent sourcing, interviewing, and hiring</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Recruitment Officer', 1200); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Add
+                                </button>
+                            </div>
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Payroll Master / Senior Payroll Analyst</h4>
+                                        <p>Complex payroll processing and compliance</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Payroll Master / Senior Payroll Analyst', 1800); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Add
+                                </button>
+                            </div>
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                                            <polyline points="10 9 9 9 8 9"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Payroll Staff</h4>
+                                        <p>Routine payroll processing and records management</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Payroll Staff', 1000); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="role-category">
+                        <h3>Technology, Marketing & Analysts</h3>
+                        <div class="role-list">
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <polyline points="16 18 22 12 16 6"></polyline>
+                                            <polyline points="8 6 2 12 8 18"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Software Developer</h4>
+                                        <p>Frontend, Backend, and Full Stack development</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Software Developer', 2000); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Add
+                                </button>
+                            </div>
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
                                             <line x1="18" y1="20" x2="18" y2="10"></line>
                                             <line x1="12" y1="20" x2="12" y2="4"></line>
                                             <line x1="6" y1="20" x2="6" y2="14"></line>
                                         </svg>
                                     </div>
                                     <div class="builder-role-text">
-                                        <h4>Accountant / CPA</h4>
-                                        <p>Bookkeeping, tax prep, comprehensive accounting</p>
+                                        <h4>Business Analyst</h4>
+                                        <p>Data analysis, process improvement, reporting</p>
                                     </div>
                                 </div>
                                 <button class="builder-add-btn"
-                                    onclick="addRoleToCart('Accountant', 1600); closeRoleModal();">
+                                    onclick="addRoleToCart('Business Analyst', 1800); closeRoleModal();">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2">
                                         <line x1="12" y1="5" x2="12" y2="19"></line>
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                    Add
+                                    </svg> Add
+                                </button>
+                            </div>
+                            <div class="builder-role-card">
+                                <div class="builder-role-info">
+                                    <div class="builder-role-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="7 10 12 15 17 10"></polyline>
+                                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="builder-role-text">
+                                        <h4>Marketing Officer</h4>
+                                        <p>Campaign management, branding, and communications</p>
+                                    </div>
+                                </div>
+                                <button class="builder-add-btn"
+                                    onclick="addRoleToCart('Marketing Officer', 1500); closeRoleModal();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg> Add
                                 </button>
                             </div>
                         </div>
@@ -473,53 +771,69 @@
         }
 
         function updateCartUI() {
-            const container = document.getElementById('cartContainer');
             const emptyState = document.getElementById('cartEmpty');
+            const tableWrapper = document.getElementById('cartTableWrapper');
+            const tbody = document.getElementById('cartTableBody');
             const btnSubmit = document.getElementById('btnSubmitQuote');
 
-            // Clear existing
-            Array.from(container.children).forEach(child => {
-                if (child.id !== 'cartEmpty') child.remove();
-            });
-
             if (cartData.length === 0) {
-                emptyState.style.display = 'block';
+                emptyState.style.display = 'flex';
+                tableWrapper.style.display = 'none';
                 btnSubmit.disabled = true;
                 updateTotals();
                 return;
             }
 
             emptyState.style.display = 'none';
+            tableWrapper.style.display = 'block';
             btnSubmit.disabled = false;
 
+            tbody.innerHTML = '';
+
             cartData.forEach((item, index) => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'cart-item fade-in';
+                const tr = document.createElement('tr');
+                tr.className = 'fade-in';
 
                 const itemPrice = Math.round(item.basePrice * item.multiplier * item.qty);
 
-                itemDiv.innerHTML = `
-                    <div class="cart-item-header">
-                        <div class="cart-item-title">${item.role}</div>
-                        <button class="cart-remove-btn" onclick="removeFromCart(${index})" title="Remove">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                        </button>
-                    </div>
-                    <div class="cart-item-controls">
-                        <select class="cart-level-select" onchange="updateLevel(${index}, this.value)">
+                tr.innerHTML = `
+                    <td>
+                        <div class="role-col">
+                            <div class="role-col-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="role-col-text">
+                                <h4>${item.role}</h4>
+                                <p>Dedicated Offshore Talent</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <select class="level-select" onchange="updateLevel(${index}, this.value)">
                             <option value="1.0" ${item.multiplier == 1.0 ? 'selected' : ''}>Junior</option>
                             <option value="1.4" ${item.multiplier == 1.4 ? 'selected' : ''}>Mid-Level</option>
                             <option value="1.8" ${item.multiplier == 1.8 ? 'selected' : ''}>Senior</option>
                         </select>
-                        <div class="cart-qty-control">
-                            <button class="cart-qty-btn" type="button" onclick="updateQty(${index}, -1)">–</button>
-                            <span class="cart-qty-display">${item.qty}</span>
-                            <button class="cart-qty-btn" type="button" onclick="updateQty(${index}, 1)">+</button>
+                    </td>
+                    <td style="text-align: center;">
+                        <div class="qty-control-wrapper">
+                            <button type="button" onclick="updateQty(${index}, -1)">–</button>
+                            <span>${item.qty}</span>
+                            <button type="button" onclick="updateQty(${index}, 1)">+</button>
                         </div>
-                        <div class="cart-item-price">$${itemPrice.toLocaleString()}/mo</div>
-                    </div>
+                    </td>
+                    <td class="price-col" style="text-align: right;">
+                        $${itemPrice.toLocaleString()}<span style="font-size:0.8rem;color:var(--text-muted);font-weight:normal;">/mo</span>
+                    </td>
+                    <td class="action-col">
+                        <button class="btn-remove-row" onclick="removeFromCart(${index})" title="Remove">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                    </td>
                 `;
-                container.appendChild(itemDiv);
+                tbody.appendChild(tr);
             });
 
             updateTotals();
