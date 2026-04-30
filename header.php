@@ -16,7 +16,7 @@
     <header id="main-header">
         <div class="nav-container">
             <div class="logo"><a href="<?php echo esc_url(home_url('/')); ?>"><img src="<?php echo kg_asset('img/[LOGO] Main Logo White.webp'); ?>" alt="Kings Group Logo"
-                        class="brand-logo"></a></div>
+                        class="brand-logo" loading="eager"></a></div>
 
             <!-- Left Side (Client Focus) -->
             <div class="nav-section client">

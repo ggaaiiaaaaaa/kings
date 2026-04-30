@@ -6,7 +6,7 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <a href="<?php echo esc_url(home_url('/')); ?>" class="footer-logo"><img src="<?php echo kg_asset('img/[LOGO] Footer.webp'); ?>"
-                            alt="Kings Group Footer Logo" class="brand-logo-footer"></a>
+                            alt="Kings Group Footer Logo" class="brand-logo-footer" loading="lazy"></a>
                     <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem;">Empowering global teams with ethical
                         Philippine talent through a worker-owned cooperative model.</p>
                 </div>
