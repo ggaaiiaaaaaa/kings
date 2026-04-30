@@ -25,13 +25,44 @@ function kg_check_honeypot() {
 }
 
 /**
+ * Flushes a JSON success response to the browser immediately,
+ * then keeps PHP running so emails send after the connection closes.
+ * This makes the form feel instant — no waiting for SMTP.
+ */
+function kg_flush_response( $data ) {
+    $json = wp_json_encode( array( 'success' => true, 'data' => $data ) );
+
+    // Disable output buffering so headers can be sent
+    while ( ob_get_level() ) {
+        ob_end_clean();
+    }
+
+    header( 'Content-Type: application/json; charset=UTF-8' );
+    header( 'Content-Length: ' . strlen( $json ) );
+    header( 'Connection: close' );
+
+    echo $json;
+
+    // Flush to the browser
+    flush();
+
+    // Keep PHP alive after response (FastCGI / Apache)
+    if ( function_exists( 'fastcgi_finish_request' ) ) {
+        fastcgi_finish_request();
+    }
+
+    // Prevent WP from sending anything else
+    ignore_user_abort( true );
+    set_time_limit( 120 );
+}
+
+/**
  * Wraps wp_mail() and captures any PHPMailer errors.
  * Returns true on success, or the error message string on failure.
  */
 function kg_send_mail( $to, $subject, $body, $headers = array(), $attachments = array() ) {
     $mail_error = null;
 
-    // Use a named static function stored in a variable so remove_action works
     $capture = static function( $wp_error ) use ( &$mail_error ) {
         $mail_error = $wp_error->get_error_message();
     };
@@ -83,10 +114,10 @@ function kg_handle_contact() {
         'Reply-To: ' . $name . ' <' . $email . '>',
     );
 
-    $result = kg_send_mail( $to_email, 'Contact Inquiry: ' . $subject, kg_email_wrap( 'Contact Inquiry: ' . $subject, $body ), $headers );
-    if ( $result !== true ) {
-        wp_send_json_error( array( 'message' => 'Email delivery failed: ' . $result . ' — Check WP Mail SMTP settings in WP Admin.' ), 500 );
-    }
+    /* — Respond to browser immediately, send emails after — */
+    kg_flush_response( array( 'message' => 'Your message has been sent. We\'ll be in touch soon!' ) );
+
+    kg_send_mail( $to_email, 'Contact Inquiry: ' . $subject, kg_email_wrap( 'Contact Inquiry: ' . $subject, $body ), $headers );
 
     /* — Auto-reply to visitor — */
     $reply_body = kg_email_heading( 'We received your message!' )
@@ -107,7 +138,7 @@ function kg_handle_contact() {
         array( 'Content-Type: text/html; charset=UTF-8' )
     );
 
-    wp_send_json_success( array( 'message' => 'Your message has been sent. We\'ll be in touch soon!' ) );
+    exit;
 }
 add_action( 'wp_ajax_nopriv_kg_submit_contact', 'kg_handle_contact' );
 add_action( 'wp_ajax_kg_submit_contact',        'kg_handle_contact' );
@@ -194,16 +225,16 @@ function kg_handle_application() {
         ) );
     }
 
-    $result = kg_send_mail(
+    /* — Respond to browser immediately, send emails after — */
+    kg_flush_response( array( 'message' => 'Application submitted! Check your email for confirmation.' ) );
+
+    kg_send_mail(
         $to_email,
         'New Application: ' . $fullname . ( $role ? ' — ' . $role : '' ),
         kg_email_wrap( 'New CV Application', $body ),
         $headers,
         array( $cv_path )
     );
-    if ( $result !== true ) {
-        wp_send_json_error( array( 'message' => 'Email delivery failed: ' . $result . ' — Check WP Mail SMTP settings in WP Admin.' ), 500 );
-    }
 
     /* — Auto-reply to applicant — */
     $reply_body = kg_email_heading( 'Application Received!' )
@@ -225,7 +256,7 @@ function kg_handle_application() {
         array( 'Content-Type: text/html; charset=UTF-8' )
     );
 
-    wp_send_json_success( array( 'message' => 'Application submitted! Check your email for confirmation.' ) );
+    exit;
 }
 add_action( 'wp_ajax_nopriv_kg_submit_application', 'kg_handle_application' );
 add_action( 'wp_ajax_kg_submit_application',        'kg_handle_application' );
@@ -306,15 +337,18 @@ function kg_handle_quote() {
         'Reply-To: ' . $name . ' <' . $email . '>',
     );
 
-    $result = kg_send_mail(
+    /* — Respond to browser immediately, send emails after — */
+    kg_flush_response( array(
+        'message' => 'Quote submitted! Check your email for your team configuration summary.',
+        'total'   => '$' . number_format($total_price, 0),
+    ) );
+
+    kg_send_mail(
         $to_email,
         'Quote Request from ' . $name . ' — $' . number_format($total_price, 0) . '/mo',
         kg_email_wrap( 'New Quote Request', $body ),
         $headers
     );
-    if ( $result !== true ) {
-        wp_send_json_error( array( 'message' => 'Email delivery failed: ' . $result . ' — Check WP Mail SMTP settings in WP Admin.' ), 500 );
-    }
 
     /* — Confirmation email to client — */
     $client_body = kg_email_heading( 'Your Quote Has Been Received!' )
@@ -333,10 +367,7 @@ function kg_handle_quote() {
         array( 'Content-Type: text/html; charset=UTF-8' )
     );
 
-    wp_send_json_success( array(
-        'message' => 'Quote submitted! Check your email for your team configuration summary.',
-        'total'   => '$' . number_format($total_price, 0),
-    ) );
+    exit;
 }
 add_action( 'wp_ajax_nopriv_kg_submit_quote', 'kg_handle_quote' );
 add_action( 'wp_ajax_kg_submit_quote',        'kg_handle_quote' );

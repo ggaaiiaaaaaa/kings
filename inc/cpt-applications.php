@@ -216,15 +216,63 @@ function kg_save_application_status( $post_id ) {
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
     if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
-    if ( isset( $_POST['kg_app_status'] ) ) {
-        $allowed = array( 'pending', 'accepted', 'rejected' );
-        $new_status = in_array( $_POST['kg_app_status'], $allowed, true )
-            ? $_POST['kg_app_status']
-            : 'pending';
-        update_post_meta( $post_id, 'kg_app_status', $new_status );
+    if ( ! isset( $_POST['kg_app_status'] ) ) return;
+
+    $allowed    = array( 'pending', 'accepted', 'rejected' );
+    $new_status = in_array( $_POST['kg_app_status'], $allowed, true )
+        ? $_POST['kg_app_status']
+        : 'pending';
+    $old_status = get_post_meta( $post_id, 'kg_app_status', true ) ?: 'pending';
+
+    update_post_meta( $post_id, 'kg_app_status', $new_status );
+
+    /* — Email applicant when status changes to accepted or rejected — */
+    if ( $new_status !== $old_status && in_array( $new_status, array( 'accepted', 'rejected' ), true ) ) {
+        kg_notify_applicant_status( $post_id, $new_status );
     }
 }
 add_action( 'save_post_kg_application', 'kg_save_application_status' );
+
+/**
+ * Sends a branded status-update email to the applicant.
+ */
+function kg_notify_applicant_status( $post_id, $status ) {
+    require_once get_template_directory() . '/inc/email-templates.php';
+
+    $fname    = explode( ' ', get_the_title( $post_id ) )[0];
+    $fullname = get_the_title( $post_id );
+    $email    = get_post_meta( $post_id, 'kg_app_email', true );
+    $role     = get_post_meta( $post_id, 'kg_app_role',  true ) ?: 'the position';
+
+    if ( ! $email ) return;
+
+    if ( $status === 'accepted' ) {
+        $subject = 'Congratulations! Your application has been accepted — Kings Group';
+        $body = kg_email_heading( 'You\'ve Been Accepted! 🎉' )
+            . kg_email_para( 'Hi ' . esc_html($fname) . ',' )
+            . kg_email_para( 'We are thrilled to inform you that your application for <strong>' . esc_html($role) . '</strong> has been <strong style="color:#065f46;">accepted</strong>.' )
+            . kg_email_para( 'Our team will reach out to you shortly with the next steps, including onboarding details and your start date.' )
+            . kg_email_banner( 'Welcome to the Kings Group family! We are excited to have you on board.' )
+            . kg_email_para( 'If you have any questions in the meantime, simply reply to this email.' )
+            . kg_email_button( 'Visit Kings Group', home_url('/') );
+    } else {
+        $subject = 'Update on your Kings Group application';
+        $body = kg_email_heading( 'Application Update' )
+            . kg_email_para( 'Hi ' . esc_html($fname) . ',' )
+            . kg_email_para( 'Thank you for your interest in joining Kings Group Cooperative and for taking the time to apply for <strong>' . esc_html($role) . '</strong>.' )
+            . kg_email_para( 'After careful consideration, we regret to inform you that we will not be moving forward with your application at this time.' )
+            . kg_email_banner( 'We encourage you to apply again in the future — we regularly open new positions.' )
+            . kg_email_para( 'We appreciate the time you invested and wish you the best in your career.' )
+            . kg_email_button( 'Browse Open Positions', home_url('/jobs/') );
+    }
+
+    wp_mail(
+        $email,
+        $subject,
+        kg_email_wrap( $subject, $body ),
+        array( 'Content-Type: text/html; charset=UTF-8' )
+    );
+}
 
 /* ─────────────────────────────────────────────
    Filter by status in admin list
