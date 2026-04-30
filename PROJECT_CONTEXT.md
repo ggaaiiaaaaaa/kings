@@ -1,25 +1,24 @@
 # PROJECT CONTEXT — Kings Group Website
 # Universal session state. Read by: Antigravity, Gemini CLI, Claude Code CLI
-# Last updated: 2026-04-30 via Gemini CLI
+# Last updated: 2026-04-30 via Claude Code
 
 ---
 
 ## PROJECT OVERVIEW
 ```
 Name:     Kings Group Website
-Type:     WordPress Theme Development (Phases 4 & 5 complete)
-Stack:    HTML, CSS (Liquid Glass), JS, PHP, ACF
+Type:     WordPress Theme Development (Phase 6 complete)
+Stack:    HTML, CSS (Liquid Glass), JS, PHP, ACF, WP Mail SMTP
 Features: Recruitment, Staffing, Service Pricing, Career, Network, Membership
-Status:   WP template hierarchy complete; image performance optimized.
+Status:   All three forms fully wired with real AJAX + branded HTML emails.
 ```
 
 ---
 
 ## CURRENT STATE
 ```
-Phase:    Phase 5 complete — WP menus, CPT templates, lazy loading, WebP helpers
+Phase:    Phase 6 complete — Forms & Email (Contact, Careers CV upload, Quote team builder)
 Branch:   master
-Commit:   423ccb8 perf: add loading=eager/lazy to all img tags
 ```
 
 ---
@@ -31,24 +30,24 @@ Tool used: Claude Code
 ```
 
 ### What was done
-- [x] **Phase 4: WP nav menus wired** — header.php uses `wp_nav_menu()` for menu-1 (client) and menu-2 (applicant). footer.php uses `wp_nav_menu()` for footer menu with full hardcoded fallback. CSS `display:contents` reset makes WP list items flow as bare nav links seamlessly.
-- [x] **Phase 4: single-jobs.php created** — Full CPT single template with JobPosting JSON-LD schema, breadcrumb nav, two-column layout (content + sticky sidebar with Apply CTA + job details card), ACF fields (location, type, salary_min, salary_max, department), mobile responsive.
-- [x] **Phase 4: archive-jobs.php created** — Grid layout with glass cards per job, type badge, location, excerpt, "View Position →" button, pagination, empty state.
-- [x] **Phase 4: search.php created** — Search results page with post-type badge, title, date, excerpt, pagination, no-results state.
-- [x] **Phase 5: kg_webp() helper added** — Auto-serves .webp over .png/.jpg if file exists on disk (filesystem check). Future-proofs image references.
-- [x] **Phase 5: kg_img() updated** — Added `$loading` parameter (defaults to `'lazy'`), outputs `loading="..."` HTML attribute.
-- [x] **Phase 5: add_image_size() calls added** — kg-hero (1920×800), kg-card (600×400), kg-thumbnail (300×200) registered in WP Media Library.
-- [x] **Phase 5: Lazy loading audit complete** — All `<img>` tags across all templates now have explicit `loading=` attribute. Hero/header images use `loading="eager"` (LCP optimization). All other images use `loading="lazy"` (60+ trust bar logos, network cards, story photos, testimonials, affiliates, footer logo).
-- [x] **ACF field group for jobs CPT** — inc/acf-fields.php: job_location, job_type (select), job_salary_min, job_salary_max, job_department.
+- [x] **Phase 6: inc/email-templates.php created** — Shared branded HTML email builders: `kg_email_wrap()`, `kg_email_row()`, `kg_email_heading()`, `kg_email_para()`, `kg_email_button()`, `kg_email_banner()`. Kings Group branding (#0A2540 header/footer, #00D09C accents).
+- [x] **Phase 6: inc/form-handlers.php created** — Three AJAX handlers: `kg_handle_contact`, `kg_handle_application`, `kg_handle_quote`. All use nonce verification, honeypot spam protection, and `wp_mail()` for HTML emails.
+- [x] **Phase 6: contact.php wired** — Real HTML form with AJAX submit. Sends inquiry to info@kingsgroup.com.ph with Reply-To set to sender. Auto-reply sent to visitor confirming receipt.
+- [x] **Phase 6: careers.php wired** — CV upload form posts `multipart/form-data` to AJAX handler. File validated (PDF/DOCX, 5MB max), saved via `wp_handle_upload()`. Kings Group gets email with CV attached; applicant gets auto-reply with "Browse Open Positions" button.
+- [x] **Phase 6: quote.php wired** — `submitQuote()` replaced with real AJAX. Sends `quote_roles` as JSON. PHP builds branded roles table (role, level×qty, unit price, subtotal, grand total). Kings Group gets quote request; client gets confirmation email with same table.
+- [x] **Phase 6: functions.php updated** — `wp_localize_script()` adds `KG_AJAX` object (AJAX URL + 3 nonces) to JS. `require_once form-handlers.php` added.
+- [x] **Phase 6: Nav fixes** — `kg_create_default_menus()` force-deletes & recreates menus on init to prevent stale DB duplication. About dropdown moved before Get a Quote in header. Footer reverted to hardcoded three-column layout.
+- [x] **Phase 6: Permalink flush** — `kg_flush_rewrite_once()` uses option flag so `/jobs/` URL resolves automatically without manual WP Admin visit.
 
 ### Decisions made
-- [Decision] Header/footer nav menus use WP dynamic menus with CSS `display:contents` trick — no visual change, fully editable from WP Admin.
-- [Decision] `kg_webp()` does filesystem check so it only serves .webp if the file actually exists — safe for gradual rollout.
-- [Decision] Hero slide 1 (`.active`) gets `loading="eager"`, slides 2-3 get `loading="lazy"` — avoids penalizing LCP on non-visible slides.
+- [Decision] No Mailtrap/sandbox — user tests emails directly via WP Mail SMTP + Gmail SMTP on localhost. Production deployment after manual testing.
+- [Decision] Honeypot spam protection chosen over reCAPTCHA — simpler, no external JS dependency, silent bot rejection.
+- [Decision] Quote roles JSON from JS uses keys `role`, `level`, `qty`, `unit_price`, `subtotal` — PHP handler reads same keys.
+- [Decision] CV files saved to WP uploads via `wp_handle_upload()` for Media Library integration and automatic filename deduplication.
 
 ### Files modified
-- header.php, footer.php, functions.php, inc/acf-fields.php, style.css
-- Created: single-jobs.php, archive-jobs.php, search.php
+- contact.php, careers.php, quote.php, functions.php, style.css, header.php, footer.php
+- Created: inc/email-templates.php, inc/form-handlers.php
 
 ---
 
@@ -58,7 +57,8 @@ Tool used: Claude Code
 - (none)
 
 ### Up Next (priority order)
-- [ ] Phase 6: Forms & production readiness (Contact Form 7, SMTP, deployment) — user to decide scope.
+- [ ] Manual email testing on localhost (test contact form, careers CV upload, quote submission)
+- [ ] Production deployment when testing passes
 
 ### Done
 - [x] Initial God Mode project setup

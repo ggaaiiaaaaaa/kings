@@ -184,14 +184,101 @@ endif;
 add_action('after_setup_theme', 'kingsgroup_setup');
 
 /**
+ * Auto-create and assign nav menus if they don't exist yet.
+ * Runs once on init; skips silently if menus are already set up.
+ */
+function kg_create_default_menus() {
+    // Client nav (left side) — About dropdown and Get a Quote are hardcoded in header.php
+    $client_items = array(
+        array( 'title' => 'Home', 'url' => home_url('/') ),
+    );
+
+    // Applicant nav (right side)
+    $applicant_items = array(
+        array( 'title' => 'Find a Job',    'url' => home_url('/careers/') ),
+        array( 'title' => 'Member Portal', 'url' => 'https://zckings.azurewebsites.net/' ),
+        array( 'title' => 'Log In',        'url' => wp_login_url() ),
+    );
+
+    // Footer nav
+    $footer_items = array(
+        array( 'title' => 'Our Story',    'url' => home_url('/story/') ),
+        array( 'title' => 'Careers',      'url' => home_url('/careers/') ),
+        array( 'title' => 'Contact Us',   'url' => home_url('/contact/') ),
+        array( 'title' => 'Member Portal','url' => 'https://zckings.azurewebsites.net/' ),
+        array( 'title' => 'Kings Lending','url' => 'https://kingslending.timefree.ph/' ),
+        array( 'title' => 'Benefits',     'url' => home_url('/benefits/') ),
+        array( 'title' => 'Terms of Service', 'url' => home_url('/terms/') ),
+        array( 'title' => 'Privacy Policy',   'url' => home_url('/privacy/') ),
+    );
+
+    $menus = array(
+        'menu-1' => array( 'name' => 'Primary Client Menu',    'items' => $client_items ),
+        'menu-2' => array( 'name' => 'Primary Applicant Menu', 'items' => $applicant_items ),
+        'footer' => array( 'name' => 'Footer Menu',            'items' => $footer_items ),
+    );
+
+    foreach ( $menus as $location => $config ) {
+        $existing = wp_get_nav_menu_object( $config['name'] );
+
+        if ( $existing ) {
+            // Delete and recreate to ensure items stay in sync with code
+            wp_delete_nav_menu( $existing->term_id );
+        }
+
+        $menu_id = wp_create_nav_menu( $config['name'] );
+        if ( is_wp_error( $menu_id ) ) continue;
+
+        foreach ( $config['items'] as $item ) {
+            wp_update_nav_menu_item( $menu_id, 0, array(
+                'menu-item-title'  => $item['title'],
+                'menu-item-url'    => $item['url'],
+                'menu-item-status' => 'publish',
+                'menu-item-type'   => 'custom',
+            ) );
+        }
+
+        // Assign to theme location
+        $locations            = get_theme_mod( 'nav_menu_locations', array() );
+        $locations[ $location ] = $menu_id;
+        set_theme_mod( 'nav_menu_locations', $locations );
+    }
+}
+add_action( 'init', 'kg_create_default_menus' );
+
+/**
+ * Auto-add menu-btn-primary class to "Get a Quote" nav item.
+ */
+function kg_nav_item_classes( $classes, $item ) {
+    if ( $item->title === 'Get a Quote' ) {
+        $classes[] = 'menu-btn-primary';
+    }
+    return $classes;
+}
+add_filter( 'nav_menu_css_class', 'kg_nav_item_classes', 10, 2 );
+
+/**
  * Enqueue scripts and styles.
  */
 function kingsgroup_scripts()
 {
     wp_enqueue_style('kingsgroup-style', get_stylesheet_uri(), array(), filemtime(get_template_directory() . '/style.css'));
     wp_enqueue_script('kingsgroup-script', get_template_directory_uri() . '/script.js', array(), filemtime(get_template_directory() . '/script.js'), true);
+
+    // Pass AJAX URL and nonces to JS — available as KG_AJAX.url, KG_AJAX.contact_nonce, etc.
+    wp_localize_script( 'kingsgroup-script', 'KG_AJAX', array(
+        'url'           => admin_url('admin-ajax.php'),
+        'contact_nonce' => wp_create_nonce('kg_contact_nonce'),
+        'careers_nonce' => wp_create_nonce('kg_careers_nonce'),
+        'quote_nonce'   => wp_create_nonce('kg_quote_nonce'),
+    ) );
 }
 add_action('wp_enqueue_scripts', 'kingsgroup_scripts');
+
+// Load form handlers — registers all three wp_ajax_* actions
+if ( function_exists('add_action') ) {
+    require_once get_template_directory() . '/inc/form-handlers.php';
+}
 
 /**
  * Helper function for asset paths (Presentation Safe)
@@ -295,5 +382,17 @@ function kingsgroup_register_jobs_cpt()
     register_post_type('jobs', $args);
 }
 add_action('init', 'kingsgroup_register_jobs_cpt');
+
+/**
+ * Flush rewrite rules once after theme activation or CPT registration changes.
+ * Runs only when the flush flag isn't set yet, then sets it so it never runs twice.
+ */
+function kg_flush_rewrite_once() {
+    if ( ! get_option('kg_rewrite_flushed') ) {
+        flush_rewrite_rules();
+        update_option('kg_rewrite_flushed', true);
+    }
+}
+add_action('init', 'kg_flush_rewrite_once', 20 );
 
 

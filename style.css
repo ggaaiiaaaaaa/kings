@@ -300,25 +300,43 @@ header.scrolled .nav-link::after {
 }
 .nav-section ul.nav-menu-list li a {
     font-family: var(--font-body);
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 0.95rem;
+    font-weight: bold;
     color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
-    padding: 0.4rem 0.1rem;
-    transition: var(--transition);
+    position: relative;
+    transition: color 0.3s ease;
     white-space: nowrap;
+}
+.nav-section ul.nav-menu-list li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background: #ffffff;
+    border-radius: 2px;
+    transition: width 0.3s ease;
 }
 .nav-section ul.nav-menu-list li a:hover,
 .nav-section ul.nav-menu-list li.current-menu-item > a {
     color: #ffffff;
 }
-/* Primary button style — add CSS class "menu-btn-primary" to menu item in WP Admin */
-.nav-section ul.nav-menu-list li.menu-btn-primary > a {
-    background: var(--sec-accent-green);
-    color: var(--main-blue);
-    padding: 0.5rem 1.25rem;
-    font-weight: 700;
+.nav-section ul.nav-menu-list li a:hover::after,
+.nav-section ul.nav-menu-list li.current-menu-item > a::after {
+    width: 100%;
 }
+header.scrolled .nav-section ul.nav-menu-list li a {
+    color: var(--text-muted);
+}
+header.scrolled .nav-section ul.nav-menu-list li a:hover {
+    color: var(--main-blue);
+}
+header.scrolled .nav-section ul.nav-menu-list li a::after {
+    background: var(--main-blue);
+}
+/* menu-btn-primary — reserved for future use if needed */
 
 /* Footer wp_nav_menu() list reset */
 ul.footer-nav-list {

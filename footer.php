@@ -11,18 +11,6 @@
                         Philippine talent through a worker-owned cooperative model.</p>
                 </div>
 
-                <?php
-                // Dynamic footer links — managed from WP Admin → Appearance → Menus → Footer Menu
-                if ( function_exists('wp_nav_menu') && has_nav_menu('footer') ) :
-                    wp_nav_menu( array(
-                        'theme_location' => 'footer',
-                        'container'      => false,
-                        'depth'          => 2,
-                        'fallback_cb'    => false,
-                        'items_wrap'     => '<ul class="footer-nav-list">%3$s</ul>',
-                    ) );
-                else : ?>
-                <!-- Fallback footer links if no menu is assigned in WP Admin -->
                 <div class="footer-links-col">
                     <h4>Company</h4>
                     <a href="<?php echo esc_url(home_url('/story/')); ?>">Our Story</a>
@@ -41,7 +29,6 @@
                     <a href="#">Privacy Policy</a>
                     <a href="#">Trust &amp; Safety</a>
                 </div>
-                <?php endif; ?>
             </div>
 
             <div class="footer-bottom">

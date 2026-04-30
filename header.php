@@ -22,14 +22,17 @@
             <div class="nav-section client">
                 <?php
                 // Dynamic client nav — managed from WP Admin → Appearance → Menus → Primary Client Menu
-                wp_nav_menu( array(
-                    'theme_location' => 'menu-1',
-                    'container'      => false,
-                    'depth'          => 1,
-                    'fallback_cb'    => false,
-                    'items_wrap'     => '<ul class="nav-menu-list">%3$s</ul>',
-                ) );
-                ?>
+                if ( has_nav_menu('menu-1') ) {
+                    wp_nav_menu( array(
+                        'theme_location' => 'menu-1',
+                        'container'      => false,
+                        'depth'          => 1,
+                        'fallback_cb'    => false,
+                        'items_wrap'     => '<ul class="nav-menu-list">%3$s</ul>',
+                    ) );
+                } else { ?>
+                <a href="<?php echo esc_url(home_url('/')); ?>" class="nav-link">Home</a>
+                <?php } ?>
 
                 <!-- Dropdown Menu: About (stays hardcoded — custom mega menu design) -->
                 <div class="dropdown">
@@ -143,20 +146,27 @@
                     </div>
                 </div>
 
+                <a href="<?php echo esc_url(home_url('/quote/')); ?>" class="nav-link">Get a Quote</a>
+
             </div>
 
             <!-- Right Side (Applicant Focus) -->
             <div class="nav-section applicant">
                 <?php
                 // Dynamic applicant nav — managed from WP Admin → Appearance → Menus → Primary Applicant Menu
-                wp_nav_menu( array(
-                    'theme_location' => 'menu-2',
-                    'container'      => false,
-                    'depth'          => 1,
-                    'fallback_cb'    => false,
-                    'items_wrap'     => '<ul class="nav-menu-list">%3$s</ul>',
-                ) );
-                ?>
+                if ( has_nav_menu('menu-2') ) {
+                    wp_nav_menu( array(
+                        'theme_location' => 'menu-2',
+                        'container'      => false,
+                        'depth'          => 1,
+                        'fallback_cb'    => false,
+                        'items_wrap'     => '<ul class="nav-menu-list">%3$s</ul>',
+                    ) );
+                } else { ?>
+                <a href="<?php echo esc_url(home_url('/careers/')); ?>" class="nav-link">Find a Job</a>
+                <a href="https://zckings.azurewebsites.net/" class="nav-link" target="_blank" rel="noopener">Member Portal</a>
+                <a href="<?php echo esc_url(home_url('/wp-login.php')); ?>" class="nav-link">Log In</a>
+                <?php } ?>
             </div>
 
             <!-- Mobile Toggle -->
