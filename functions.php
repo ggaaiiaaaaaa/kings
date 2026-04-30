@@ -339,6 +339,11 @@ if (file_exists(get_template_directory() . '/inc/cpt-applications.php')) {
     require_once get_template_directory() . '/inc/cpt-applications.php';
 }
 
+// Inquiries + Quote Leads CPTs (contact and quote form submissions)
+if (file_exists(get_template_directory() . '/inc/cpt-inquiries.php')) {
+    require_once get_template_directory() . '/inc/cpt-inquiries.php';
+}
+
 /**
  * Safely get ACF field value, allowing intentional empty strings.
  */

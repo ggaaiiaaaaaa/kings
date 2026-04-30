@@ -114,6 +114,16 @@ function kg_handle_contact() {
         'Reply-To: ' . $name . ' <' . $email . '>',
     );
 
+    /* — Save to WP Admin (Inquiries CPT) — */
+    if ( function_exists('kg_save_inquiry_post') ) {
+        kg_save_inquiry_post( array(
+            'name'    => $name,
+            'email'   => $email,
+            'subject' => $subject,
+            'message' => $message,
+        ) );
+    }
+
     /* — Respond to browser immediately, send emails after — */
     kg_flush_response( array( 'message' => 'Your message has been sent. We\'ll be in touch soon!' ) );
 
@@ -336,6 +346,16 @@ function kg_handle_quote() {
         'Content-Type: text/html; charset=UTF-8',
         'Reply-To: ' . $name . ' <' . $email . '>',
     );
+
+    /* — Save to WP Admin (Quote Leads CPT) — */
+    if ( function_exists('kg_save_quote_lead_post') ) {
+        kg_save_quote_lead_post( array(
+            'name'  => $name,
+            'email' => $email,
+            'total' => $total_price,
+            'roles' => $roles,
+        ) );
+    }
 
     /* — Respond to browser immediately, send emails after — */
     kg_flush_response( array(

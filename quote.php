@@ -186,6 +186,9 @@ get_header();
                     </div>
 
                     <div class="cart-action">
+                        <div id="quote-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;padding:0.75rem 1rem;margin-bottom:1rem;border-radius:6px;">
+                            <p style="margin:0;color:#991b1b;font-size:0.9rem;" id="quote-error-msg"></p>
+                        </div>
                         <form onsubmit="event.preventDefault(); submitQuote();">
                             <input type="text" id="quoteName" placeholder="Your Full Name" required>
                             <input type="email" id="quoteEmail" placeholder="Your Work Email" required>
@@ -200,6 +203,24 @@ get_header();
                 </div>
 
             </div>
+        </div>
+    </div>
+
+    <!-- Quote Success Modal -->
+    <div id="quoteSuccessOverlay" style="display:none;position:fixed;inset:0;background:rgba(10,37,64,0.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+        <div style="background:#fff;border-radius:20px;padding:3rem 2.5rem;max-width:480px;width:90%;text-align:center;position:relative;box-shadow:0 24px 64px rgba(10,37,64,0.25);">
+            <button onclick="closeQuoteModal()" style="position:absolute;top:1rem;right:1.25rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-muted);">&times;</button>
+            <div style="width:80px;height:80px;margin:0 auto 1.5rem;background:rgba(0,208,156,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--sec-accent-green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h3 style="font-size:1.6rem;margin-bottom:0.5rem;color:var(--text-dark);">Quote Submitted!</h3>
+            <p style="color:var(--text-muted);font-size:1rem;margin-bottom:0.5rem;" id="quoteSuccessName"></p>
+            <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:2rem;">Our sales team will review your team configuration and reach out within 1 business day with a full proposal.</p>
+            <div style="background:var(--bg-subtle);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.5rem;text-align:left;">
+                <p style="margin:0 0 0.4rem;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Estimated Monthly Total</p>
+                <p style="margin:0;font-size:1.8rem;font-weight:800;color:var(--main-blue);" id="quoteSuccessTotal">$0</p>
+            </div>
+            <a href="<?php echo esc_url(home_url('/')); ?>" class="btn btn-primary" style="width:100%;display:block;padding:0.9rem;">Back to Home</a>
         </div>
     </div>
 
@@ -404,17 +425,30 @@ get_header();
             }
         }
 
+        function showQuoteError(msg) {
+            const box = document.getElementById('quote-error');
+            document.getElementById('quote-error-msg').textContent = msg;
+            box.style.display = 'block';
+            box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function closeQuoteModal() {
+            document.getElementById('quoteSuccessOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
         function submitQuote() {
             const name  = document.getElementById('quoteName').value.trim();
             const email = document.getElementById('quoteEmail').value.trim();
+            const errorBox = document.getElementById('quote-error');
+            errorBox.style.display = 'none';
 
             if (!name || !email) {
-                alert('Please fill in your name and email before submitting.');
+                showQuoteError('Please fill in your name and email before submitting.');
                 return;
             }
-
             if (cartData.length === 0) {
-                alert('Your cart is empty. Please add at least one role.');
+                showQuoteError('Your cart is empty. Please add at least one role.');
                 return;
             }
 
@@ -431,34 +465,49 @@ get_header();
             btn.textContent = 'Sending…';
 
             const body = new FormData();
-            body.append('action',          'kg_submit_quote');
-            body.append('kg_nonce',        KG_AJAX.quote_nonce);
-            body.append('quote_name',      name);
-            body.append('quote_email',     email);
-            body.append('quote_roles',     JSON.stringify(roles));
-            body.append('kg_hp_field',     document.getElementById('kg_hp_quote').value);
+            body.append('action',      'kg_submit_quote');
+            body.append('kg_nonce',    KG_AJAX.quote_nonce);
+            body.append('quote_name',  name);
+            body.append('quote_email', email);
+            body.append('quote_roles', JSON.stringify(roles));
+            body.append('kg_hp_field', document.getElementById('kg_hp_quote').value);
 
             fetch(KG_AJAX.url, { method: 'POST', body })
                 .then(r => r.json())
                 .then(data => {
                     if (data.success) {
+                        // Show branded success modal
+                        document.getElementById('quoteSuccessName').textContent = 'Thank you, ' + name + '! Check your email for a summary.';
+                        document.getElementById('quoteSuccessTotal').textContent = data.data.total || '$0';
+                        const overlay = document.getElementById('quoteSuccessOverlay');
+                        overlay.style.display = 'flex';
+                        document.body.style.overflow = 'hidden';
+                        // Clear cart
                         cartData.length = 0;
                         document.getElementById('quoteName').value  = '';
                         document.getElementById('quoteEmail').value = '';
                         updateCartUI();
-                        alert('Thank you, ' + name + '! Your quote has been submitted. Check your email for a confirmation.');
                     } else {
-                        alert('Error: ' + (data.data && data.data.message ? data.data.message : 'Something went wrong. Please try again.'));
+                        showQuoteError(data.data && data.data.message ? data.data.message : 'Something went wrong. Please try again.');
                         btn.disabled = false;
                         btn.textContent = 'Request Detailed Quote';
                     }
                 })
                 .catch(() => {
-                    alert('Network error. Please check your connection and try again.');
+                    showQuoteError('Network error. Please check your connection and try again.');
                     btn.disabled = false;
                     btn.textContent = 'Request Detailed Quote';
                 });
         }
+
+        // Close modal on overlay click
+        document.getElementById('quoteSuccessOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeQuoteModal();
+        });
+        // Close on ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeQuoteModal();
+        });
     </script>
 
 <?php get_footer(); ?>

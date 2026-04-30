@@ -157,6 +157,9 @@ get_header();
                 <div style="display:none;" aria-hidden="true">
                     <input type="text" id="kg_hp_careers" name="kg_hp_field" value="" tabindex="-1" autocomplete="off">
                 </div>
+                <div id="careers-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;padding:0.75rem 1rem;margin-bottom:0.75rem;border-radius:6px;">
+                    <p style="margin:0;color:#991b1b;font-size:0.9rem;" id="careers-error-msg"></p>
+                </div>
                 <div style="display:flex;gap:1rem;margin-top:1.5rem;">
                     <button type="button" class="btn btn-outline" style="flex:1;padding:1rem;"
                         onclick="goToStep(1)">Back</button>
@@ -464,12 +467,20 @@ get_header();
             const linkedin = document.getElementById('app-linkedin').value.trim();
             const cvFile   = cvInput.files[0];
 
+            const errBox = document.getElementById('careers-error');
+            const errMsg = document.getElementById('careers-error-msg');
+            errBox.style.display = 'none';
+
             if (!fname || !lname || !email) {
-                alert('Please fill in your name and email.');
+                errMsg.textContent = 'Please fill in your first name, last name, and email.';
+                errBox.style.display = 'block';
+                errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 return;
             }
             if (!cvFile) {
-                alert('Please upload your CV.');
+                errMsg.textContent = 'Please upload your CV before submitting.';
+                errBox.style.display = 'block';
+                errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 return;
             }
 
@@ -505,10 +516,17 @@ get_header();
                         document.getElementById('success-modal').classList.add('visible');
                         document.body.style.overflow = 'hidden';
                     } else {
-                        alert(data.data.message || 'Submission failed. Please try again.');
+                        const errBox = document.getElementById('careers-error');
+                        document.getElementById('careers-error-msg').textContent = (data.data && data.data.message) ? data.data.message : 'Submission failed. Please try again.';
+                        errBox.style.display = 'block';
+                        errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     }
                 })
-                .catch(() => alert('Network error. Please try again.'))
+                .catch(() => {
+                    const errBox = document.getElementById('careers-error');
+                    document.getElementById('careers-error-msg').textContent = 'Network error. Please try again.';
+                    errBox.style.display = 'block';
+                })
                 .finally(() => {
                     submitBtn.disabled    = false;
                     submitBtn.textContent = 'Submit Application';
