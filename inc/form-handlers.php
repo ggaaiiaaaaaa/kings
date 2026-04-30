@@ -65,7 +65,7 @@ function kg_handle_contact() {
         wp_send_json_error( array( 'message' => 'Please fill in all required fields.' ), 422 );
     }
 
-    $to_email = 'info@kingsgroup.com.ph';
+    $to_email = 'rhonjames95@gmail.com';
 
     /* — Email to Kings Group — */
     $body = kg_email_heading( 'New Contact Inquiry' )
@@ -162,7 +162,7 @@ function kg_handle_application() {
     $cv_url  = $upload['url'];
     $cv_path = $upload['file'];
 
-    $to_email = 'info@kingsgroup.com.ph';
+    $to_email = 'rhonjames95@gmail.com';
 
     /* — Email to Kings Group — */
     $body = kg_email_heading( 'New CV Application Received' )
@@ -181,6 +181,18 @@ function kg_handle_application() {
         'Content-Type: text/html; charset=UTF-8',
         'Reply-To: ' . $fullname . ' <' . $email . '>',
     );
+
+    /* — Save to WP Admin (Applications CPT) — */
+    if ( function_exists( 'kg_save_application_post' ) ) {
+        kg_save_application_post( array(
+            'fullname' => $fullname,
+            'email'    => $email,
+            'phone'    => $phone,
+            'role'     => $role,
+            'linkedin' => $linkedin,
+            'cv_url'   => $cv_url,
+        ) );
+    }
 
     $result = kg_send_mail(
         $to_email,
@@ -275,7 +287,7 @@ function kg_handle_quote() {
       <tbody>' . $roles_rows . $total_row . '</tbody>
     </table>';
 
-    $to_email = 'info@kingsgroup.com.ph';
+    $to_email = 'rhonjames95@gmail.com';
 
     /* — Email to Kings Group — */
     $body = kg_email_heading( 'New Quote Request' )

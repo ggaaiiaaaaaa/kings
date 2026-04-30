@@ -334,6 +334,11 @@ if (file_exists(get_template_directory() . '/inc/acf-fields.php')) {
     require_once get_template_directory() . '/inc/acf-fields.php';
 }
 
+// Applications CPT (career form submissions)
+if (file_exists(get_template_directory() . '/inc/cpt-applications.php')) {
+    require_once get_template_directory() . '/inc/cpt-applications.php';
+}
+
 /**
  * Safely get ACF field value, allowing intentional empty strings.
  */
@@ -394,5 +399,23 @@ function kg_flush_rewrite_once() {
     }
 }
 add_action('init', 'kg_flush_rewrite_once', 20 );
+
+/**
+ * Configure PHPMailer directly with Gmail SMTP credentials from wp-config.php.
+ * This bypasses WP Mail SMTP OAuth and works with a Gmail App Password.
+ * Credentials are defined in wp-config.php (not committed to git).
+ */
+if ( defined('KG_SMTP_HOST') ) {
+    add_action( 'phpmailer_init', function( $phpmailer ) {
+        $phpmailer->isSMTP();
+        $phpmailer->Host       = KG_SMTP_HOST;
+        $phpmailer->Port       = KG_SMTP_PORT;
+        $phpmailer->SMTPAuth   = true;
+        $phpmailer->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        $phpmailer->Username   = KG_SMTP_USER;
+        $phpmailer->Password   = KG_SMTP_PASS;
+        $phpmailer->setFrom( KG_SMTP_FROM, KG_SMTP_FROMNAME );
+    }, 999 );
+}
 
 
