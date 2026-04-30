@@ -352,11 +352,11 @@ get_header();
 </div>
 </section>
 
-    <!-- Testimonials Section — Now fully ACF-driven -->
+    <!-- Testimonials Section — Driven by the kg_testimonial CPT -->
     <?php
-    // Read testimonial section title/subtitle from ACF
     $testi_title = kg_get_field('testi_title', 'What Our Partners Say');
-    $testi_sub = kg_get_field('testi_subtitle', 'Hear from the organizations and professionals who have experienced the Kings cooperative difference.');
+    $testi_sub   = kg_get_field('testi_subtitle', 'Hear from the organizations and professionals who have experienced the Kings cooperative difference.');
+    $testimonials = function_exists('kg_get_testimonials') ? kg_get_testimonials() : array();
     ?>
     <section class="section testimonials-section" id="testimonials">
         <div class="container animate-on-scroll">
@@ -365,17 +365,13 @@ get_header();
 
             <div class="testimonials-slider-container">
                 <div class="testimonials-track" id="testimonials-track">
-                    <?php
-                    // Loop through up to 4 testimonials from ACF fields
-                    $testi_count = 0;
-                    for ($i = 1; $i <= 4; $i++) {
-                        $quote = function_exists('get_field') ? get_field('testi_'.$i.'_quote', get_queried_object_id()) : '';
-                        $name  = function_exists('get_field') ? get_field('testi_'.$i.'_name', get_queried_object_id()) : '';
-                        $role  = function_exists('get_field') ? get_field('testi_'.$i.'_role', get_queried_object_id()) : '';
-                        $img   = function_exists('get_field') ? get_field('testi_'.$i.'_img', get_queried_object_id()) : '';
-                        if (empty($quote) && empty($name)) continue; // Skip empty testimonials
-                        $testi_count++;
-                        $active_class = ($testi_count === 1) ? ' active' : '';
+                    <?php if ( ! empty( $testimonials ) ) :
+                        foreach ( $testimonials as $i => $t ) :
+                            $quote = get_post_meta( $t->ID, '_kg_testi_quote', true );
+                            $role  = get_post_meta( $t->ID, '_kg_testi_role',  true );
+                            $img   = get_post_meta( $t->ID, '_kg_testi_img',   true );
+                            $name  = get_the_title( $t );
+                            $active_class = ( $i === 0 ) ? ' active' : '';
                     ?>
                     <div class="testimonial-card slide<?php echo $active_class; ?>">
                         <div class="testimonial-content-wrapper">
@@ -399,7 +395,9 @@ get_header();
                             <?php echo kg_img($img, esc_attr($name)); ?>
                         </div>
                     </div>
-                    <?php } // end for ?>
+                    <?php endforeach; else : ?>
+                    <!-- No testimonials added yet — add them via WP Admin → Testimonials -->
+                    <?php endif; ?>
                 </div>
 
                 <div class="slider-controls">

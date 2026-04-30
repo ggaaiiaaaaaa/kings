@@ -344,6 +344,11 @@ if (file_exists(get_template_directory() . '/inc/cpt-inquiries.php')) {
     require_once get_template_directory() . '/inc/cpt-inquiries.php';
 }
 
+// Testimonials CPT — replaces ACF testi_1_* through testi_4_* fields
+if (file_exists(get_template_directory() . '/inc/cpt-testimonials.php')) {
+    require_once get_template_directory() . '/inc/cpt-testimonials.php';
+}
+
 /**
  * Safely get ACF field value, allowing intentional empty strings.
  */

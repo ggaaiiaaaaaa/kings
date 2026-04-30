@@ -308,7 +308,8 @@ get_header();
 </div>
 </section>
 
-    <!-- Testimonials Section -->
+    <!-- Testimonials Section — Driven by the kg_testimonial CPT -->
+    <?php $testimonials = function_exists('kg_get_testimonials') ? kg_get_testimonials() : array(); ?>
     <section class="section testimonials-section" id="testimonials">
         <div class="container animate-on-scroll">
             <h2 class="section-title">What Our Partners Say</h2>
@@ -317,71 +318,39 @@ get_header();
 
             <div class="testimonials-slider-container">
                 <div class="testimonials-track" id="testimonials-track">
-                    <!-- Testimonial 1 -->
-                    <div class="testimonial-card slide active">
+                    <?php if ( ! empty( $testimonials ) ) :
+                        foreach ( $testimonials as $i => $t ) :
+                            $quote = get_post_meta( $t->ID, '_kg_testi_quote', true );
+                            $role  = get_post_meta( $t->ID, '_kg_testi_role',  true );
+                            $img   = get_post_meta( $t->ID, '_kg_testi_img',   true );
+                            $name  = get_the_title( $t );
+                            $active_class = ( $i === 0 ) ? ' active' : '';
+                    ?>
+                    <div class="testimonial-card slide<?php echo $active_class; ?>">
                         <div class="testimonial-content-wrapper">
                             <div class="quote-icon">
                                 <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                 </svg>
                             </div>
                             <div class="rating">
+                                <?php for ($s = 0; $s < 5; $s++): ?>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                <?php endfor; ?>
                             </div>
-                            <p class="testimonial-text">"Kings Group fundamentally transformed how we structure our
-                                customer
-                                service in Asia. The worker-owned model means our team operates with an unparalleled
-                                sense
-                                of ownership and dedication."</p>
-
+                            <p class="testimonial-text">"<?php echo esc_html($quote); ?>"</p>
                             <div class="author-info">
-                                <h4>David K.</h4>
-                                <span>COO, Global Logistics Tech</span>
+                                <h4><?php echo esc_html($name); ?></h4>
+                                <span><?php echo esc_html($role); ?></span>
                             </div>
                         </div>
-
                         <div class="testimonial-image-large">
-                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                                alt="David K." loading="lazy">
+                            <?php echo kg_img($img, esc_attr($name)); ?>
                         </div>
                     </div>
-
-                    <!-- Testimonial 2 -->
-                    <div class="testimonial-card slide">
-                        <div class="testimonial-content-wrapper">
-                            <div class="quote-icon">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                                </svg>
-                            </div>
-                            <div class="rating">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                            </div>
-                            <p class="testimonial-text">"Before Kings, my career was just a series of jobs. Now, as a
-                                member-owner, I have access to lending programs, real benefits, and a voice in how we
-                                operate. It's life-changing."</p>
-
-                            <div class="author-info">
-                                <h4>Maria S.</h4>
-                                <span>Senior Technical Support</span>
-                            </div>
-                        </div>
-
-                        <div class="testimonial-image-large">
-                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                                alt="Maria S." loading="lazy">
-                        </div>
-                    </div>
+                    <?php endforeach; else : ?>
+                    <!-- No testimonials added yet — add them via WP Admin → Testimonials -->
+                    <?php endif; ?>
                 </div>
 
                 <div class="slider-controls">
