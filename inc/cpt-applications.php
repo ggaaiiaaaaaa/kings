@@ -96,14 +96,14 @@ function kg_application_column_content( $column, $post_id ) {
 
         case 'kg_status':
             $status = get_post_meta( $post_id, 'kg_app_status', true ) ?: 'pending';
-            $styles = array(
-                'pending'  => 'background:#fef3c7;color:#92400e;',
-                'accepted' => 'background:#d1fae5;color:#065f46;',
-                'rejected' => 'background:#fee2e2;color:#991b1b;',
-            );
-            $style = $styles[ $status ] ?? $styles['pending'];
-            echo '<span style="' . $style . 'padding:3px 12px;border-radius:12px;font-size:12px;font-weight:700;text-transform:capitalize;display:inline-block;">'
-                . esc_html( $status ) . '</span>';
+            // Inline dropdown — change status directly from the list view
+            echo '<select class="kg-inline-status" data-post-id="' . esc_attr( $post_id ) . '" data-nonce="' . esc_attr( wp_create_nonce( 'kg_inline_status_' . $post_id ) ) . '"
+                style="padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;border:2px solid transparent;cursor:pointer;'
+                . ( $status === 'accepted' ? 'background:#d1fae5;color:#065f46;' : ( $status === 'rejected' ? 'background:#fee2e2;color:#991b1b;' : 'background:#fef3c7;color:#92400e;' ) ) . '">';
+            foreach ( array( 'pending' => '🕐 Pending', 'accepted' => '✅ Accepted', 'rejected' => '❌ Rejected' ) as $val => $label ) {
+                echo '<option value="' . esc_attr($val) . '"' . selected( $status, $val, false ) . '>' . esc_html($label) . '</option>';
+            }
+            echo '</select>';
             break;
 
         case 'kg_cv':
@@ -316,16 +316,127 @@ function kg_application_status_filter_query( $query ) {
 add_action( 'pre_get_posts', 'kg_application_status_filter_query' );
 
 /* ─────────────────────────────────────────────
-   Remove "Add New" button (applications come from the form only)
+   AJAX: inline status change from list view
 ───────────────────────────────────────────── */
 
-function kg_hide_add_new_application() {
-    global $post_type;
-    if ( $post_type === 'kg_application' ) {
-        echo '<style>
-            .page-title-action { display: none !important; }
-            #post-status-display { pointer-events: none; }
-        </style>';
+function kg_ajax_inline_status() {
+    $post_id    = absint( $_POST['post_id'] ?? 0 );
+    $new_status = sanitize_text_field( $_POST['status'] ?? '' );
+    $nonce      = $_POST['nonce'] ?? '';
+
+    if ( ! wp_verify_nonce( $nonce, 'kg_inline_status_' . $post_id ) ) {
+        wp_send_json_error( 'Security check failed.' );
+    }
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+        wp_send_json_error( 'Permission denied.' );
+    }
+
+    $allowed = array( 'pending', 'accepted', 'rejected' );
+    if ( ! in_array( $new_status, $allowed, true ) ) {
+        wp_send_json_error( 'Invalid status.' );
+    }
+
+    $old_status = get_post_meta( $post_id, 'kg_app_status', true ) ?: 'pending';
+    update_post_meta( $post_id, 'kg_app_status', $new_status );
+
+    if ( $new_status !== $old_status && in_array( $new_status, array( 'accepted', 'rejected' ), true ) ) {
+        kg_notify_applicant_status( $post_id, $new_status );
+    }
+
+    wp_send_json_success( array( 'status' => $new_status ) );
+}
+add_action( 'wp_ajax_kg_inline_status', 'kg_ajax_inline_status' );
+
+/* ─────────────────────────────────────────────
+   Bulk actions: Accept / Reject selected
+───────────────────────────────────────────── */
+
+function kg_application_bulk_actions( $actions ) {
+    $actions['kg_bulk_accept'] = '✅ Mark as Accepted';
+    $actions['kg_bulk_reject'] = '❌ Mark as Rejected';
+    return $actions;
+}
+add_filter( 'bulk_actions-edit-kg_application', 'kg_application_bulk_actions' );
+
+function kg_application_bulk_action_handler( $redirect, $action, $post_ids ) {
+    if ( ! in_array( $action, array( 'kg_bulk_accept', 'kg_bulk_reject' ), true ) ) {
+        return $redirect;
+    }
+    $new_status = $action === 'kg_bulk_accept' ? 'accepted' : 'rejected';
+
+    foreach ( $post_ids as $post_id ) {
+        $old_status = get_post_meta( $post_id, 'kg_app_status', true ) ?: 'pending';
+        update_post_meta( $post_id, 'kg_app_status', $new_status );
+        if ( $new_status !== $old_status ) {
+            kg_notify_applicant_status( $post_id, $new_status );
+        }
+    }
+
+    return add_query_arg( 'kg_bulk_done', count( $post_ids ), $redirect );
+}
+add_filter( 'handle_bulk_actions-edit-kg_application', 'kg_application_bulk_action_handler', 10, 3 );
+
+function kg_application_bulk_notice() {
+    if ( ! empty( $_GET['kg_bulk_done'] ) ) {
+        $count = absint( $_GET['kg_bulk_done'] );
+        echo '<div class="notice notice-success is-dismissible"><p>'
+            . sprintf( '%d application(s) updated and applicants notified by email.', $count )
+            . '</p></div>';
     }
 }
-add_action( 'admin_head', 'kg_hide_add_new_application' );
+add_action( 'admin_notices', 'kg_application_bulk_notice' );
+
+/* ─────────────────────────────────────────────
+   Admin JS: inline dropdown + hide Add New
+───────────────────────────────────────────── */
+
+function kg_application_admin_scripts( $hook ) {
+    global $post_type;
+    if ( $hook !== 'edit.php' || $post_type !== 'kg_application' ) return;
+    ?>
+    <style>
+        .page-title-action { display: none !important; }
+        .kg-inline-status:focus { outline: 2px solid #2271b1; }
+        .kg-status-saving { opacity: 0.5; pointer-events: none; }
+    </style>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.kg-inline-status').forEach(function (select) {
+            select.addEventListener('change', function () {
+                var postId  = this.dataset.postId;
+                var nonce   = this.dataset.nonce;
+                var status  = this.value;
+                var el      = this;
+
+                el.classList.add('kg-status-saving');
+
+                var body = new FormData();
+                body.append('action',  'kg_inline_status');
+                body.append('post_id', postId);
+                body.append('status',  status);
+                body.append('nonce',   nonce);
+
+                fetch(ajaxurl, { method: 'POST', body: body })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data.success) {
+                            var colors = {
+                                pending:  'background:#fef3c7;color:#92400e;',
+                                accepted: 'background:#d1fae5;color:#065f46;',
+                                rejected: 'background:#fee2e2;color:#991b1b;',
+                            };
+                            el.style.cssText = 'padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;border:2px solid transparent;cursor:pointer;' + (colors[status] || '');
+                        } else {
+                            alert('Failed to update status. Please try again.');
+                            location.reload();
+                        }
+                    })
+                    .catch(function () { location.reload(); })
+                    .finally(function () { el.classList.remove('kg-status-saving'); });
+            });
+        });
+    });
+    </script>
+    <?php
+}
+add_action( 'admin_footer', 'kg_application_admin_scripts' );
