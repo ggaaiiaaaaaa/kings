@@ -83,6 +83,25 @@
                                             <span class="desc">Discover our cooperative advantage and vision.</span>
                                         </div>
                                     </a>
+                                    <a href="<?php echo esc_url(home_url('/news/')); ?>" class="mega-feature-link">
+                                        <div class="feature-link-icon">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10l4 4v10a2 2 0 0 1-2 2z"></path>
+                                                <polyline points="14 2 14 8 20 8"></polyline>
+                                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                            </svg>
+                                        </div>
+                                        <div class="feature-link-text">
+                                            <span class="title">News</span>
+                                            <span class="desc">Latest updates and corporate milestones.</span>
+                                        </div>
+                                    </a>
+                                    <a href="<?php echo esc_url(home_url('/community/')); ?>" class="mega-feature-link">
+                                        <div class="feature-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></div>
+                                        <div class="feature-link-text"><span class="title">Community</span><span class="desc">Uplifting lives through education and livelihood.</span></div>
+                                    </a>
+
                                 </div>
 
                                 <!-- Column 2: Solutions -->

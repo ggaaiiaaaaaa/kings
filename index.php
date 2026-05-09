@@ -1,442 +1,112 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-    require_once 'functions.php';
-}
-// echo "DEBUG: index.php starting\n";
-$page_title = 'Kings Group | Elite Talent. Ethical Staffing.';
-$page_description = 'Elite talent acquisition and ethical staffing solutions. Discover Kings Group\'s managed services and labor management for businesses.';
+/**
+ * The main template file
+ *
+ * This is the most generic template file in a WordPress theme
+ * and one of the two required files for a theme (the other being style.css).
+ * It is used to display a page when nothing more specific matches a query.
+ * E.g., it puts together the home page when no home.php file exists.
+ *
+ * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
+ *
+ * @package Kings_Group
+ */
+
 get_header();
+
+// Determine if we are on the blog archive or a general archive
+$is_news_archive = is_home() || is_archive();
+$title = $is_news_archive ? 'News & Updates' : 'Kings Group';
+$subtitle = $is_news_archive ? 'Stay informed with the latest insights, company news, and industry updates from the Kings Group community.' : 'Elite talent acquisition and ethical staffing solutions.';
 ?>
 
-    <!-- The Hero Section: People-First Hook -->
-    <section class="hero">
-        <div class="hero-bg-media" id="hero-slider">
-            <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
-                alt="Smiling Filipino professionals in a modern workspace" class="hero-slide active" loading="eager">
-            <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
-                alt="Team collaborating in modern office" class="hero-slide" loading="lazy">
-            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
-                alt="Colleagues discussing ideas enthusiastically" class="hero-slide" loading="lazy">
-        </div>
-        <div class="hero-content">
-            <h1>Elite Talent.<br><span>Ethical Staffing.</span>Exceptional Results.</h1>
-            <p>We connect global businesses with the Philippines' top professionals. Established in 1999 as a
-                worker-owned cooperative, our
-                people aren't just staff—they are partners in your success.</p>
-            <div class="hero-buttons">
-                <a href="<?php echo esc_url(home_url('/quote/')); ?>" class="btn btn-primary">
-                    Build Your Team
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                    </svg>
-                </a>
-                <a href="<?php echo esc_url(home_url('/careers/')); ?>" class="btn btn-outline"
-                    style="background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.3); backdrop-filter: blur(5px);">
-                    View Open Roles
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8" />
-                        <path d="m21 21-4.3-4.3" />
-                    </svg>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Trust Bar -->
-    <section class="trust-bar animate-on-scroll">
-        <div class="trust-bar-label">Trusted by leading organizations worldwide</div>
-        <div class="trust-logos-track">
-            <img src="<?php echo kg_asset('img/adidas.webp'); ?>" alt="Adidas" loading="lazy">
-            <img src="<?php echo kg_asset('img/Alveo.webp'); ?>" alt="Alveo" loading="lazy">
-            <img src="<?php echo kg_asset('img/Am-Europharma Corporation.webp'); ?>" alt="Am-Europharma Corporation" loading="lazy">
-            <img src="<?php echo kg_asset('img/american-garden.webp'); ?>" alt="American Garden" loading="lazy">
-            <img src="<?php echo kg_asset('img/Antech.webp'); ?>" alt="Antech" loading="lazy">
-            <img src="<?php echo kg_asset('img/apple.webp'); ?>" alt="Apple" loading="lazy">
-            <img src="<?php echo kg_asset('img/bakers-secret.webp'); ?>" alt="Bakers Secret" loading="lazy">
-            <img src="<?php echo kg_asset('img/brent.webp'); ?>" alt="Brent" loading="lazy">
-            <img src="<?php echo kg_asset('img/BuildbyForgems.webp'); ?>" alt="Build by Forgems" loading="lazy">
-            <img src="<?php echo kg_asset('img/ceres.webp'); ?>" alt="Ceres" loading="lazy">
-            <img src="<?php echo kg_asset('img/Chowking.webp'); ?>" alt="Chowking" loading="lazy">
-            <img src="<?php echo kg_asset('img/CircleK.webp'); ?>" alt="Circle K" loading="lazy">
-            <img src="<?php echo kg_asset('img/cocolife.webp'); ?>" alt="Cocolife" loading="lazy">
-            <img src="<?php echo kg_asset('img/concentrix.webp'); ?>" alt="Concentrix" loading="lazy">
-            <img src="<?php echo kg_asset('img/Defoam.webp'); ?>" alt="Defoam" loading="lazy">
-            <img src="<?php echo kg_asset('img/donamaria.webp'); ?>" alt="Dona Maria" loading="lazy">
-            <img src="<?php echo kg_asset('img/dost.webp'); ?>" alt="DOST" loading="lazy">
-            <img src="<?php echo kg_asset('img/ekco.webp'); ?>" alt="Ekco" loading="lazy">
-            <img src="<?php echo kg_asset('img/entrego.webp'); ?>" alt="Entrego" loading="lazy">
-            <img src="<?php echo kg_asset('img/eurocare.webp'); ?>" alt="Eurocare" loading="lazy">
-            <img src="<?php echo kg_asset('img/evian.webp'); ?>" alt="Evian" loading="lazy">
-            <img src="<?php echo kg_asset('img/expressionslogo.webp'); ?>" alt="Expressions" loading="lazy">
-            <img src="<?php echo kg_asset('img/FDI.webp'); ?>" alt="FDI" loading="lazy">
-            <img src="<?php echo kg_asset('img/Forgems Marketing.webp'); ?>" alt="Forgems Marketing" loading="lazy">
-            <img src="<?php echo kg_asset('img/ForgemsPlusTech.webp'); ?>" alt="Forgems Plus Tech" loading="lazy">
-            <img src="<?php echo kg_asset('img/frabelle.webp'); ?>" alt="Frabelle" loading="lazy">
-            <img src="<?php echo kg_asset('img/hariraya cafe.webp'); ?>" alt="Hariraya Cafe" loading="lazy">
-            <img src="<?php echo kg_asset('img/home-couture.webp'); ?>" alt="Home Couture" loading="lazy">
-            <img src="<?php echo kg_asset('img/iguanas.webp'); ?>" alt="Iguanas" loading="lazy">
-            <img src="<?php echo kg_asset('img/johnsinville.webp'); ?>" alt="Johnsinville" loading="lazy">
-            <img src="<?php echo kg_asset('img/Jollibee.webp'); ?>" alt="Jollibee" loading="lazy">
-            <img src="<?php echo kg_asset('img/kaftheinz.webp'); ?>" alt="Kraft Heinz" loading="lazy">
-            <img src="<?php echo kg_asset('img/kamiseta.webp'); ?>" alt="Kamiseta" loading="lazy">
-            <img src="<?php echo kg_asset('img/kapeZambo.webp'); ?>" alt="Kape Zambo" loading="lazy">
-            <img src="<?php echo kg_asset('img/karimadon.webp'); ?>" alt="Karimadon" loading="lazy">
-            <img src="<?php echo kg_asset('img/klg.webp'); ?>" alt="KLG" loading="lazy">
-            <img src="<?php echo kg_asset('img/kraft phil.webp'); ?>" alt="Kraft Philippines" loading="lazy">
-            <img src="<?php echo kg_asset('img/libbys.webp'); ?>" alt="Libbys" loading="lazy">
-            <img src="<?php echo kg_asset('img/Ma-Ling-Logo1.webp'); ?>" alt="Ma Ling" loading="lazy">
-            <img src="<?php echo kg_asset('img/mamypoko.webp'); ?>" alt="MamyPoko" loading="lazy">
-            <img src="<?php echo kg_asset('img/MartOne.webp'); ?>" alt="Mart One" loading="lazy">
-            <img src="<?php echo kg_asset('img/maxicare.webp'); ?>" alt="Maxicare" loading="lazy">
-            <img src="<?php echo kg_asset('img/Metro.webp'); ?>" alt="Metro" loading="lazy">
-            <img src="<?php echo kg_asset('img/Mirage.webp'); ?>" alt="Mirage" loading="lazy">
-            <img src="<?php echo kg_asset('img/palmlogo.webp'); ?>" alt="Palm" loading="lazy">
-            <img src="<?php echo kg_asset('img/PhilippineWaters.webp'); ?>" alt="Philippine Waters" loading="lazy">
-            <img src="<?php echo kg_asset('img/pocari-sweat.webp'); ?>" alt="Pocari Sweat" loading="lazy">
-            <img src="<?php echo kg_asset('img/samgyupsalamat.webp'); ?>" alt="Samgyupsalamat" loading="lazy">
-            <img src="<?php echo kg_asset('img/scpa.webp'); ?>" alt="SCPA" loading="lazy">
-            <img src="<?php echo kg_asset('img/slagritech.webp'); ?>" alt="SL Agritech" loading="lazy">
-            <img src="<?php echo kg_asset('img/Sofitel.webp'); ?>" alt="Sofitel" loading="lazy">
-            <img src="<?php echo kg_asset('img/spam.webp'); ?>" alt="Spam" loading="lazy">
-            <img src="<?php echo kg_asset('img/Sterlingpaper logo.webp'); ?>" alt="Sterling Paper" loading="lazy">
-            <img src="<?php echo kg_asset('img/subway.webp'); ?>" alt="Subway" loading="lazy">
-            <img src="<?php echo kg_asset('img/temmys.webp'); ?>" alt="Temmys" loading="lazy">
-            <img src="<?php echo kg_asset('img/tigerbalm.webp'); ?>" alt="Tiger Balm" loading="lazy">
-            <img src="<?php echo kg_asset('img/vice.webp'); ?>" alt="Vice" loading="lazy">
-            <img src="<?php echo kg_asset('img/vismay.webp'); ?>" alt="Vismay" loading="lazy">
-            <img src="<?php echo kg_asset('img/volvic.webp'); ?>" alt="Volvic" loading="lazy">
-            <img src="<?php echo kg_asset('img/worldchicken.webp'); ?>" alt="World Chicken" loading="lazy">
-            <img src="<?php echo kg_asset('img/zalora.webp'); ?>" alt="Zalora" loading="lazy">
-        </div>
-    </section>
-
-    <!-- High-Converting Copy Sections -->
-    <section class="section section-bg-light">
-        <div class="container animate-on-scroll">
-            <h2 class="section-title" style="color: var(--main-blue); margin-bottom: 0.5rem;">A Different Kind of
-                Staffing</h2>
-            <p class="section-subtitle" style="margin-bottom: 3rem;">Bridging the gap between a traditional agency and
-                a modern global talent
-                platform to serve businesses and career-seekers alike.</p>
-        </div>
-
-        <div class="container" style="display: flex; flex-direction: column; gap: 5rem; padding-top: 0.5rem;">
-            <!-- For Clients: The Kings Advantage -->
-            <div class="staffing-split animate-on-scroll"
-                style="display: flex; align-items: center; gap: 3rem; flex-wrap: wrap;">
-                <div class="staffing-content" style="flex: 1; min-width: 300px;">
-                    <h2
-                        style="font-size: 2rem; font-family: var(--font-header); color: var(--main-blue); margin-bottom: 0.75rem; line-height: 1.2;">
-                        Your Dedicated Philippine HQ<br>Without the Overhead.</h2>
-                    <p style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 0.5rem; font-weight: 500;">
-                        Stop
-                        "outsourcing" and start "building."</p>
-                    <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5; font-size: 0.95rem;">
-                        Access elite Filipino talent through a worker-owned cooperative with <span class="stats-number" data-value="10000">10,000</span> members. Since
-                        1999, every team member has been personally invested in your growth.</p>
-
-                    <div class="feature-folders">
-                        <div class="folder-item">
-                            <div class="folder-header">
-                                <div class="folder-icon">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                    </svg>
-                                </div>
-                                <h3 class="folder-title">Owner-Level Commitment</h3>
-                            </div>
-                            <div class="folder-body">
-                                <div class="folder-content-inner">
-                                    <p>They aren't just "working for a paycheck." They have a literal stake in the
-                                        company's success.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="folder-item">
-                            <div class="folder-header">
-                                <div class="folder-icon">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                                    </svg>
-                                </div>
-                                <h3 class="folder-title">The "Zero-Hassle" Guarantee</h3>
-                            </div>
-                            <div class="folder-body">
-                                <div class="folder-content-inner">
-                                    <p>We handle strict DOLE compliance, premium hardware, and operations so you can
-                                        focus on leadership.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="folder-item">
-                            <div class="folder-header">
-                                <div class="folder-icon">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                                        <path
-                                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <h3 class="folder-title">Ethical Global Sourcing</h3>
-                            </div>
-                            <div class="folder-body">
-                                <div class="folder-content-inner">
-                                    <p>Care about ESG? By hiring through Kings, you support an ethical, worker-centric
-                                        business model that empowers the local community.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <a href="<?php echo esc_url(home_url('/quote/')); ?>" class="btn btn-primary" style="padding: 0.85rem 2rem; font-size: 1rem;">
-                            Start Hiring Now
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" style="margin-left: 0.5rem;">
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="staffing-image" style="flex: 1; min-width: 300px; position: relative;">
-                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                        alt="Professional team meeting in a modern office" loading="lazy"
-                        style="position: relative; z-index: 1; border-radius: var(--card-radius-lg); box-shadow: var(--shadow-lg); width: 100%; object-fit: cover; aspect-ratio: 4/3; border: 1px solid var(--border-color);">
-                </div>
-            </div>
-
-            <!-- For Applicants: More Than Just a Job -->
-            <div class="staffing-split animate-on-scroll"
-                style="display: flex; align-items: center; gap: 3rem; flex-wrap: wrap; flex-direction: row-reverse; margin-top: 0;">
-                <div class="staffing-content" style="flex: 1; min-width: 300px;">
-                    <h2
-                        style="font-size: 2rem; font-family: var(--font-header); color: var(--main-blue); margin-bottom: 0.75rem; line-height: 1.2;">
-                        "Your Career,<br>Owned by You."</h2>
-                    <p style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 0.5rem; font-weight: 500;">
-                        Join
-                        a community where you are a member, not just a number.</p>
-                    <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5; font-size: 0.95rem;">
-                        Get
-                        access to premium benefits, career coaching, and the stability of a worker-owned cooperative.
-                        It's built for you, by people like you.</p>
-
-                    <div class="feature-folders">
-                        <div class="folder-item talent">
-                            <div class="folder-header">
-                                <div class="folder-icon">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="22" y1="2" x2="11" y2="13"></line>
-                                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                                    </svg>
-                                </div>
-                                <h3 class="folder-title">Fast-Track Application</h3>
-                            </div>
-                            <div class="folder-body">
-                                <div class="folder-content-inner">
-                                    <p>No long forms. Just drop your CV and let our recruiters find your perfect match
-                                        in our global network.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="folder-item talent">
-                            <div class="folder-header">
-                                <div class="folder-icon">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                                        <line x1="1" y1="10" x2="23" y2="10"></line>
-                                    </svg>
-                                </div>
-                                <h3 class="folder-title">Kings Lending Access</h3>
-                            </div>
-                            <div class="folder-body">
-                                <div class="folder-content-inner">
-                                    <p>Need a boost? Our internal lending program is exclusively designed to support our
-                                        members' major life milestones.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="folder-item talent">
-                            <div class="folder-header">
-                                <div class="folder-icon">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                        <polyline points="17 6 23 6 23 12"></polyline>
-                                    </svg>
-                                </div>
-                                <h3 class="folder-title">Wealth Building</h3>
-                            </div>
-                            <div class="folder-body">
-                                <div class="folder-content-inner">
-                                    <p>Build true financial security. Share in the true economic success we create
-                                        together as a cooperative.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <a href="<?php echo esc_url(home_url('/careers/')); ?>" class="btn btn-outline"
-                            style="border-color: var(--sec-accent-green); color: var(--text-dark); padding: 0.85rem 2rem; font-size: 1rem;">
-                            Drop your CV Today
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" style="margin-left: 0.5rem;">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-<div class="staffing-image" style="flex: 1; min-width: 300px; position: relative;">
-    <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-        alt="Empowered professionals collaborating globally" loading="lazy"
-        style="position: relative; z-index: 1; border-radius: var(--card-radius-lg); box-shadow: var(--shadow-lg); width: 100%; object-fit: cover; aspect-ratio: 4/3; border: 1px solid var(--border-color);">
-</div>
-</div>
-</div> <!-- End Applicant Panel -->
-</div>
+<!-- Hero Section -->
+<section class="hero hero-minimal" style="min-height: 40vh; display: flex; align-items: center; background: var(--main-blue); position: relative; overflow: hidden;">
+    <div class="hero-bg-media">
+        <img src="https://images.unsplash.com/photo-1495020689067-958852a7765e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" 
+             alt="News and Updates" style="opacity: 0.3; filter: grayscale(100%);">
+    </div>
+    <div class="container" style="position: relative; z-index: 2; text-align: center; color: white;">
+        <h1 style="font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 1rem;"><?php echo esc_html($title); ?></h1>
+        <p style="max-width: 700px; margin: 0 auto; font-size: 1.1rem; opacity: 0.9; line-height: 1.6;">
+            <?php echo esc_html($subtitle); ?>
+        </p>
+    </div>
 </section>
 
-    <!-- Testimonials Section — Driven by the kg_testimonial CPT -->
-    <?php $testimonials = function_exists('kg_get_testimonials') ? kg_get_testimonials() : array(); ?>
-    <section class="section testimonials-section" id="testimonials">
-        <div class="container animate-on-scroll">
-            <h2 class="section-title">What Our Partners Say</h2>
-            <p class="section-subtitle">Hear from the organizations and professionals who have experienced the Kings
-                cooperative difference.</p>
-
-            <div class="testimonials-slider-container">
-                <div class="testimonials-track" id="testimonials-track">
-                    <?php if ( ! empty( $testimonials ) ) :
-                        foreach ( $testimonials as $i => $t ) :
-                            $quote = get_post_meta( $t->ID, '_kg_testi_quote', true );
-                            $role  = get_post_meta( $t->ID, '_kg_testi_role',  true );
-                            $img   = get_post_meta( $t->ID, '_kg_testi_img',   true );
-                            $name  = get_the_title( $t );
-                            $active_class = ( $i === 0 ) ? ' active' : '';
-                    ?>
-                    <div class="testimonial-card slide<?php echo $active_class; ?>">
-                        <div class="testimonial-content-wrapper">
-                            <div class="quote-icon">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                                </svg>
-                            </div>
-                            <div class="rating">
-                                <?php for ($s = 0; $s < 5; $s++): ?>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                <?php endfor; ?>
-                            </div>
-                            <p class="testimonial-text">"<?php echo esc_html($quote); ?>"</p>
-                            <div class="author-info">
-                                <h4><?php echo esc_html($name); ?></h4>
-                                <span><?php echo esc_html($role); ?></span>
-                            </div>
-                        </div>
-                        <div class="testimonial-image-large">
-                            <?php echo kg_img($img, esc_attr($name)); ?>
-                        </div>
-                    </div>
-                    <?php endforeach; else : ?>
-                    <!-- No testimonials added yet — add them via WP Admin → Testimonials -->
-                    <?php endif; ?>
-                </div>
-
-                <div class="slider-controls">
-                    <div class="slider-dots" id="testi-dots"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Affiliated Brands / Network Section -->
-    <section class="affiliates-section animate-on-scroll">
+<?php if ( $is_news_archive ) : ?>
+    <!-- News Archive Grid -->
+    <section class="section section-bg-light">
         <div class="container">
-            <div class="affiliates-header text-center">
-                <h2>Our Network</h2>
-                <p>Explore our affiliated brands and communities.</p>
-            </div>
-
-            <div class="affiliates-showcase-container">
-                <!-- Brand 1: The Kings City -->
-                <div class="affiliate-showcase animate-on-scroll">
-                    <div class="affiliate-showcase-image">
-                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                            alt="The Kings City" loading="lazy">
-                    </div>
-                    <div class="affiliate-showcase-content">
-                        <h3>The Kings City</h3>
-                        <p>Our premier coworking and flex-office brand. We provide modern, inspiring workspaces designed
-                            to foster collaboration, innovation, and productivity for professionals in the heart of the
-                            business district.</p>
-                        <a href="https://kingscity.netlify.app/" class="btn btn-primary" style="margin-top: 1rem;">
-                            Discover Kings City
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                        </a>
-                    </div>
+            <?php if ( have_posts() ) : ?>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem;">
+                    <?php while ( have_posts() ) : the_post(); ?>
+                        <article class="news-card glass-card animate-on-scroll" style="display: flex; flex-direction: column; height: 100%; overflow: hidden; padding: 0; background: white; border-radius: var(--card-radius); border: 1px solid var(--border-color); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                            <div style="aspect-ratio: 16/9; overflow: hidden; border-bottom: 1px solid var(--border-color); background: #eee;">
+                                <?php if (has_post_thumbnail()) : ?>
+                                    <a href="<?php the_permalink(); ?>" style="display: block; height: 100%;">
+                                        <?php the_post_thumbnail('kg-card', ['style' => 'width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;']); ?>
+                                    </a>
+                                <?php else : ?>
+                                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.9rem;">
+                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                            <polyline points="21 15 16 10 5 21"></polyline>
+                                        </svg>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <div style="padding: 1.75rem; display: flex; flex-direction: column; flex-grow: 1;">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 1rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
+                                    <span><?php the_category(', '); ?></span>
+                                    <span><?php echo get_the_date(); ?></span>
+                                </div>
+                                <h3 style="font-size: 1.3rem; margin-bottom: 1rem; line-height: 1.4;">
+                                    <a href="<?php the_permalink(); ?>" style="color: var(--main-blue); text-decoration: none; transition: color 0.2s ease;">
+                                        <?php the_title(); ?>
+                                    </a>
+                                </h3>
+                                <div style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 2rem; flex-grow: 1;">
+                                    <?php echo wp_trim_words(get_the_excerpt(), 20); ?>
+                                </div>
+                                <a href="<?php the_permalink(); ?>" class="btn btn-outline" style="align-self: flex-start; padding: 0.6rem 1.2rem; font-size: 0.85rem; border-color: var(--main-blue); color: var(--main-blue);">
+                                    Read Full Article
+                                </a>
+                            </div>
+                        </article>
+                    <?php endwhile; ?>
                 </div>
 
-                <!-- Brand 2: The Social Manila -->
-                <div class="affiliate-showcase reverse animate-on-scroll">
-                    <div class="affiliate-showcase-image">
-                        <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                            alt="The Social Manila" loading="lazy">
-                    </div>
-                    <div class="affiliate-showcase-content">
-                        <h3>The Social Manila</h3>
-                        <p>The premier events, lifestyle, and community engagement hub. We host corporate functions,
-                            team-building events, and exclusive gatherings designed to connect leaders and ignite
-                            culture.</p>
-                        <a href="https://the-social-manila-lifestyle-test-site.netlify.app/" class="btn btn-outline"
-                            style="margin-top: 1rem;">
-                            Explore The Social
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                        </a>
-                    </div>
+                <!-- Pagination -->
+                <div class="pagination" style="margin-top: 4rem; text-align: center;">
+                    <?php
+                    echo paginate_links( array(
+                        'prev_text' => '<span class="prev">← Newer</span>',
+                        'next_text' => '<span class="next">Older →</span>',
+                        'type'      => 'list',
+                    ) );
+                    ?>
                 </div>
 
-                <!-- Brand 3: The Home Culinary School -->
-                <div class="affiliate-showcase animate-on-scroll">
-                    <div class="affiliate-showcase-image">
-                        <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                            alt="The Home Culinary School" loading="lazy">
-                    </div>
-                    <div class="affiliate-showcase-content">
-                        <h3>The Home Culinary School</h3>
-                        <p>Professional culinary training and certification programs. Equipping the next generation of
-                            chefs and hospitality professionals with world-class skills, discipline, and ethical
-                            standards.</p>
-                        <a href="https://unique-souffle-78e15a.netlify.app/" class="btn btn-primary"
-                            style="margin-top: 1rem;">
-                            Start Cooking
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                        </a>
-                    </div>
+            <?php else : ?>
+                <div style="text-align: center; padding: 5rem 0;">
+                    <h2 style="color: var(--main-blue);">No articles found</h2>
+                    <p style="color: var(--text-muted);">We haven't posted any news yet. Please check back later.</p>
+                    <a href="<?php echo esc_url(home_url()); ?>" class="btn btn-primary" style="margin-top: 2rem;">Return Home</a>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
     </section>
+<?php else : ?>
+    <!-- Fallback for non-archive index (if any) -->
+    <section class="section">
+        <div class="container">
+            <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+                <?php the_content(); ?>
+            <?php endwhile; endif; ?>
+        </div>
+    </section>
+<?php endif; ?>
 
 <?php get_footer(); ?>
-
-

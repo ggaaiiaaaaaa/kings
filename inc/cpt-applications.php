@@ -247,23 +247,23 @@ function kg_notify_applicant_status( $post_id, $status ) {
     if ( ! $email ) return;
 
     if ( $status === 'accepted' ) {
-        $subject = 'Congratulations! Your application has been accepted — Kings Group';
-        $body = kg_email_heading( 'You\'ve Been Accepted! 🎉' )
-            . kg_email_para( 'Hi ' . esc_html($fname) . ',' )
-            . kg_email_para( 'We are thrilled to inform you that your application for <strong>' . esc_html($role) . '</strong> has been <strong style="color:#065f46;">accepted</strong>.' )
-            . kg_email_para( 'Our team will reach out to you shortly with the next steps, including onboarding details and your start date.' )
-            . kg_email_banner( 'Welcome to the Kings Group family! We are excited to have you on board.' )
-            . kg_email_para( 'If you have any questions in the meantime, simply reply to this email.' )
-            . kg_email_button( 'Visit Kings Group', home_url('/') );
+        $subject = 'Application Status: Accepted — Kings Manpower';
+        $body = kg_email_heading( 'Application Status: Accepted' )
+            . kg_email_para( 'Dear ' . esc_html($fname) . ',' )
+            . kg_email_para( 'We are pleased to inform you that your application for the position of <strong>' . esc_html($role) . '</strong> has been formally <strong style="color:#00D09C;">accepted</strong> by Kings Manpower.' )
+            . kg_email_para( 'Our human resources department will contact you imminently to outline the subsequent onboarding procedures, required documentation, and to finalize your commencement date.' )
+            . kg_email_banner( 'Welcome to the Kings Manpower organization. We look forward to a mutually rewarding professional relationship.' )
+            . kg_email_para( 'Should you have any immediate inquiries, please direct them by replying to this correspondence.' )
+            . kg_email_button( 'Visit Kings Manpower', home_url('/') );
     } else {
-        $subject = 'Update on your Kings Group application';
-        $body = kg_email_heading( 'Application Update' )
-            . kg_email_para( 'Hi ' . esc_html($fname) . ',' )
-            . kg_email_para( 'Thank you for your interest in joining Kings Group Cooperative and for taking the time to apply for <strong>' . esc_html($role) . '</strong>.' )
-            . kg_email_para( 'After careful consideration, we regret to inform you that we will not be moving forward with your application at this time.' )
-            . kg_email_banner( 'We encourage you to apply again in the future — we regularly open new positions.' )
-            . kg_email_para( 'We appreciate the time you invested and wish you the best in your career.' )
-            . kg_email_button( 'Browse Open Positions', home_url('/jobs/') );
+        $subject = 'Application Status Update — Kings Manpower';
+        $body = kg_email_heading( 'Application Status Update' )
+            . kg_email_para( 'Dear ' . esc_html($fname) . ',' )
+            . kg_email_para( 'We appreciate your interest in joining Kings Manpower and thank you for submitting your application for the position of <strong>' . esc_html($role) . '</strong>.' )
+            . kg_email_para( 'Following a thorough evaluation of your qualifications by our talent acquisition team, we have opted to proceed with other candidates whose profiles more closely align with our immediate operational requirements.' )
+            . kg_email_banner( 'We will retain your Curriculum Vitae in our secure database and may contact you should a suitable opportunity arise in the future.' )
+            . kg_email_para( 'We thank you for the time invested in this process and wish you continued success in your professional endeavors.' )
+            . kg_email_button( 'View Other Opportunities', home_url('/jobs/') );
     }
 
     wp_mail(

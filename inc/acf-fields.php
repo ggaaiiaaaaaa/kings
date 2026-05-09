@@ -490,4 +490,24 @@ acf_add_local_field_group(array(
     'hide_on_screen'        => array(),
 ));
 
+// ==========================================
+// 12. COMMUNITY PAGE FIELDS
+// ==========================================
+if ( function_exists('acf_add_local_field_group') ) {
+    acf_add_local_field_group(array(
+        'key' => 'group_community_page',
+        'title' => 'Community Page Fields',
+        'fields' => array(
+            array('key' => 'field_comm_hero_title', 'label' => 'Hero Title', 'name' => 'comm_hero_title', 'type' => 'text', 'default_value' => 'Our Commitment to Community'),
+            array('key' => 'field_comm_impact_intro', 'label' => 'Impact Intro', 'name' => 'comm_impact_intro', 'type' => 'textarea', 'default_value' => 'Community is essential to our mission and it is our responsibility to support the aspirations of our members by providing scholarships to our members and their dependents.'),
+            array('key' => 'field_comm_queens_title', 'label' => 'Queens Section Title', 'name' => 'comm_queens_title', 'type' => 'text', 'default_value' => 'Queens of Kings Group'),
+            array('key' => 'field_comm_queens_desc', 'label' => 'Queens Section Description', 'name' => 'comm_queens_desc', 'type' => 'textarea', 'default_value' => 'Dedicated to empowering women within the Kings Group network through specialized resources, mentorship, and support structures designed for professional and personal growth.'),
+            array('key' => 'field_comm_culinary_intro', 'label' => 'Culinary School Intro', 'name' => 'comm_culinary_intro', 'type' => 'textarea', 'default_value' => 'We built Home Culinary and Technical School to have a sustainable education and livelihood programs for our members and their families.'),
+            array('key' => 'field_comm_culinary_desc', 'label' => 'Culinary School Description', 'name' => 'comm_culinary_desc', 'type' => 'textarea', 'default_value' => 'As The Kings expands, so does our scholarship program with Home Culinary and Technical School. We are TESDA accredited and certified.'),
+            array('key' => 'field_comm_culinary_img', 'label' => 'Culinary School Image', 'name' => 'comm_culinary_img', 'type' => 'image', 'return_format' => 'url', 'preview_size' => 'medium', 'instructions' => 'Upload a 16:9 image (e.g. 800x450px) for the culinary school card.'),
+        ),
+        'location' => array(array(array('param' => 'page_template', 'operator' => '==', 'value' => 'community.php'))),
+    ));
+}
+
 endif;

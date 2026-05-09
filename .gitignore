@@ -1,0 +1,34 @@
+# Local Environments
+.venv/
+.pylib/
+.claude/
+.skills/
+.idea/
+.vscode/
+node_modules/
+__pycache__/
+
+# Large Assets & Temp Files
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.webp
+!img/
+!assets/
+brandbook_text.txt
+
+# Debug & Temp Scripts
+check_db.php
+debug_db.php
+test_db_direct.php
+check_home.php
+check_option.php
+fix_get_field.php
+force_populator.php
+update_quote.php
+update_quote.ps1
+
+# WordPress Specific
+wp-config.php
+*.log

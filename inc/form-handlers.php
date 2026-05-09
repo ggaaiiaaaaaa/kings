@@ -96,18 +96,18 @@ function kg_handle_contact() {
         wp_send_json_error( array( 'message' => 'Please fill in all required fields.' ), 422 );
     }
 
-    $to_email = 'rhonjames95@gmail.com';
+    $to_email = defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : get_option('admin_email');
 
     /* — Email to Kings Group — */
-    $body = kg_email_heading( 'New Contact Inquiry' )
-        . kg_email_para( 'You have received a new message from the Kings Group website contact form.' )
+    $body = kg_email_heading( 'Website Inquiry Notification' )
+        . kg_email_para( 'A new inquiry has been submitted via the Kings Manpower corporate website. Please review the details below and ensure a timely response.' )
         . '<table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;margin-bottom:24px;">'
         . kg_email_row( 'Name',    $name )
         . kg_email_row( 'Email',   '<a href="mailto:' . esc_attr($email) . '" style="color:#0A2540;">' . esc_html($email) . '</a>' )
         . kg_email_row( 'Subject', $subject )
         . kg_email_row( 'Message', nl2br( esc_html($message) ) )
         . '</table>'
-        . kg_email_banner( 'Reply directly to this email — the sender\'s address is set as reply-to.' );
+        . kg_email_banner( 'To respond, please reply directly to this email. The sender\'s address is configured as the reply-to destination.' );
 
     $headers = array(
         'Content-Type: text/html; charset=UTF-8',
@@ -130,21 +130,21 @@ function kg_handle_contact() {
     kg_send_mail( $to_email, 'Contact Inquiry: ' . $subject, kg_email_wrap( 'Contact Inquiry: ' . $subject, $body ), $headers );
 
     /* — Auto-reply to visitor — */
-    $reply_body = kg_email_heading( 'We received your message!' )
-        . kg_email_para( 'Hi ' . esc_html($name) . ',' )
-        . kg_email_para( 'Thank you for reaching out to Kings Group Cooperative. We have received your message and our team will review it shortly.' )
+    $reply_body = kg_email_heading( 'Inquiry Acknowledgment' )
+        . kg_email_para( 'Dear ' . esc_html($name) . ',' )
+        . kg_email_para( 'Thank you for contacting Kings Manpower. We acknowledge receipt of your inquiry and appreciate your interest in our services. Our team is currently reviewing your message and will provide a comprehensive response shortly.' )
         . '<table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;margin-bottom:24px;">'
         . kg_email_row( 'Your Name',    $name )
         . kg_email_row( 'Subject',      $subject )
         . kg_email_row( 'Your Message', nl2br( esc_html($message) ) )
         . '</table>'
-        . kg_email_banner( 'We typically respond within 1–2 business days.' )
+        . kg_email_banner( 'Please expect a response from our representatives within 24 to 48 hours.' )
         . kg_email_button( 'Visit Our Website', home_url('/') );
 
     kg_send_mail(
         $email,
-        'We received your message — Kings Group',
-        kg_email_wrap( 'Message Received', $reply_body ),
+        'Inquiry Acknowledgment — Kings Manpower',
+        kg_email_wrap( 'Inquiry Acknowledgment', $reply_body ),
         array( 'Content-Type: text/html; charset=UTF-8' )
     );
 
@@ -203,11 +203,11 @@ function kg_handle_application() {
     $cv_url  = $upload['url'];
     $cv_path = $upload['file'];
 
-    $to_email = 'rhonjames95@gmail.com';
+    $to_email = defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : get_option('admin_email');
 
     /* — Email to Kings Group — */
-    $body = kg_email_heading( 'New CV Application Received' )
-        . kg_email_para( 'A new job application has been submitted via the Kings Group careers page.' )
+    $body = kg_email_heading( 'Candidate Application Notification' )
+        . kg_email_para( 'A new employment application has been successfully submitted via the Kings Manpower careers portal. The candidate\'s details are enclosed for your evaluation.' )
         . '<table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;margin-bottom:24px;">'
         . kg_email_row( 'Full Name',      $fullname )
         . kg_email_row( 'Email',          '<a href="mailto:' . esc_attr($email) . '" style="color:#0A2540;">' . esc_html($email) . '</a>' )
@@ -216,7 +216,7 @@ function kg_handle_application() {
         . kg_email_row( 'LinkedIn',       $linkedin ? '<a href="' . esc_url($linkedin) . '" style="color:#0A2540;">View Profile</a>' : '—' )
         . kg_email_row( 'CV File',        '<a href="' . esc_url($cv_url) . '" style="color:#00D09C;font-weight:600;">Download CV</a>' )
         . '</table>'
-        . kg_email_banner( 'CV file is attached to this email and also saved to the WP Media Library.' );
+        . kg_email_banner( 'The candidate\'s Curriculum Vitae is attached to this email and archived within the corporate media library.' );
 
     $headers = array(
         'Content-Type: text/html; charset=UTF-8',
@@ -247,22 +247,22 @@ function kg_handle_application() {
     );
 
     /* — Auto-reply to applicant — */
-    $reply_body = kg_email_heading( 'Application Received!' )
-        . kg_email_para( 'Hi ' . esc_html($fname) . ',' )
-        . kg_email_para( 'Thank you for applying to Kings Group Cooperative. We have received your CV and our talent team will review your profile carefully.' )
+    $reply_body = kg_email_heading( 'Application Acknowledgment' )
+        . kg_email_para( 'Dear ' . esc_html($fname) . ',' )
+        . kg_email_para( 'Thank you for your interest in a career with Kings Manpower. This email confirms the successful receipt of your application and Curriculum Vitae. Our talent acquisition team will review your qualifications against our current requirements.' )
         . '<table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;margin-bottom:24px;">'
         . kg_email_row( 'Full Name',      $fullname )
         . kg_email_row( 'Email',          $email )
         . kg_email_row( 'Preferred Role', $role ?: 'Open to opportunities' )
         . '</table>'
-        . kg_email_banner( 'Our talent team typically reaches out within 2–3 business days.' )
-        . kg_email_para( 'While you wait, feel free to explore our open positions and learn more about life at Kings Group.' )
-        . kg_email_button( 'Browse Open Positions', home_url('/jobs/') );
+        . kg_email_banner( 'Should your profile match our needs, a representative will contact you within 2 to 3 business days to discuss the next steps.' )
+        . kg_email_para( 'We appreciate your time and interest in joining our organization.' )
+        . kg_email_button( 'View Career Opportunities', home_url('/jobs/') );
 
     kg_send_mail(
         $email,
-        'Your application to Kings Group has been received',
-        kg_email_wrap( 'Application Received', $reply_body ),
+        'Application Acknowledgment — Kings Manpower',
+        kg_email_wrap( 'Application Acknowledgment', $reply_body ),
         array( 'Content-Type: text/html; charset=UTF-8' )
     );
 
@@ -328,11 +328,11 @@ function kg_handle_quote() {
       <tbody>' . $roles_rows . $total_row . '</tbody>
     </table>';
 
-    $to_email = 'rhonjames95@gmail.com';
+    $to_email = defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : get_option('admin_email');
 
     /* — Email to Kings Group — */
-    $body = kg_email_heading( 'New Quote Request' )
-        . kg_email_para( 'A client has submitted a team builder quote request from the Kings Group website.' )
+    $body = kg_email_heading( 'Service Proposal Request Notification' )
+        . kg_email_para( 'A prospective client has submitted a formal request for a service proposal via the Kings Manpower platform. Please review the enclosed workforce configuration.' )
         . '<table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;margin-bottom:24px;">'
         . kg_email_row( 'Client Name',  $name )
         . kg_email_row( 'Work Email',   '<a href="mailto:' . esc_attr($email) . '" style="color:#0A2540;">' . esc_html($email) . '</a>' )
@@ -340,7 +340,7 @@ function kg_handle_quote() {
         . '</table>'
         . '<h3 style="margin:0 0 12px;font-size:16px;font-weight:700;color:#0A2540;">Requested Team Configuration</h3>'
         . $roles_table
-        . kg_email_banner( 'Reply directly to this email — the client\'s address is set as reply-to.' );
+        . kg_email_banner( 'To initiate correspondence, please reply directly to this email. The prospect\'s email address is designated as the reply-to.' );
 
     $headers = array(
         'Content-Type: text/html; charset=UTF-8',
@@ -366,24 +366,24 @@ function kg_handle_quote() {
     kg_send_mail(
         $to_email,
         'Quote Request from ' . $name . ' — $' . number_format($total_price, 0) . '/mo',
-        kg_email_wrap( 'New Quote Request', $body ),
+        kg_email_wrap( 'Service Proposal Request', $body ),
         $headers
     );
 
     /* — Confirmation email to client — */
-    $client_body = kg_email_heading( 'Your Quote Has Been Received!' )
-        . kg_email_para( 'Hi ' . esc_html($name) . ',' )
-        . kg_email_para( 'Thank you for your interest in building a team with Kings Group Cooperative. We have received your team configuration and our sales team will prepare a detailed proposal for you.' )
+    $client_body = kg_email_heading( 'Proposal Request Acknowledgment' )
+        . kg_email_para( 'Dear ' . esc_html($name) . ',' )
+        . kg_email_para( 'Thank you for considering Kings Manpower as your workforce solutions partner. We have successfully received your service configuration request. Our business development team is currently analyzing your requirements to formulate a comprehensive proposal.' )
         . '<h3 style="margin:0 0 12px;font-size:16px;font-weight:700;color:#0A2540;">Your Team Configuration Summary</h3>'
         . $roles_table
-        . kg_email_banner( 'Our team will reach out within 1 business day with a full proposal and pricing breakdown.' )
-        . kg_email_para( 'Questions? Reply to this email or call us at <strong>+63 (2) 87766712</strong>.' )
-        . kg_email_button( 'Visit Kings Group', home_url('/') );
+        . kg_email_banner( 'A dedicated representative will contact you within one business day to present a detailed pricing breakdown and discuss your specific needs.' )
+        . kg_email_para( 'Should you require immediate assistance, please reply directly to this correspondence or contact our corporate office at <strong>+63 (2) 87766712</strong>.' )
+        . kg_email_button( 'Visit Kings Manpower', home_url('/') );
 
     kg_send_mail(
         $email,
-        'Your Kings Group Team Quote — $' . number_format($total_price, 0) . '/mo',
-        kg_email_wrap( 'Quote Received', $client_body ),
+        'Your Kings Manpower Service Proposal — $' . number_format($total_price, 0) . '/mo',
+        kg_email_wrap( 'Proposal Request Acknowledgment', $client_body ),
         array( 'Content-Type: text/html; charset=UTF-8' )
     );
 

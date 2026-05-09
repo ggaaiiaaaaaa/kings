@@ -203,6 +203,8 @@ function kg_create_default_menus() {
     // Footer nav
     $footer_items = array(
         array( 'title' => 'Our Story',    'url' => home_url('/story/') ),
+        array( 'title' => 'News',         'url' => home_url('/news/') ),
+        array( 'title' => 'Community',    'url' => home_url('/community/') ),
         array( 'title' => 'Careers',      'url' => home_url('/careers/') ),
         array( 'title' => 'Contact Us',   'url' => home_url('/contact/') ),
         array( 'title' => 'Member Portal','url' => 'https://zckings.azurewebsites.net/' ),
