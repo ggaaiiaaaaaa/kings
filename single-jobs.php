@@ -62,118 +62,258 @@ $page_schema = [
     ],
 ];
 
-// Add salary to schema only if provided
-if ( $job_salary_min ) {
-    $page_schema['baseSalary'] = [
-        '@type'    => 'MonetaryAmount',
-        'currency' => 'PHP',
-        'value'    => [
-            '@type'    => 'QuantitativeValue',
-            'minValue' => (float) $job_salary_min,
-            'maxValue' => $job_salary_max ? (float) $job_salary_max : (float) $job_salary_min,
-            'unitText' => 'MONTH',
-        ],
-    ];
-}
-
 get_header();
 ?>
 
-    <!-- Breadcrumb -->
-    <nav aria-label="Breadcrumb" style="padding:1rem 0;background:var(--bg-light);border-bottom:1px solid var(--border-color);">
-        <div class="container" style="font-size:0.85rem;color:var(--text-muted);">
-            <a href="<?php echo esc_url( home_url('/') ); ?>" style="color:var(--main-blue);text-decoration:none;">Home</a>
-            <span style="margin:0 0.5rem;">›</span>
-            <a href="<?php echo esc_url( home_url('/jobs/') ); ?>" style="color:var(--main-blue);text-decoration:none;">Jobs</a>
-            <span style="margin:0 0.5rem;">›</span>
-            <span><?php echo esc_html( get_the_title() ); ?></span>
+<!-- Breadcrumb -->
+<nav aria-label="Breadcrumb" class="breadcrumb-nav">
+    <div class="container">
+        <a href="<?php echo esc_url( home_url('/') ); ?>">Home</a>
+        <span class="sep">›</span>
+        <a href="<?php echo esc_url( home_url('/our-jobs/') ); ?>">Our Jobs</a>
+        <span class="sep">›</span>
+        <span class="current"><?php echo esc_html( get_the_title() ); ?></span>
+    </div>
+</nav>
+
+<!-- Job Hero -->
+<section class="page-hero job-single-hero">
+    <div class="container">
+        <div class="job-meta-badges animate-on-scroll">
+            <span class="type-badge"><?php echo esc_html( $job_type_label ); ?></span>
+            <?php if ( $job_location ) : ?>
+                <span class="meta-pill"><?php echo kg_icon('location', 'inline-icon'); ?> <?php echo esc_html( $job_location ); ?></span>
+            <?php endif; ?>
+            <?php if ( $job_department ) : ?>
+                <span class="meta-pill"><?php echo kg_icon('building', 'inline-icon'); ?> <?php echo esc_html( $job_department ); ?></span>
+            <?php endif; ?>
         </div>
-    </nav>
+        <h1 class="animate-on-scroll"><?php the_title(); ?></h1>
+        <p class="hero-date animate-on-scroll">Posted on <?php echo get_the_date(); ?></p>
+    </div>
+</section>
 
-    <!-- Job Hero -->
-    <section class="page-hero" style="padding:4rem 0 3rem;">
-        <div class="container">
-            <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-bottom:1.25rem;">
-                <span style="background:rgba(0,208,156,0.15);color:var(--sec-accent-green);padding:0.3rem 0.9rem;font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;"><?php echo esc_html( $job_type_label ); ?></span>
-                <?php if ( $job_location ) : ?>
-                <span style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.85);padding:0.3rem 0.9rem;font-size:0.8rem;">📍 <?php echo esc_html( $job_location ); ?></span>
-                <?php endif; ?>
-                <?php if ( $job_department ) : ?>
-                <span style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.85);padding:0.3rem 0.9rem;font-size:0.8rem;"><?php echo esc_html( $job_department ); ?></span>
-                <?php endif; ?>
-            </div>
-            <h1 style="font-size:clamp(1.75rem,4vw,2.75rem);font-weight:800;color:#fff;margin-bottom:0.75rem;"><?php the_title(); ?></h1>
-            <p style="color:rgba(255,255,255,0.7);font-size:0.9rem;">Posted <?php echo get_the_date(); ?></p>
-        </div>
-    </section>
+<!-- Job Body -->
+<section class="section section-bg-white">
+    <div class="container">
+        <div class="job-single-layout">
 
-    <!-- Job Body -->
-    <section style="padding:4rem 0;background:var(--bg-white);">
-        <div class="container">
-            <div style="display:grid;grid-template-columns:1fr 320px;gap:3rem;align-items:start;">
-
-                <!-- Left: Full Job Description -->
-                <div class="post-content" style="line-height:1.85;color:var(--text-body);font-size:1.05rem;">
+            <!-- Left: Full Job Description -->
+            <div class="job-main-content animate-on-scroll">
+                <div class="post-content">
                     <?php the_content(); ?>
                 </div>
 
-                <!-- Right: Sticky Sidebar -->
-                <aside style="position:sticky;top:6rem;">
-                    <!-- Apply CTA Card -->
-                    <div style="background:var(--glass-mid-bg);border:1px solid var(--glass-mid-border);backdrop-filter:var(--glass-mid-blur);padding:2rem;margin-bottom:1.5rem;box-shadow:var(--glass-mid-shadow);">
-                        <h3 style="font-size:1.15rem;color:var(--text-dark);margin-bottom:0.5rem;">Interested in this role?</h3>
-                        <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1.5rem;">Submit your application in under 2 minutes — just your CV and basic details.</p>
-                        <a href="<?php echo esc_url( home_url('/careers/#apply') ); ?>" class="btn btn-primary" style="display:block;text-align:center;padding:1rem;">Apply for this Role</a>
-                    </div>
-
-                    <!-- Job Details Card -->
-                    <div style="background:var(--bg-light);border:1px solid var(--border-color);padding:1.75rem;">
-                        <h4 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:1.25rem;">Job Details</h4>
-                        <div style="display:flex;flex-direction:column;gap:1rem;">
-                            <div>
-                                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:0.2rem;">Employment Type</div>
-                                <div style="font-weight:600;color:var(--text-dark);"><?php echo esc_html( $job_type_label ); ?></div>
-                            </div>
-                            <?php if ( $job_location ) : ?>
-                            <div>
-                                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:0.2rem;">Location</div>
-                                <div style="font-weight:600;color:var(--text-dark);"><?php echo esc_html( $job_location ); ?></div>
-                            </div>
-                            <?php endif; ?>
-                            <?php if ( $salary_display ) : ?>
-                            <div>
-                                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:0.2rem;">Salary Range</div>
-                                <div style="font-weight:600;color:var(--sec-accent-green);"><?php echo esc_html( $salary_display ); ?></div>
-                            </div>
-                            <?php endif; ?>
-                            <?php if ( $job_department ) : ?>
-                            <div>
-                                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:0.2rem;">Department</div>
-                                <div style="font-weight:600;color:var(--text-dark);"><?php echo esc_html( $job_department ); ?></div>
-                            </div>
-                            <?php endif; ?>
-                            <div>
-                                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:0.2rem;">Date Posted</div>
-                                <div style="font-weight:600;color:var(--text-dark);"><?php echo get_the_date(); ?></div>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
-
+                <!-- Shared CTA for Mobile -->
+                <div class="mobile-apply-cta">
+                    <a href="<?php echo esc_url( add_query_arg('role', urlencode(get_the_title()), home_url('/careers/#apply')) ); ?>" class="btn btn-primary btn-block">Apply for this Role</a>
+                </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Responsive: collapse sidebar on mobile -->
-    <style>
-        @media (max-width: 768px) {
-            .container > div[style*="grid-template-columns:1fr 320px"] {
-                grid-template-columns: 1fr !important;
-            }
-            .container > div[style*="grid-template-columns:1fr 320px"] aside {
-                position: static !important;
-            }
-        }
-    </style>
+            <!-- Right: Sticky Sidebar -->
+            <aside class="job-sidebar animate-on-scroll">
+                <!-- Apply CTA Card -->
+                <div class="sidebar-card glass-cta">
+                    <h3>Interested?</h3>
+                    <p>Submit your application in under 2 minutes — just your CV and basic details.</p>
+                    <a href="<?php echo esc_url( add_query_arg('role', urlencode(get_the_title()), home_url('/careers/#apply')) ); ?>" class="btn btn-primary btn-block">Apply Now</a>
+                </div>
+
+                <!-- Job Details Card -->
+                <div class="sidebar-card job-info">
+                    <h4>Job Details</h4>
+                    <div class="info-list">
+                        <div class="info-item">
+                            <label>Employment Type</label>
+                            <div class="value"><?php echo esc_html( $job_type_label ); ?></div>
+                        </div>
+                        <?php if ( $job_duration && in_array($job_type, ['CONTRACTOR', 'TEMPORARY']) ) : ?>
+                        <div class="info-item">
+                            <label>Contract Duration</label>
+                            <div class="value highlight"><?php echo esc_html( $job_duration ); ?></div>
+                        </div>
+                        <?php endif; ?>
+                        <?php if ( $job_location ) : ?>
+                        <div class="info-item">
+                            <label>Location</label>
+                            <div class="value"><?php echo esc_html( $job_location ); ?></div>
+                        </div>
+                        <?php endif; ?>
+                        <?php if ( $salary_display ) : ?>
+                        <div class="info-item">
+                            <label>Salary Range</label>
+                            <div class="value highlight"><?php echo esc_html( $salary_display ); ?></div>
+                        </div>
+                        <?php endif; ?>
+                        <?php if ( $job_department ) : ?>
+                        <div class="info-item">
+                            <label>Department</label>
+                            <div class="value"><?php echo esc_html( $job_department ); ?></div>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                
+                <!-- Security Note -->
+                <p class="sidebar-note">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    Kings Group will never ask for payment during the recruitment process.
+                </p>
+            </aside>
+
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Breadcrumb */
+    .breadcrumb-nav {
+        padding: 1.5rem 0;
+        background: var(--bg-light);
+        border-bottom: 1px solid var(--border-color);
+    }
+    .breadcrumb-nav .container {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .breadcrumb-nav a {
+        color: var(--main-blue);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    .breadcrumb-nav a:hover { color: var(--main-blue-light); }
+    .breadcrumb-nav .sep { opacity: 0.5; }
+    .breadcrumb-nav .current { color: var(--text-dark); font-weight: 500; }
+
+    /* Hero */
+    .job-single-hero {
+        min-height: 40vh;
+        padding: 6rem 0;
+        background-color: var(--main-blue);
+        background-image: var(--gradient-hero);
+    }
+    .job-meta-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    .type-badge {
+        background: rgba(0, 208, 156, 0.2);
+        color: var(--sec-accent-green);
+        padding: 0.4rem 1.2rem;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 4px;
+    }
+    .meta-pill {
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+        padding: 0.4rem 1rem;
+        font-size: 0.8rem;
+        border-radius: 4px;
+        backdrop-filter: blur(4px);
+    }
+    .hero-date {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 1rem;
+        margin-top: 1rem;
+    }
+
+    /* Layout */
+    .job-single-layout {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 4rem;
+        align-items: start;
+    }
+    .post-content {
+        color: var(--text-body);
+        line-height: 1.8;
+        font-size: 1.1rem;
+    }
+    .post-content h2, .post-content h3 {
+        color: var(--text-dark);
+        margin: 2rem 0 1rem;
+    }
+    .post-content ul {
+        margin-bottom: 2rem;
+        padding-left: 1.25rem;
+    }
+    .post-content li { margin-bottom: 0.5rem; }
+
+    /* Sidebar */
+    .job-sidebar {
+        position: sticky;
+        top: 8rem;
+    }
+    .sidebar-card {
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+    .glass-cta {
+        background: var(--glass-mid-bg);
+        backdrop-filter: var(--glass-mid-blur);
+        border: 1px solid var(--glass-mid-border);
+        padding: 2.5rem;
+        box-shadow: var(--glass-mid-shadow);
+    }
+    .glass-cta h3 { font-size: 1.25rem; margin-bottom: 0.75rem; }
+    .glass-cta p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.5; }
+    
+    .job-info {
+        background: var(--bg-light);
+        border: 1px solid var(--border-color);
+        padding: 2rem;
+    }
+    .job-info h4 {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .info-list { display: flex; flex-direction: column; gap: 1.25rem; }
+    .info-item label {
+        display: block;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+    .info-item .value { font-weight: 700; color: var(--text-dark); font-size: 1rem; }
+    .info-item .value.highlight { color: var(--sec-accent-green); }
+
+    .sidebar-note {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        display: flex;
+        gap: 0.5rem;
+        line-height: 1.4;
+        padding: 0 1rem;
+    }
+    .sidebar-note svg { flex-shrink: 0; margin-top: 2px; }
+
+    .btn-block { display: block; text-align: center; width: 100%; padding: 1rem; }
+    .mobile-apply-cta { display: none; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+
+    @media (max-width: 992px) {
+        .job-single-layout { grid-template-columns: 1fr; gap: 3rem; }
+        .job-sidebar { position: static; }
+        .mobile-apply-cta { display: block; }
+    }
+</style>
 
 <?php get_footer(); ?>

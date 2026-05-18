@@ -68,7 +68,7 @@ get_header();
 
                 <!-- No results state -->
                 <div style="text-align:center;padding:4rem 0;">
-                    <div style="font-size:4rem;opacity:0.12;margin-bottom:1rem;">🔍</div>
+                    <div style="font-size:4rem;opacity:0.12;margin-bottom:1rem;"><?php echo kg_icon('search'); ?></div>
                     <h2 class="section-title" style="margin-bottom:1rem;">Nothing Found</h2>
                     <p style="color:var(--text-muted);font-size:1.05rem;max-width:480px;margin:0 auto 2rem;">
                         No results for <strong>"<?php echo esc_html( $search_query ); ?>"</strong>. Try a different keyword or browse our pages below.
