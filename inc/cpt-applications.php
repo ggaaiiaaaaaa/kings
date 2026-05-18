@@ -58,7 +58,8 @@ function kg_save_application_post( $data ) {
     update_post_meta( $post_id, 'kg_app_role',     sanitize_text_field( $data['role'] ) );
     update_post_meta( $post_id, 'kg_app_linkedin', esc_url_raw( $data['linkedin'] ) );
     update_post_meta( $post_id, 'kg_app_cv_url',   esc_url_raw( $data['cv_url'] ) );
-    update_post_meta( $post_id, 'kg_app_status',   'pending' );
+    update_post_meta( $post_id, 'kg_app_status',   'screening' );
+    update_post_meta( $post_id, 'kg_app_client',   '' );
 
     return $post_id;
 }
@@ -67,6 +68,18 @@ function kg_save_application_post( $data ) {
    Admin columns
 ───────────────────────────────────────────── */
 
+/* Helper: canonical ATS status list */
+function kg_ats_statuses() {
+    return array(
+        'screening'    => 'Screening',
+        'interviewing' => 'Interviewing',
+        'hired'        => 'Hired',
+        'deployed'     => 'Deployed',
+        'benched'      => 'Benched',
+        'blacklisted'  => 'Blacklisted',
+    );
+}
+
 function kg_application_columns( $columns ) {
     return array(
         'cb'         => '<input type="checkbox">',
@@ -74,6 +87,7 @@ function kg_application_columns( $columns ) {
         'kg_email'   => 'Email',
         'kg_role'    => 'Role Applied For',
         'kg_status'  => 'Status',
+        'kg_client'  => 'Client Assignment',
         'kg_cv'      => 'CV',
         'date'       => 'Submitted',
     );
@@ -95,15 +109,25 @@ function kg_application_column_content( $column, $post_id ) {
             break;
 
         case 'kg_status':
-            $status = get_post_meta( $post_id, 'kg_app_status', true ) ?: 'pending';
-            // Inline dropdown — change status directly from the list view
-            echo '<select class="kg-inline-status" data-post-id="' . esc_attr( $post_id ) . '" data-nonce="' . esc_attr( wp_create_nonce( 'kg_inline_status_' . $post_id ) ) . '"
-                style="padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;border:2px solid transparent;cursor:pointer;'
-                . ( $status === 'accepted' ? 'background:#d1fae5;color:#065f46;' : ( $status === 'rejected' ? 'background:#fee2e2;color:#991b1b;' : 'background:#fef3c7;color:#92400e;' ) ) . '">';
-            foreach ( array( 'pending' => '🕐 Pending', 'accepted' => '✅ Accepted', 'rejected' => '❌ Rejected' ) as $val => $label ) {
-                echo '<option value="' . esc_attr($val) . '"' . selected( $status, $val, false ) . '>' . esc_html($label) . '</option>';
+            $status = get_post_meta( $post_id, 'kg_app_status', true ) ?: 'screening';
+            $status_styles = array(
+                'screening'    => 'background:#dbeafe;color:#1e40af;',
+                'interviewing' => 'background:#ede9fe;color:#6d28d9;',
+                'hired'        => 'background:#d1fae5;color:#065f46;',
+                'deployed'     => 'background:#dcfce7;color:#15803d;',
+                'benched'      => 'background:#fef3c7;color:#92400e;',
+                'blacklisted'  => 'background:#fee2e2;color:#991b1b;',
+            );
+            $s = $status_styles[ $status ] ?? 'background:#f3f4f6;color:#374151;';
+            echo '<select class="kg-inline-status" data-post-id="' . esc_attr( $post_id ) . '" data-nonce="' . esc_attr( wp_create_nonce( 'kg_inline_status_' . $post_id ) ) . '" style="padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;border:2px solid transparent;cursor:pointer;' . $s . '">';
+            foreach ( kg_ats_statuses() as $val => $lbl ) {
+                echo '<option value="' . esc_attr($val) . '"' . selected( $status, $val, false ) . '>' . esc_html($lbl) . '</option>';
             }
             echo '</select>';
+            break;
+
+        case 'kg_client':
+            echo esc_html( get_post_meta( $post_id, 'kg_app_client', true ) ?: '—' );
             break;
 
         case 'kg_cv':
@@ -197,16 +221,22 @@ function kg_application_details_box( $post ) {
 
 function kg_application_status_box( $post ) {
     wp_nonce_field( 'kg_app_status_save', 'kg_app_status_nonce' );
-    $status = get_post_meta( $post->ID, 'kg_app_status', true ) ?: 'pending';
+    $status = get_post_meta( $post->ID, 'kg_app_status', true ) ?: 'screening';
+    $client = get_post_meta( $post->ID, 'kg_app_client', true );
     ?>
     <div style="margin-bottom:12px;">
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Pipeline Status</label>
         <select name="kg_app_status" style="width:100%;padding:8px;font-size:14px;">
-            <option value="pending"  <?php selected( $status, 'pending' );  ?>>🕐 Pending</option>
-            <option value="accepted" <?php selected( $status, 'accepted' ); ?>>✅ Accepted</option>
-            <option value="rejected" <?php selected( $status, 'rejected' ); ?>>❌ Rejected</option>
+            <?php foreach ( kg_ats_statuses() as $val => $lbl ) : ?>
+            <option value="<?php echo esc_attr($val); ?>" <?php selected( $status, $val ); ?>><?php echo esc_html($lbl); ?></option>
+            <?php endforeach; ?>
         </select>
     </div>
-    <p style="font-size:12px;color:#666;margin:0;">Click <strong>Update</strong> to save the new status.</p>
+    <div style="margin-bottom:12px;">
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Client Assignment</label>
+        <input type="text" name="kg_app_client" value="<?php echo esc_attr($client); ?>" placeholder="e.g. Acme Corp" style="width:100%;padding:8px;font-size:14px;">
+    </div>
+    <p style="font-size:12px;color:#666;margin:0;">Click <strong>Update</strong> to save changes.</p>
     <?php
 }
 
@@ -218,17 +248,24 @@ function kg_save_application_status( $post_id ) {
 
     if ( ! isset( $_POST['kg_app_status'] ) ) return;
 
-    $allowed    = array( 'pending', 'accepted', 'rejected' );
+    $allowed    = array_keys( kg_ats_statuses() );
     $new_status = in_array( $_POST['kg_app_status'], $allowed, true )
         ? $_POST['kg_app_status']
-        : 'pending';
-    $old_status = get_post_meta( $post_id, 'kg_app_status', true ) ?: 'pending';
+        : 'screening';
+    $old_status = get_post_meta( $post_id, 'kg_app_status', true ) ?: 'screening';
 
     update_post_meta( $post_id, 'kg_app_status', $new_status );
 
-    /* — Email applicant when status changes to accepted or rejected — */
-    if ( $new_status !== $old_status && in_array( $new_status, array( 'accepted', 'rejected' ), true ) ) {
-        kg_notify_applicant_status( $post_id, $new_status );
+    if ( isset( $_POST['kg_app_client'] ) ) {
+        update_post_meta( $post_id, 'kg_app_client', sanitize_text_field( $_POST['kg_app_client'] ) );
+    }
+
+    /* — Email applicant when status changes to hired — */
+    if ( $new_status !== $old_status && $new_status === 'hired' ) {
+        kg_notify_applicant_status( $post_id, 'accepted' );
+    }
+    if ( $new_status !== $old_status && $new_status === 'blacklisted' ) {
+        kg_notify_applicant_status( $post_id, 'rejected' );
     }
 }
 add_action( 'save_post_kg_application', 'kg_save_application_status' );
@@ -285,9 +322,9 @@ function kg_application_status_filter( $post_type ) {
     ?>
     <select name="kg_status_filter">
         <option value="">All Statuses</option>
-        <option value="pending"  <?php selected( $current, 'pending' );  ?>>Pending</option>
-        <option value="accepted" <?php selected( $current, 'accepted' ); ?>>Accepted</option>
-        <option value="rejected" <?php selected( $current, 'rejected' ); ?>>Rejected</option>
+        <?php foreach ( kg_ats_statuses() as $val => $lbl ) : ?>
+        <option value="<?php echo esc_attr($val); ?>" <?php selected( $current, $val ); ?>><?php echo esc_html($lbl); ?></option>
+        <?php endforeach; ?>
     </select>
     <?php
 }
@@ -331,16 +368,19 @@ function kg_ajax_inline_status() {
         wp_send_json_error( 'Permission denied.' );
     }
 
-    $allowed = array( 'pending', 'accepted', 'rejected' );
+    $allowed = array_keys( kg_ats_statuses() );
     if ( ! in_array( $new_status, $allowed, true ) ) {
         wp_send_json_error( 'Invalid status.' );
     }
 
-    $old_status = get_post_meta( $post_id, 'kg_app_status', true ) ?: 'pending';
+    $old_status = get_post_meta( $post_id, 'kg_app_status', true ) ?: 'screening';
     update_post_meta( $post_id, 'kg_app_status', $new_status );
 
-    if ( $new_status !== $old_status && in_array( $new_status, array( 'accepted', 'rejected' ), true ) ) {
-        kg_notify_applicant_status( $post_id, $new_status );
+    if ( $new_status !== $old_status && $new_status === 'hired' ) {
+        kg_notify_applicant_status( $post_id, 'accepted' );
+    }
+    if ( $new_status !== $old_status && $new_status === 'blacklisted' ) {
+        kg_notify_applicant_status( $post_id, 'rejected' );
     }
 
     wp_send_json_success( array( 'status' => $new_status ) );
@@ -352,8 +392,8 @@ add_action( 'wp_ajax_kg_inline_status', 'kg_ajax_inline_status' );
 ───────────────────────────────────────────── */
 
 function kg_application_bulk_actions( $actions ) {
-    $actions['kg_bulk_accept'] = '✅ Mark as Accepted';
-    $actions['kg_bulk_reject'] = '❌ Mark as Rejected';
+    $actions['kg_bulk_accept'] = 'Mark as Accepted';
+    $actions['kg_bulk_reject'] = 'Mark as Rejected';
     return $actions;
 }
 add_filter( 'bulk_actions-edit-kg_application', 'kg_application_bulk_actions' );
@@ -362,13 +402,14 @@ function kg_application_bulk_action_handler( $redirect, $action, $post_ids ) {
     if ( ! in_array( $action, array( 'kg_bulk_accept', 'kg_bulk_reject' ), true ) ) {
         return $redirect;
     }
-    $new_status = $action === 'kg_bulk_accept' ? 'accepted' : 'rejected';
+    $new_status = $action === 'kg_bulk_accept' ? 'hired' : 'blacklisted';
 
     foreach ( $post_ids as $post_id ) {
-        $old_status = get_post_meta( $post_id, 'kg_app_status', true ) ?: 'pending';
+        $old_status = get_post_meta( $post_id, 'kg_app_status', true ) ?: 'screening';
         update_post_meta( $post_id, 'kg_app_status', $new_status );
         if ( $new_status !== $old_status ) {
-            kg_notify_applicant_status( $post_id, $new_status );
+            $email_status = $new_status === 'hired' ? 'accepted' : 'rejected';
+            kg_notify_applicant_status( $post_id, $email_status );
         }
     }
 

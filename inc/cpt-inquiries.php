@@ -82,11 +82,11 @@ function kg_inquiry_column_content( $column, $post_id ) {
                 'in_progress' => 'background:#fef3c7;color:#92400e;',
                 'resolved'    => 'background:#d1fae5;color:#065f46;',
             );
-            $labels = array( 'new' => '🔵 New', 'in_progress' => '🕐 In Progress', 'resolved' => '✅ Resolved' );
+            $labels = array( 'new' => 'New', 'in_progress' => 'In Progress', 'resolved' => 'Resolved' );
             $style  = $styles[$status] ?? $styles['new'];
             echo '<select class="kg-inq-status" data-post-id="' . esc_attr($post_id) . '" data-nonce="' . esc_attr( wp_create_nonce('kg_inq_status_'.$post_id) ) . '"
                 style="padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;border:2px solid transparent;cursor:pointer;' . $style . '">';
-            foreach ( array( 'new' => '🔵 New', 'in_progress' => '🕐 In Progress', 'resolved' => '✅ Resolved' ) as $val => $label ) {
+            foreach ( array( 'new' => 'New', 'in_progress' => 'In Progress', 'resolved' => 'Resolved' ) as $val => $label ) {
                 echo '<option value="' . esc_attr($val) . '"' . selected($status,$val,false) . '>' . esc_html($label) . '</option>';
             }
             echo '</select>';
@@ -121,9 +121,9 @@ function kg_inquiry_details_box( $post ) {
         <tr><td style="padding:10px 8px;font-weight:600;">Status</td>
             <td style="padding:10px 8px;">
                 <select name="kg_inq_status" style="padding:6px 10px;font-size:13px;width:200px;">
-                    <option value="new"         <?php selected($status,'new');         ?>>🔵 New</option>
-                    <option value="in_progress" <?php selected($status,'in_progress'); ?>>🕐 In Progress</option>
-                    <option value="resolved"    <?php selected($status,'resolved');    ?>>✅ Resolved</option>
+                    <option value="new"         <?php selected($status,'new');         ?>>New</option>
+                    <option value="in_progress" <?php selected($status,'in_progress'); ?>>In Progress</option>
+                    <option value="resolved"    <?php selected($status,'resolved');    ?>>Resolved</option>
                 </select>
             </td></tr>
     </table>
@@ -352,7 +352,7 @@ function kg_quote_lead_column_content( $column, $post_id ) {
             $style = $styles[$status] ?? $styles['pending'];
             echo '<select class="kg-quote-status" data-post-id="' . esc_attr($post_id) . '" data-nonce="' . esc_attr(wp_create_nonce('kg_quote_status_'.$post_id)) . '"
                 style="padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;border:2px solid transparent;cursor:pointer;' . $style . '">';
-            foreach ( array('pending'=>'🕐 Pending','contacted'=>'📞 Contacted','converted'=>'✅ Converted','closed'=>'❌ Closed') as $val=>$label ) {
+            foreach ( array('pending'=>'Pending','contacted'=>'Contacted','converted'=>'Converted','closed'=>'Closed') as $val=>$label ) {
                 echo '<option value="' . esc_attr($val) . '"' . selected($status,$val,false) . '>' . esc_html($label) . '</option>';
             }
             echo '</select>';
@@ -415,10 +415,10 @@ function kg_quote_lead_status_box( $post ) {
     $status = get_post_meta( $post->ID, 'kg_quote_status', true ) ?: 'pending';
     ?>
     <select name="kg_quote_status" style="width:100%;padding:8px;font-size:14px;margin-bottom:8px;">
-        <option value="pending"   <?php selected($status,'pending');   ?>>🕐 Pending</option>
-        <option value="contacted" <?php selected($status,'contacted'); ?>>📞 Contacted</option>
-        <option value="converted" <?php selected($status,'converted'); ?>>✅ Converted</option>
-        <option value="closed"    <?php selected($status,'closed');    ?>>❌ Closed</option>
+        <option value="pending"   <?php selected($status,'pending');   ?>>Pending</option>
+        <option value="contacted" <?php selected($status,'contacted'); ?>>Contacted</option>
+        <option value="converted" <?php selected($status,'converted'); ?>>Converted</option>
+        <option value="closed"    <?php selected($status,'closed');    ?>>Closed</option>
     </select>
     <p style="font-size:12px;color:#666;margin:0;">Click <strong>Update</strong> to save.</p>
     <?php
