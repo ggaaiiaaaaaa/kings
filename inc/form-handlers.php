@@ -399,10 +399,3 @@ function kg_handle_quote() {
 }
 add_action( 'wp_ajax_nopriv_kg_submit_quote', 'kg_handle_quote' );
 add_action( 'wp_ajax_kg_submit_quote',        'kg_handle_quote' );
-t-Type: text/html; charset=UTF-8' )
-    );
-
-    exit;
-}
-add_action( 'wp_ajax_nopriv_kg_submit_quote', 'kg_handle_quote' );
-add_action( 'wp_ajax_kg_submit_quote',        'kg_handle_quote' );
