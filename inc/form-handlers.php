@@ -247,16 +247,24 @@ function kg_handle_application() {
     );
 
     /* — Auto-reply to applicant — */
-    $reply_body = kg_email_heading( 'Application Acknowledgment' )
+    $base_reply = kg_email_heading( 'Application Acknowledgment' )
         . kg_email_para( 'Dear ' . esc_html($fname) . ',' )
-        . kg_email_para( 'Thank you for your interest in a career with Kings Manpower. This email confirms the successful receipt of your application and Curriculum Vitae. Our talent acquisition team will review your qualifications against our current requirements.' )
-        . '<table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;margin-bottom:24px;">'
-        . kg_email_row( 'Full Name',      $fullname )
-        . kg_email_row( 'Email',          $email )
-        . kg_email_row( 'Preferred Role', $role ?: 'Open to opportunities' )
-        . '</table>'
+        . kg_email_para( 'Thank you for your interest in a career with Kings Manpower. This email confirms the successful receipt of your application for <strong>' . ($role ?: 'a position') . '</strong>.' );
+
+    if ($job_type === 'FULL_TIME') {
+        $base_reply .= kg_email_para('We are excited about the possibility of you joining us long-term. Our team offers comprehensive benefits, health coverage, and strong career growth paths. We will be reviewing your expected salary and notice period against our current openings.');
+    } elseif ($job_type === 'PART_TIME') {
+        $base_reply .= kg_email_para('We value flexibility. Our talent team is reviewing your availability and shift preferences to see if they align with our current operational needs.');
+    } elseif ($job_type === 'CONTRACTOR') {
+        $base_reply .= kg_email_para('Thank you for providing your portfolio. Our procurement and project managers will review your past work to see if your skills align with our upcoming project deliverables.');
+    } elseif ($job_type === 'OTHER') {
+        $base_reply .= kg_email_para('Remote work requires strong communication. Our IT and operations teams will review your technical specifications (internet and power backups) alongside your skills to ensure a seamless remote setup.');
+    } else {
+        $base_reply .= kg_email_para('Our talent acquisition team will review your qualifications against our current requirements.');
+    }
+
+    $reply_body = $base_reply
         . kg_email_banner( 'Should your profile match our needs, a representative will contact you within 2 to 3 business days to discuss the next steps.' )
-        . kg_email_para( 'We appreciate your time and interest in joining our organization.' )
         . kg_email_button( 'View Career Opportunities', home_url('/jobs/') );
 
     kg_send_mail(
@@ -385,6 +393,13 @@ function kg_handle_quote() {
         'Your Kings Manpower Service Proposal — $' . number_format($total_price, 0) . '/mo',
         kg_email_wrap( 'Proposal Request Acknowledgment', $client_body ),
         array( 'Content-Type: text/html; charset=UTF-8' )
+    );
+
+    exit;
+}
+add_action( 'wp_ajax_nopriv_kg_submit_quote', 'kg_handle_quote' );
+add_action( 'wp_ajax_kg_submit_quote',        'kg_handle_quote' );
+t-Type: text/html; charset=UTF-8' )
     );
 
     exit;
