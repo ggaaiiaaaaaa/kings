@@ -60,6 +60,17 @@ function kg_save_application_post( $data ) {
     update_post_meta( $post_id, 'kg_app_cv_url',   esc_url_raw( $data['cv_url'] ) );
     update_post_meta( $post_id, 'kg_app_status',   'screening' );
     update_post_meta( $post_id, 'kg_app_client',   '' );
+    
+    // Dynamic Fields
+    if(!empty($data['job_type'])) update_post_meta( $post_id, 'kg_app_job_type', sanitize_text_field($data['job_type']) );
+    if(!empty($data['notice_period'])) update_post_meta( $post_id, 'kg_app_notice_period', sanitize_text_field($data['notice_period']) );
+    if(!empty($data['expected_salary'])) update_post_meta( $post_id, 'kg_app_expected_salary', sanitize_text_field($data['expected_salary']) );
+    if(!empty($data['available_hours'])) update_post_meta( $post_id, 'kg_app_available_hours', sanitize_text_field($data['available_hours']) );
+    if(!empty($data['shift_pref'])) update_post_meta( $post_id, 'kg_app_shift_pref', sanitize_text_field($data['shift_pref']) );
+    if(!empty($data['portfolio'])) update_post_meta( $post_id, 'kg_app_portfolio', esc_url_raw($data['portfolio']) );
+    if(!empty($data['tin'])) update_post_meta( $post_id, 'kg_app_tin', sanitize_text_field($data['tin']) );
+    if(!empty($data['internet_speed'])) update_post_meta( $post_id, 'kg_app_internet_speed', sanitize_text_field($data['internet_speed']) );
+    if(!empty($data['backup_power'])) update_post_meta( $post_id, 'kg_app_backup_power', sanitize_text_field($data['backup_power']) );
 
     return $post_id;
 }
@@ -215,6 +226,45 @@ function kg_application_details_box( $post ) {
                 <?php else : ?>—<?php endif; ?>
             </td>
         </tr>
+        <?php 
+        $job_type = get_post_meta( $post->ID, 'kg_app_job_type', true );
+        if ($job_type === 'FULL_TIME') : ?>
+        <tr>
+            <td style="padding:10px 8px;font-weight:600;border-top:2px solid #f0f0f0;">Notice Period</td>
+            <td style="padding:10px 8px;border-top:2px solid #f0f0f0;"><?php echo esc_html( get_post_meta( $post->ID, 'kg_app_notice_period', true ) ?: '—' ); ?></td>
+        </tr>
+        <tr>
+            <td style="padding:10px 8px;font-weight:600;border-top:1px solid #f0f0f0;">Expected Salary</td>
+            <td style="padding:10px 8px;border-top:1px solid #f0f0f0;">PHP <?php echo esc_html( get_post_meta( $post->ID, 'kg_app_expected_salary', true ) ?: '—' ); ?></td>
+        </tr>
+        <?php elseif ($job_type === 'PART_TIME') : ?>
+        <tr>
+            <td style="padding:10px 8px;font-weight:600;border-top:2px solid #f0f0f0;">Available Hours</td>
+            <td style="padding:10px 8px;border-top:2px solid #f0f0f0;"><?php echo esc_html( get_post_meta( $post->ID, 'kg_app_available_hours', true ) ?: '—' ); ?></td>
+        </tr>
+        <tr>
+            <td style="padding:10px 8px;font-weight:600;border-top:1px solid #f0f0f0;">Shift Preference</td>
+            <td style="padding:10px 8px;border-top:1px solid #f0f0f0;"><?php echo esc_html( get_post_meta( $post->ID, 'kg_app_shift_pref', true ) ?: '—' ); ?></td>
+        </tr>
+        <?php elseif ($job_type === 'CONTRACTOR') : ?>
+        <tr>
+            <td style="padding:10px 8px;font-weight:600;border-top:2px solid #f0f0f0;">Portfolio</td>
+            <td style="padding:10px 8px;border-top:2px solid #f0f0f0;"><?php $port = get_post_meta( $post->ID, 'kg_app_portfolio', true ); echo $port ? '<a href="'.esc_url($port).'" target="_blank">View</a>' : '—'; ?></td>
+        </tr>
+        <tr>
+            <td style="padding:10px 8px;font-weight:600;border-top:1px solid #f0f0f0;">TIN/Registration</td>
+            <td style="padding:10px 8px;border-top:1px solid #f0f0f0;"><?php echo esc_html( get_post_meta( $post->ID, 'kg_app_tin', true ) ?: '—' ); ?></td>
+        </tr>
+        <?php elseif ($job_type === 'OTHER') : ?>
+        <tr>
+            <td style="padding:10px 8px;font-weight:600;border-top:2px solid #f0f0f0;">Internet Speed</td>
+            <td style="padding:10px 8px;border-top:2px solid #f0f0f0;"><?php echo esc_html( get_post_meta( $post->ID, 'kg_app_internet_speed', true ) ?: '—' ); ?> Mbps</td>
+        </tr>
+        <tr>
+            <td style="padding:10px 8px;font-weight:600;border-top:1px solid #f0f0f0;">Backup Power</td>
+            <td style="padding:10px 8px;border-top:1px solid #f0f0f0;"><?php echo esc_html( get_post_meta( $post->ID, 'kg_app_backup_power', true ) ?: '—' ); ?></td>
+        </tr>
+        <?php endif; ?>
     </table>
     <?php
 }
