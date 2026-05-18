@@ -195,7 +195,8 @@ function kg_create_default_menus() {
 
     // Applicant nav (right side)
     $applicant_items = array(
-        array( 'title' => 'Find a Job',    'url' => home_url('/careers/') ),
+        array( 'title' => 'Our Jobs',      'url' => home_url('/our-jobs/') ),
+        array( 'title' => 'Apply Now',     'url' => home_url('/careers/') ),
         array( 'title' => 'Member Portal', 'url' => 'https://zckings.azurewebsites.net/' ),
         array( 'title' => 'Log In',        'url' => wp_login_url() ),
     );
@@ -372,6 +373,11 @@ if (file_exists(get_template_directory() . '/inc/data-populator.php')) {
     require_once get_template_directory() . '/inc/data-populator.php';
 }
 
+// ATS Admin Dashboard Widget
+if (file_exists(get_template_directory() . '/inc/ats-dashboard.php')) {
+    require_once get_template_directory() . '/inc/ats-dashboard.php';
+}
+
 // Jobs Custom Post Type
 function kingsgroup_register_jobs_cpt()
 {
@@ -401,6 +407,29 @@ function kingsgroup_register_jobs_cpt()
 add_action('init', 'kingsgroup_register_jobs_cpt');
 
 /**
+ * Redirect default jobs archive to the custom "Our Jobs" portal page.
+ */
+function kg_redirect_jobs_archive() {
+    if ( is_post_type_archive( 'jobs' ) ) {
+        // Try to find the page with the our-jobs.php template
+        $portal_page = get_pages( array(
+            'meta_key' => '_wp_page_template',
+            'meta_value' => 'our-jobs.php'
+        ));
+
+        if ( ! empty( $portal_page ) ) {
+            wp_redirect( get_permalink( $portal_page[0]->ID ), 301 );
+            exit;
+        } else {
+            // Fallback to home if page not found
+            wp_redirect( home_url( '/our-jobs/' ), 301 );
+            exit;
+        }
+    }
+}
+add_action( 'template_redirect', 'kg_redirect_jobs_archive' );
+
+/**
  * Flush rewrite rules once after theme activation or CPT registration changes.
  * Runs only when the flush flag isn't set yet, then sets it so it never runs twice.
  */
@@ -428,6 +457,34 @@ if ( defined('KG_SMTP_HOST') ) {
         $phpmailer->Password   = KG_SMTP_PASS;
         $phpmailer->setFrom( KG_SMTP_FROM, KG_SMTP_FROMNAME );
     }, 999 );
+}
+
+/**
+ * Returns an inline SVG icon string.
+ * Uses Heroicons 24x24 outline.
+ */
+function kg_icon($name, $class = '') {
+    $class_attr = $class ? ' class="' . esc_attr($class) . '"' : '';
+    $default_attrs = 'xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"' . $class_attr;
+
+    switch ($name) {
+        case 'search':
+            return '<svg ' . $default_attrs . '><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>';
+        case 'briefcase':
+            return '<svg ' . $default_attrs . '><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.084-.816 1.964-1.828 2.192a41.465 41.465 0 0 1-9.222 0c-1.012-.228-1.828-1.108-1.828-2.192v-4.25m16.5 0a21.819 21.819 0 0 0-3.846-1.106c-.106-.02-.213-.04-.321-.06A21.83 21.83 0 0 0 12 11.5a21.82 21.82 0 0 0-3.333.284c-.108.02-.215.04-.321.06A21.819 21.819 0 0 0 3.75 14.15m16.5 0v-4.25c0-1.084-.816-1.964-1.828-2.192a41.465 41.465 0 0 0-9.222 0c-1.012.228-1.828 1.108-1.828 2.192v4.25m16.5 0a21.819 21.819 0 0 1-3.846 1.106c-.106.02-.213.04-.321.06A21.83 21.83 0 0 1 12 12.5a21.82 21.82 0 0 1-3.333-.284c-.108-.02-.215-.04-.321-.06A21.819 21.819 0 0 1 3.75 14.15m16.5 0v-4.25c0-1.084-.816-1.964-1.828-2.192a41.465 41.465 0 0 0-9.222 0c-1.012.228-1.828 1.108-1.828 2.192v4.25" /><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 7.5h-9v-2.25c0-1.084.816-1.964 1.828-2.192a41.465 41.465 0 0 1 5.344 0c1.012.228 1.828 1.108 1.828 2.192V7.5Z" /></svg>';
+        case 'location':
+            return '<svg ' . $default_attrs . '><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>';
+        case 'building':
+            return '<svg ' . $default_attrs . '><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" /></svg>';
+        case 'crown':
+            return '<svg ' . $default_attrs . '><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" /></svg>';
+        case 'clipboard':
+            return '<svg ' . $default_attrs . '><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V8.25ZM6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" /></svg>';
+        case 'refresh':
+            return '<svg ' . $default_attrs . '><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>';
+        default:
+            return '';
+    }
 }
 
 
