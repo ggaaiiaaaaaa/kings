@@ -426,6 +426,15 @@ acf_add_local_field_group(array(
     'title'    => 'Job Details',
     'fields'   => array(
         array(
+            'key'           => 'field_job_card_image',
+            'label'         => 'Card Image',
+            'name'          => 'job_card_image',
+            'type'          => 'image',
+            'instructions'  => 'Optional: Upload an image to display on the job board card. If left blank, it falls back to the post Featured Image or a placeholder.',
+            'return_format' => 'url',
+            'preview_size'  => 'medium',
+        ),
+        array(
             'key'           => 'field_job_location',
             'label'         => 'Location',
             'name'          => 'job_location',
@@ -442,12 +451,35 @@ acf_add_local_field_group(array(
                 'FULL_TIME'  => 'Full-time',
                 'PART_TIME'  => 'Part-time',
                 'CONTRACTOR' => 'Contract',
-                'TEMPORARY'  => 'Temporary',
                 'OTHER'      => 'Remote',
             ),
             'default_value' => 'FULL_TIME',
             'allow_null'    => 0,
             'return_format' => 'value',
+        ),
+        array(
+            'key'           => 'field_job_duration',
+            'label'         => 'Contract Duration',
+            'name'          => 'job_duration',
+            'type'          => 'text',
+            'instructions'  => 'Specify the duration (e.g., "6 Months", "1 Year").',
+            'placeholder'   => 'e.g. 6 Months',
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field'    => 'field_job_type',
+                        'operator' => '==',
+                        'value'    => 'CONTRACTOR',
+                    ),
+                ),
+                array(
+                    array(
+                        'field'    => 'field_job_type',
+                        'operator' => '==',
+                        'value'    => 'TEMPORARY',
+                    ),
+                ),
+            ),
         ),
         array(
             'key'          => 'field_job_salary_min',
@@ -472,6 +504,26 @@ acf_add_local_field_group(array(
             'type'        => 'text',
             'placeholder' => 'e.g. Operations, Technology, HR',
         ),
+        array(
+            'key'          => 'field_job_target_headcount',
+            'label'        => 'Target Headcount',
+            'name'         => 'job_target_headcount',
+            'type'         => 'number',
+            'instructions' => 'Total number of hires needed for this role. Set to 0 or leave blank for unlimited.',
+            'min'          => 0,
+            'placeholder'  => '0',
+            'wrapper'      => array( 'width' => '50' ),
+        ),
+        array(
+            'key'          => 'field_job_filled_headcount',
+            'label'        => 'Filled Headcount',
+            'name'         => 'job_filled_headcount',
+            'type'         => 'number',
+            'instructions' => 'Number of positions already filled. When this equals Target, the job auto-hides from the front-end.',
+            'min'          => 0,
+            'placeholder'  => '0',
+            'wrapper'      => array( 'width' => '50' ),
+        ),
     ),
     'location' => array(
         array(
@@ -488,6 +540,22 @@ acf_add_local_field_group(array(
     'label_placement'       => 'top',
     'instruction_placement' => 'label',
     'hide_on_screen'        => array(),
+));
+
+// ==========================================
+// 11. JOBS LIST PAGE FIELDS
+// ==========================================
+acf_add_local_field_group(array(
+    'key' => 'group_jobspage',
+    'title' => 'Jobs Page Sections',
+    'fields' => array(
+        array('key' => 'tab_jobs_hero', 'label' => '1. Page Hero', 'type' => 'tab'),
+        array('key' => 'field_jobs_hero_headline', 'label' => 'Main Headline', 'name' => 'jobs_hero_headline', 'type' => 'text', 'placeholder' => 'Our Jobs'),
+        array('key' => 'field_jobs_hero_desc', 'label' => 'Hero Description', 'name' => 'jobs_hero_desc', 'type' => 'textarea', 'rows' => 2),
+        array('key' => 'field_jobs_hero_bg', 'label' => 'Background Image', 'name' => 'jobs_hero_bg', 'type' => 'image', 'return_format' => 'url', 'preview_size' => 'medium'),
+    ),
+    'location' => array( array( array( 'param' => 'page_template', 'operator' => '==', 'value' => 'our-jobs.php' ) ) ),
+    'hide_on_screen' => $hide_elements,
 ));
 
 // ==========================================
