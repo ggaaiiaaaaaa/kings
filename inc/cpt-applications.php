@@ -246,15 +246,6 @@ function kg_application_details_box( $post ) {
             <td style="padding:10px 8px;font-weight:600;border-top:1px solid #f0f0f0;">Shift Preference</td>
             <td style="padding:10px 8px;border-top:1px solid #f0f0f0;"><?php echo esc_html( get_post_meta( $post->ID, 'kg_app_shift_pref', true ) ?: '—' ); ?></td>
         </tr>
-        <?php elseif ($job_type === 'CONTRACTOR') : ?>
-        <tr>
-            <td style="padding:10px 8px;font-weight:600;border-top:2px solid #f0f0f0;">Portfolio</td>
-            <td style="padding:10px 8px;border-top:2px solid #f0f0f0;"><?php $port = get_post_meta( $post->ID, 'kg_app_portfolio', true ); echo $port ? '<a href="'.esc_url($port).'" target="_blank">View</a>' : '—'; ?></td>
-        </tr>
-        <tr>
-            <td style="padding:10px 8px;font-weight:600;border-top:1px solid #f0f0f0;">TIN/Registration</td>
-            <td style="padding:10px 8px;border-top:1px solid #f0f0f0;"><?php echo esc_html( get_post_meta( $post->ID, 'kg_app_tin', true ) ?: '—' ); ?></td>
-        </tr>
         <?php elseif ($job_type === 'OTHER') : ?>
         <tr>
             <td style="padding:10px 8px;font-weight:600;border-top:2px solid #f0f0f0;">Internet Speed</td>
