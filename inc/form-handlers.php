@@ -96,7 +96,7 @@ function kg_handle_contact() {
         wp_send_json_error( array( 'message' => 'Please fill in all required fields.' ), 422 );
     }
 
-    $to_email = defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : get_option('admin_email');
+    $to_email = defined('KG_INQUIRY_EMAIL') ? KG_INQUIRY_EMAIL : (defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : 'info@kingsgroup.com.ph');
 
     /* — Email to Kings Group — */
     $body = kg_email_heading( 'Website Inquiry Notification' )
@@ -153,10 +153,17 @@ function kg_handle_contact() {
 add_action( 'wp_ajax_nopriv_kg_submit_contact', 'kg_handle_contact' );
 add_action( 'wp_ajax_kg_submit_contact',        'kg_handle_contact' );
 
+function kg_secure_upload_directory($dirs) {
+    $dirs['subdir'] = '/secure-cvs';
+    $dirs['path']   = $dirs['basedir'] . '/secure-cvs';
+    $dirs['url']    = $dirs['baseurl'] . '/secure-cvs';
+    return $dirs;
+}
+
 /* ─────────────────────────────────────────────
    HANDLER 2: CV Application
    Action: kg_submit_application
-───────────────────────────────────────────── */
+   ───────────────────────────────────────────── */
 
 function kg_handle_application() {
     kg_verify_nonce( $_POST['kg_nonce'] ?? '', 'kg_careers_nonce' );
@@ -167,12 +174,14 @@ function kg_handle_application() {
     $email    = sanitize_email(      $_POST['app_email']    ?? '' );
     $phone    = sanitize_text_field( $_POST['app_phone']    ?? '' );
     $role     = sanitize_text_field( $_POST['app_role']     ?? '' );
-    $linkedin = esc_url_raw(         $_POST['app_linkedin'] ?? '' );
     $fullname = trim( $fname . ' ' . $lname );
 
     if ( ! $fname || ! $lname || ! is_email( $email ) ) {
         wp_send_json_error( array( 'message' => 'Please fill in your name and email.' ), 422 );
     }
+
+    $cv_url  = '';
+    $cv_path = '';
 
     if ( empty( $_FILES['app_cv'] ) || $_FILES['app_cv']['error'] !== UPLOAD_ERR_OK ) {
         wp_send_json_error( array( 'message' => 'Please upload your CV (PDF or DOCX).' ), 422 );
@@ -184,7 +193,12 @@ function kg_handle_application() {
         'application/msword',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     );
-    $file_type = mime_content_type( $_FILES['app_cv']['tmp_name'] );
+    if ( function_exists( 'mime_content_type' ) ) {
+        $file_type = mime_content_type( $_FILES['app_cv']['tmp_name'] );
+    } else {
+        $file_info = wp_check_filetype( $_FILES['app_cv']['name'] );
+        $file_type = $file_info['type'];
+    }
     $file_size = $_FILES['app_cv']['size'];
 
     if ( ! in_array( $file_type, $allowed_types, true ) ) {
@@ -195,15 +209,42 @@ function kg_handle_application() {
     }
 
     /* — Save CV to WP uploads — */
+    $upload_dir = wp_upload_dir();
+    $secure_dir = $upload_dir['basedir'] . '/secure-cvs';
+    if ( ! file_exists( $secure_dir ) ) {
+        wp_mkdir_p( $secure_dir );
+    }
+    $htaccess_file = $secure_dir . '/.htaccess';
+    if ( ! file_exists( $htaccess_file ) ) {
+        @file_put_contents( $htaccess_file, "Deny from all\n" );
+    }
+
+    add_filter( 'upload_dir', 'kg_secure_upload_directory' );
     require_once ABSPATH . 'wp-admin/includes/file.php';
     $upload = wp_handle_upload( $_FILES['app_cv'], array( 'test_form' => false ) );
+    remove_filter( 'upload_dir', 'kg_secure_upload_directory' );
     if ( isset( $upload['error'] ) ) {
         wp_send_json_error( array( 'message' => 'Upload failed: ' . $upload['error'] ), 500 );
     }
     $cv_url  = $upload['url'];
     $cv_path = $upload['file'];
 
-    $to_email = defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : get_option('admin_email');
+    $to_email = defined('KG_CAREER_EMAIL') ? KG_CAREER_EMAIL : (defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : 'hr@kingsgroup.com.ph');
+
+    /* — Save to WP Admin (Applications CPT) — */
+    $app_post_id = 0;
+    if ( function_exists( 'kg_save_application_post' ) ) {
+        $app_post_id = kg_save_application_post( array(
+            'fullname' => $fullname,
+            'email'    => $email,
+            'phone'    => $phone,
+            'role'     => $role,
+            'linkedin' => '',
+            'cv_url'   => $cv_url,
+        ) );
+    }
+
+    $download_url = $app_post_id ? add_query_arg( 'kg_download_cv', $app_post_id, home_url( '/' ) ) : $cv_url;
 
     /* — Email to Kings Group — */
     $body = kg_email_heading( 'Candidate Application Notification' )
@@ -213,8 +254,7 @@ function kg_handle_application() {
         . kg_email_row( 'Email',          '<a href="mailto:' . esc_attr($email) . '" style="color:#0A2540;">' . esc_html($email) . '</a>' )
         . kg_email_row( 'Phone',          $phone ?: '—' )
         . kg_email_row( 'Preferred Role', $role  ?: 'Not specified' )
-        . kg_email_row( 'LinkedIn',       $linkedin ? '<a href="' . esc_url($linkedin) . '" style="color:#0A2540;">View Profile</a>' : '—' )
-        . kg_email_row( 'CV File',        '<a href="' . esc_url($cv_url) . '" style="color:#00D09C;font-weight:600;">Download CV</a>' )
+        . kg_email_row( 'CV File',        '<a href="' . esc_url($download_url) . '" style="color:#00D09C;font-weight:600;">Download CV (Secure)</a>' )
         . '</table>'
         . kg_email_banner( 'The candidate\'s Curriculum Vitae is attached to this email and archived within the corporate media library.' );
 
@@ -223,49 +263,25 @@ function kg_handle_application() {
         'Reply-To: ' . $fullname . ' <' . $email . '>',
     );
 
-    /* — Save to WP Admin (Applications CPT) — */
-    if ( function_exists( 'kg_save_application_post' ) ) {
-        kg_save_application_post( array(
-            'fullname' => $fullname,
-            'email'    => $email,
-            'phone'    => $phone,
-            'role'     => $role,
-            'linkedin' => $linkedin,
-            'cv_url'   => $cv_url,
-        ) );
-    }
-
     /* — Respond to browser immediately, send emails after — */
     kg_flush_response( array( 'message' => 'Application submitted! Check your email for confirmation.' ) );
 
+    $attachments = $cv_path ? array( $cv_path ) : array();
     kg_send_mail(
         $to_email,
         'New Application: ' . $fullname . ( $role ? ' — ' . $role : '' ),
         kg_email_wrap( 'New CV Application', $body ),
         $headers,
-        array( $cv_path )
+        $attachments
     );
 
     /* — Auto-reply to applicant — */
-    $base_reply = kg_email_heading( 'Application Acknowledgment' )
+    $reply_body = kg_email_heading( 'Application Acknowledgment' )
         . kg_email_para( 'Dear ' . esc_html($fname) . ',' )
-        . kg_email_para( 'Thank you for your interest in a career with Kings Manpower. This email confirms the successful receipt of your application for <strong>' . ($role ?: 'a position') . '</strong>.' );
-
-    if ($job_type === 'FULL_TIME') {
-        $base_reply .= kg_email_para('We are excited about the possibility of you joining us long-term. Our team offers comprehensive benefits, health coverage, and strong career growth paths. We will be reviewing your expected salary and notice period against our current openings.');
-    } elseif ($job_type === 'PART_TIME') {
-        $base_reply .= kg_email_para('We value flexibility. Our talent team is reviewing your availability and shift preferences to see if they align with our current operational needs.');
-    } elseif ($job_type === 'CONTRACTOR') {
-        $base_reply .= kg_email_para('Thank you for providing your portfolio. Our procurement and project managers will review your past work to see if your skills align with our upcoming project deliverables.');
-    } elseif ($job_type === 'OTHER') {
-        $base_reply .= kg_email_para('Remote work requires strong communication. Our IT and operations teams will review your technical specifications (internet and power backups) alongside your skills to ensure a seamless remote setup.');
-    } else {
-        $base_reply .= kg_email_para('Our talent acquisition team will review your qualifications against our current requirements.');
-    }
-
-    $reply_body = $base_reply
+        . kg_email_para( 'Thank you for your interest in a career with Kings Manpower. This email confirms the successful receipt of your application for <strong>' . ($role ?: 'a position') . '</strong>.' )
+        . kg_email_para( 'Our talent acquisition team will review your qualifications against our current requirements and the requirements of your preferred role.' )
         . kg_email_banner( 'Should your profile match our needs, a representative will contact you within 2 to 3 business days to discuss the next steps.' )
-        . kg_email_button( 'View Career Opportunities', home_url('/jobs/') );
+        . kg_email_button( 'View Career Opportunities', home_url('/our-jobs/') );
 
     kg_send_mail(
         $email,
@@ -292,6 +308,18 @@ function kg_handle_quote() {
     $email = sanitize_email(      $_POST['quote_email'] ?? '' );
     $roles = json_decode( stripslashes( $_POST['quote_roles'] ?? '[]' ), true );
 
+    $currency   = sanitize_text_field( $_POST['quote_currency'] ?? 'USD' );
+    $discount_p = absint( $_POST['quote_discount_percent'] ?? 0 );
+    $discount_a = sanitize_text_field( $_POST['quote_discount_amount'] ?? '0' );
+    $quote_total = sanitize_text_field( $_POST['quote_total'] ?? '' );
+
+    $currency_symbols = array(
+        'USD' => '$',
+        'AUD' => 'A$',
+        'PHP' => '₱'
+    );
+    $sym = $currency_symbols[$currency] ?? '$';
+
     if ( ! $name || ! is_email( $email ) ) {
         wp_send_json_error( array( 'message' => 'Please enter your name and work email.' ), 422 );
     }
@@ -299,28 +327,49 @@ function kg_handle_quote() {
         wp_send_json_error( array( 'message' => 'Please add at least one role to your team.' ), 422 );
     }
 
+    // Determine exchange rates relative to USD in case we need math
+    $rates = array( 'USD' => 1.0, 'AUD' => 1.5, 'PHP' => 58.0 );
+    $rate = $rates[$currency] ?? 1.0;
+
     /* — Build roles table HTML — */
     $roles_rows  = '';
-    $total_price = 0;
+    $total_base = 0;
     foreach ( $roles as $role ) {
         $role_name  = sanitize_text_field( $role['role']       ?? '' );
         $level      = sanitize_text_field( $role['level']      ?? 'Junior' );
         $qty        = absint(              $role['qty']        ?? 1 );
         $unit_price = floatval(            $role['unit_price'] ?? 0 );
         $subtotal   = floatval(            $role['subtotal']   ?? ( $qty * $unit_price ) );
-        $total_price += $subtotal;
+
+        $converted_unit = round($unit_price * $rate);
+        $converted_sub  = round($subtotal * $rate);
+        $total_base += $converted_sub;
+
         $roles_rows .= '
         <tr>
           <td style="padding:12px 16px;font-size:14px;color:#1a1a2e;border-bottom:1px solid #f0f0f0;">' . esc_html($role_name) . '</td>
           <td style="padding:12px 16px;font-size:14px;color:#1a1a2e;text-align:center;border-bottom:1px solid #f0f0f0;">' . esc_html($level) . ' &times; ' . $qty . '</td>
-          <td style="padding:12px 16px;font-size:14px;color:#1a1a2e;text-align:right;border-bottom:1px solid #f0f0f0;">$' . number_format($unit_price, 0) . '</td>
-          <td style="padding:12px 16px;font-size:14px;font-weight:600;color:#0A2540;text-align:right;border-bottom:1px solid #f0f0f0;">$' . number_format($subtotal, 0) . '</td>
+          <td style="padding:12px 16px;font-size:14px;color:#1a1a2e;text-align:right;border-bottom:1px solid #f0f0f0;">' . $sym . number_format($converted_unit, 0) . '</td>
+          <td style="padding:12px 16px;font-size:14px;font-weight:600;color:#0A2540;text-align:right;border-bottom:1px solid #f0f0f0;">' . $sym . number_format($converted_sub, 0) . '</td>
         </tr>';
     }
-    $total_row = '
+
+    $discount_rows_html = '';
+    $final_total_val = $total_base;
+    if ($discount_p > 0) {
+        $discount_amount_val = round($total_base * ($discount_p / 100));
+        $final_total_val = $total_base - $discount_amount_val;
+        $discount_rows_html = '
+        <tr style="background:#fffbeb;">
+          <td colspan="3" style="padding:10px 16px;font-size:14px;color:#92400e;text-align:right;font-weight:600;">Volume Discount (' . $discount_p . '%)</td>
+          <td style="padding:10px 16px;font-size:14px;font-weight:600;color:#b45309;text-align:right;">-' . $sym . number_format($discount_amount_val, 0) . '</td>
+        </tr>';
+    }
+
+    $total_row = $discount_rows_html . '
         <tr style="background:#f0fdf9;">
           <td colspan="3" style="padding:14px 16px;font-size:15px;font-weight:700;color:#0A2540;text-align:right;">Estimated Monthly Total</td>
-          <td style="padding:14px 16px;font-size:18px;font-weight:700;color:#00D09C;text-align:right;">$' . number_format($total_price, 0) . '</td>
+          <td style="padding:14px 16px;font-size:18px;font-weight:700;color:#00D09C;text-align:right;">' . ($quote_total ?: ($sym . number_format($final_total_val, 0) . '/mo')) . '</td>
         </tr>';
 
     $roles_table = '
@@ -336,7 +385,7 @@ function kg_handle_quote() {
       <tbody>' . $roles_rows . $total_row . '</tbody>
     </table>';
 
-    $to_email = defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : get_option('admin_email');
+    $to_email = defined('KG_QUOTE_EMAIL') ? KG_QUOTE_EMAIL : (defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : 'hr@kingsgroup.com.ph');
 
     /* — Email to Kings Group — */
     $body = kg_email_heading( 'Service Proposal Request Notification' )
@@ -360,7 +409,7 @@ function kg_handle_quote() {
         kg_save_quote_lead_post( array(
             'name'  => $name,
             'email' => $email,
-            'total' => $total_price,
+            'total' => $final_total_val, // Save final calculated USD base total or converted total
             'roles' => $roles,
         ) );
     }
@@ -368,12 +417,12 @@ function kg_handle_quote() {
     /* — Respond to browser immediately, send emails after — */
     kg_flush_response( array(
         'message' => 'Quote submitted! Check your email for your team configuration summary.',
-        'total'   => '$' . number_format($total_price, 0),
+        'total'   => ($quote_total ?: ($sym . number_format($final_total_val, 0) . '/mo')),
     ) );
 
     kg_send_mail(
         $to_email,
-        'Quote Request from ' . $name . ' — $' . number_format($total_price, 0) . '/mo',
+        'Quote Request from ' . $name . ' — ' . ($quote_total ?: ($sym . number_format($final_total_val, 0) . '/mo')),
         kg_email_wrap( 'Service Proposal Request', $body ),
         $headers
     );
@@ -390,7 +439,7 @@ function kg_handle_quote() {
 
     kg_send_mail(
         $email,
-        'Your Kings Manpower Service Proposal — $' . number_format($total_price, 0) . '/mo',
+        'Your Kings Manpower Service Proposal — ' . ($quote_total ?: ($sym . number_format($final_total_val, 0) . '/mo')),
         kg_email_wrap( 'Proposal Request Acknowledgment', $client_body ),
         array( 'Content-Type: text/html; charset=UTF-8' )
     );

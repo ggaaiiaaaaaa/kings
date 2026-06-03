@@ -1,6 +1,6 @@
 <?php
 function kingsgroup_populate_all_pages() {
-    if ( get_option( 'kg_full_site_populated_v6' ) ) { return; }
+    if ( get_option( 'kg_full_site_populated_v13' ) ) { return; }
 
     $pages_to_create = array(
         'Home'             => 'front-page.php',
@@ -11,19 +11,28 @@ function kingsgroup_populate_all_pages() {
         'Labor Management' => 'service-labor.php',
         'HR Tech (KIT)'    => 'service-kit.php',
         'Our Network'      => 'network.php',
+        'Our Jobs'         => 'our-jobs.php',
         'Contact Us'       => 'contact.php',
         'Community'        => 'community.php',
-        'News'             => 'index.php'
+        'News'             => 'index.php',
+        'Terms of Service' => 'terms.php',
+        'Privacy Policy'   => 'privacy.php',
+        'Trust & Safety'   => 'trust-safety.php'
     );
 
     foreach ($pages_to_create as $title => $template) {
         // Check by template first, then by title
         $page_id = kg_get_page_by_template($template);
         
+        $is_new_page = false;
         if (!$page_id) {
-            $existing = get_page_by_title($title);
-            if ($existing) {
-                $page_id = $existing->ID;
+            $existing_pages = get_posts(array(
+                'post_type'   => 'page',
+                'title'       => $title,
+                'numberposts' => 1
+            ));
+            if (!empty($existing_pages)) {
+                $page_id = $existing_pages[0]->ID;
             }
         }
 
@@ -34,6 +43,7 @@ function kingsgroup_populate_all_pages() {
                 'post_type'     => 'page',
                 'page_template' => $template
             ));
+            $is_new_page = true;
         }
 
         // ─────────────────────────────────────────
@@ -115,21 +125,19 @@ function kingsgroup_populate_all_pages() {
             }
 
             // Testimonials
-            update_post_meta($page_id, 'testi_title',    'What Our Partners Say');
+            update_post_meta($page_id, 'testi_title',    'What Our Members Say');
             update_post_meta($page_id, '_testi_title',   'field_home_testi_title');
-            update_post_meta($page_id, 'testi_subtitle', 'Hear from the organizations and professionals who have experienced the Kings cooperative difference.');
+            update_post_meta($page_id, 'testi_subtitle', 'Hear from the empowered professionals and cooperative members who have built their careers with Kings.');
             update_post_meta($page_id, '_testi_subtitle','field_home_testi_sub');
 
             $testimonials = array(
                 array(
                     'Kings Group fundamentally transformed how we structure our customer service in Asia. The worker-owned model means our team operates with an unparalleled sense of ownership and dedication.',
-                    'David K.', 'COO, Global Logistics Tech',
-                    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'
+                    'David K.', 'COO, Global Logistics Tech'
                 ),
                 array(
                     'Before Kings, my career was just a series of jobs. Now, as a member-owner, I have access to lending programs, real benefits, and a voice in how we operate. It\'s life-changing.',
-                    'Maria S.', 'Senior Technical Support',
-                    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80'
+                    'Maria S.', 'Senior Technical Support'
                 ),
             );
             foreach ($testimonials as $i => $t) {
@@ -140,10 +148,33 @@ function kingsgroup_populate_all_pages() {
                 update_post_meta($page_id, '_testi_'.$n.'_name', 'field_home_t'.$n.'_name');
                 update_post_meta($page_id, 'testi_'.$n.'_role',  $t[2]);
                 update_post_meta($page_id, '_testi_'.$n.'_role', 'field_home_t'.$n.'_role');
-                update_post_meta($page_id, 'testi_'.$n.'_img',   $t[3]);
-                update_post_meta($page_id, '_testi_'.$n.'_img',  'field_home_t'.$n.'_img');
+            }
+
+            // Our Network
+            update_post_meta($page_id, 'net_title',    'Our Network');
+            update_post_meta($page_id, '_net_title',   'field_home_net_title');
+            update_post_meta($page_id, 'net_subtitle', 'Explore our affiliated brands and communities.');
+            update_post_meta($page_id, '_net_subtitle','field_home_net_desc');
+
+            $brands = array(
+                1 => array('title' => 'The Kings City', 'desc' => 'Our premier coworking and flex-office brand. We provide modern, inspiring workspaces designed to foster collaboration, innovation, and productivity for professionals in the heart of the business district.', 'link' => 'https://www.kings-city.com/', 'btn' => 'Discover Kings City', 'img' => 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80'),
+                2 => array('title' => 'The Social Manila', 'desc' => 'The premier events, lifestyle, and community engagement hub. We host corporate functions, team-building events, and exclusive gatherings designed to connect leaders and ignite culture.', 'link' => 'https://kingscity.com.ph/', 'btn' => 'Explore The Social', 'img' => 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80'),
+                3 => array('title' => 'The Home Culinary School', 'desc' => 'Professional culinary training and certification programs. Equipping the next generation of chefs and hospitality professionals with world-class skills, discipline, and ethical standards.', 'link' => 'https://unique-souffle-78e15a.netlify.app/', 'btn' => 'Start Cooking', 'img' => 'https://images.unsplash.com/photo-1556910103-1c02745a872e?auto=format&fit=crop&w=800&q=80'),
+            );
+            foreach ($brands as $i => $b) {
+                update_post_meta($page_id, 'net_brand'.$i.'_title', $b['title']);
+                update_post_meta($page_id, '_net_brand'.$i.'_title', 'field_home_net_b'.$i.'_title');
+                update_post_meta($page_id, 'net_brand'.$i.'_desc',  $b['desc']);
+                update_post_meta($page_id, '_net_brand'.$i.'_desc',  'field_home_net_b'.$i.'_desc');
+                update_post_meta($page_id, 'net_brand'.$i.'_link',  $b['link']);
+                update_post_meta($page_id, '_net_brand'.$i.'_link',  'field_home_net_b'.$i.'_link');
+                update_post_meta($page_id, 'net_brand'.$i.'_btn',   $b['btn']);
+                update_post_meta($page_id, '_net_brand'.$i.'_btn',   'field_home_net_b'.$i.'_btn');
+                update_post_meta($page_id, 'net_brand'.$i.'_img',   $b['img']);
+                update_post_meta($page_id, '_net_brand'.$i.'_img',   'field_home_net_b'.$i.'_img');
             }
         }
+
 
         // ─────────────────────────────────────────
         // 2. STORY PAGE
@@ -197,7 +228,8 @@ function kingsgroup_populate_all_pages() {
             update_post_meta($page_id, '_story_timeline_title', 'field_story_timeline_title');
             update_post_meta($page_id, 'story_timeline_intro',  'Since 1999, Kings has been redefining the staffing industry.');
             update_post_meta($page_id, '_story_timeline_intro', 'field_story_timeline_intro');
-            // story_roots_video: leave blank — admin pastes their own URL
+            update_post_meta($page_id, 'story_roots_video', 'https://www.youtube.com/watch?v=ScMzIvxBSi4');
+            update_post_meta($page_id, '_story_roots_video', 'field_story_roots_video');
 
             // Leadership Team
             update_post_meta($page_id, 'story_team_title',  'Kings Team');
@@ -252,7 +284,8 @@ function kingsgroup_populate_all_pages() {
                 $n = $i + 1;
                 update_post_meta($page_id, 'story_co'.$n.'_name',  $name);
                 update_post_meta($page_id, '_story_co'.$n.'_name', 'field_story_co'.$n.'_name');
-                // story_co{n}_img: left blank — admin uploads actual logos
+                update_post_meta($page_id, 'story_co'.$n.'_img', 'https://images.unsplash.com/photo-1599305445671-ac291c95aba9?auto=format&fit=crop&w=300&q=80');
+                update_post_meta($page_id, '_story_co'.$n.'_img', 'field_story_co'.$n.'_img');
             }
         }
 
@@ -559,12 +592,32 @@ function kingsgroup_populate_all_pages() {
         if ($template === 'community.php') {
             update_post_meta($page_id, 'comm_hero_title',      'Our Commitment to Community');
             update_post_meta($page_id, '_comm_hero_title',     'field_comm_hero_title');
+            update_post_meta($page_id, 'comm_hero_desc',       'Building a sustainable future through education, empowerment, and shared success.');
+            update_post_meta($page_id, '_comm_hero_desc',      'field_comm_hero_desc');
             update_post_meta($page_id, 'comm_impact_intro',    'Community is essential to our mission and it is our responsibility to support the aspirations of our members by providing scholarships to our members and their dependents.');
             update_post_meta($page_id, '_comm_impact_intro',   'field_comm_impact_intro');
+            update_post_meta($page_id, 'comm_stat1_num',        '500+');
+            update_post_meta($page_id, '_comm_stat1_num',       'field_comm_stat1_num');
+            update_post_meta($page_id, 'comm_stat1_label',      'Scholarships Awarded');
+            update_post_meta($page_id, '_comm_stat1_label',     'field_comm_stat1_label');
+            update_post_meta($page_id, 'comm_stat2_num',        '100%');
+            update_post_meta($page_id, '_comm_stat2_num',       'field_comm_stat2_num');
+            update_post_meta($page_id, 'comm_stat2_label',      'Member Focused');
+            update_post_meta($page_id, '_comm_stat2_label',     'field_comm_stat2_label');
+            update_post_meta($page_id, 'comm_impact_img',       'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80');
+            update_post_meta($page_id, '_comm_impact_img',      'field_comm_impact_img');
             update_post_meta($page_id, 'comm_queens_title',    'Queens of Kings Group');
             update_post_meta($page_id, '_comm_queens_title',   'field_comm_queens_title');
             update_post_meta($page_id, 'comm_queens_desc',     'Dedicated to empowering women within the Kings Group network through specialized resources, mentorship, and support structures designed for professional and personal growth.');
             update_post_meta($page_id, '_comm_queens_desc',    'field_comm_queens_desc');
+            update_post_meta($page_id, 'comm_queens_img',       'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80');
+            update_post_meta($page_id, '_comm_queens_img',      'field_comm_queens_img');
+            update_post_meta($page_id, 'comm_culinary_tag',     'Education');
+            update_post_meta($page_id, '_comm_culinary_tag',    'field_comm_culinary_tag');
+            update_post_meta($page_id, 'comm_culinary_title',   'Home Culinary & Technical School');
+            update_post_meta($page_id, '_comm_culinary_title',  'field_comm_culinary_title');
+            update_post_meta($page_id, 'comm_culinary_sub',     'Empowering our members with sustainable livelihood programs and TESDA-accredited training.');
+            update_post_meta($page_id, '_comm_culinary_sub',    'field_comm_culinary_sub');
             update_post_meta($page_id, 'comm_culinary_intro',  'We built Home Culinary and Technical School to have a sustainable education and livelihood programs for our members and their families.');
             update_post_meta($page_id, '_comm_culinary_intro', 'field_comm_culinary_intro');
             update_post_meta($page_id, 'comm_culinary_desc',   'As The Kings expands, so does our scholarship program with Home Culinary and Technical School. We are TESDA accredited and certified.');
@@ -577,6 +630,9 @@ function kingsgroup_populate_all_pages() {
     // Global Options
     if (function_exists('update_field')) {
         update_field('footer_description', 'Empowering global teams with ethical Philippine talent through a worker-owned cooperative model.', 'option');
+        update_field('social_fb', 'https://www.facebook.com/kingsgroup', 'option');
+        update_field('social_tw', 'https://twitter.com/kingsgroup', 'option');
+        update_field('social_li', 'https://www.linkedin.com/company/kingsgroup', 'option');
     }
 
     // Default Jobs for Team Builder
@@ -592,21 +648,78 @@ function kingsgroup_populate_all_pages() {
             array('Digital Marketing Exec',  'SEO, social media, paid ads, and content strategy',               1100),
             array('Accountant',              'Bookkeeping, financial reporting, and compliance',                 1200),
         );
+        $job_images = array(
+            'Software Developer'     => 'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?auto=format&fit=crop&w=600&q=80',
+            'Operations Head'        => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
+            'Customer Service Rep'   => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+            'Data Analyst'           => 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80',
+            'Graphic Designer'       => 'https://images.unsplash.com/photo-1561070791-26c113006238?auto=format&fit=crop&w=600&q=80',
+            'Virtual Assistant'      => 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=600&q=80',
+            'Digital Marketing Exec' => 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80',
+            'Accountant'             => 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=600&q=80',
+        );
+        $job_depts = array(
+            'Software Developer'     => 'Technology',
+            'Operations Head'        => 'Operations',
+            'Customer Service Rep'   => 'Customer Support',
+            'Data Analyst'           => 'Technology',
+            'Graphic Designer'       => 'Creative',
+            'Virtual Assistant'      => 'Administrative',
+            'Digital Marketing Exec' => 'Marketing',
+            'Accountant'             => 'Finance',
+        );
         foreach ($default_jobs as $job) {
+            $title = $job[0];
             $job_id = wp_insert_post(array(
-                'post_title'   => $job[0],
+                'post_title'   => $title,
                 'post_status'  => 'publish',
                 'post_type'    => 'jobs',
                 'post_excerpt' => $job[1],
             ));
+            
+            $img = isset($job_images[$title]) ? $job_images[$title] : 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=600&q=80';
+            $dept = isset($job_depts[$title]) ? $job_depts[$title] : 'General';
+            $is_remote = ($title === 'Software Developer' || $title === 'Virtual Assistant' || $title === 'Graphic Designer');
+
             update_post_meta($job_id, 'base_price',             $job[2]);
             update_post_meta($job_id, '_base_price',            'field_job_base_price');
             update_post_meta($job_id, 'include_in_team_builder', 1);
             update_post_meta($job_id, '_include_in_team_builder','field_job_include_team_builder');
+            
+            update_post_meta($job_id, 'job_card_image',         $img);
+            update_post_meta($job_id, '_job_card_image',        'field_job_card_image');
+            update_post_meta($job_id, 'job_location',           $is_remote ? 'Remote, Philippines' : 'Parañaque, Metro Manila');
+            update_post_meta($job_id, '_job_location',          'field_job_location');
+            update_post_meta($job_id, 'job_type',               $is_remote ? 'CONTRACTOR' : 'FULL_TIME');
+            update_post_meta($job_id, '_job_type',              'field_job_type');
+            update_post_meta($job_id, 'job_work_setup',          $is_remote ? 'WFH' : 'WFO');
+            update_post_meta($job_id, '_job_work_setup',         'field_job_work_setup');
+            update_post_meta($job_id, 'job_salary_min',          $job[2] * 40);
+            update_post_meta($job_id, '_job_salary_min',         'field_job_salary_min');
+            update_post_meta($job_id, 'job_salary_max',          $job[2] * 60);
+            update_post_meta($job_id, '_job_salary_max',         'field_job_salary_max');
+            update_post_meta($job_id, 'job_department',         $dept);
+            update_post_meta($job_id, '_job_department',         'field_job_department');
+            update_post_meta($job_id, 'job_target_headcount',    5);
+            update_post_meta($job_id, '_job_target_headcount',   'field_job_target_headcount');
+            update_post_meta($job_id, 'job_filled_headcount',    1);
+            update_post_meta($job_id, '_job_filled_headcount',   'field_job_filled_headcount');
+        }
+        // ─────────────────────────────────────────
+        // 13. OUR JOBS PAGE
+        // ─────────────────────────────────────────
+        if ($template === 'our-jobs.php') {
+            update_post_meta($page_id, 'jobs_hero_headline',  'Our Jobs');
+            update_post_meta($page_id, '_jobs_hero_headline', 'field_jobs_hero_headline');
+            update_post_meta($page_id, 'jobs_hero_desc',      'Find your next opportunity at one of the Philippines\' most people-first cooperatives.');
+            update_post_meta($page_id, '_jobs_hero_desc',     'field_jobs_hero_desc');
+            update_post_meta($page_id, 'jobs_hero_bg',       'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=2000&q=80');
+            update_post_meta($page_id, '_jobs_hero_bg',      'field_jobs_hero_bg');
         }
     }
 
-    update_option('kg_full_site_populated_v7', true);
+    update_option('kg_full_site_populated_v13', true);
+    flush_rewrite_rules();
 }
 add_action('init', 'kingsgroup_populate_all_pages');
 
@@ -623,3 +736,4 @@ function kg_get_page_by_template($template_name) {
     ));
     return !empty($pages) ? $pages[0] : false;
 }
+

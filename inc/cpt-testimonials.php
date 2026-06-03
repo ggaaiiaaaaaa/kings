@@ -49,7 +49,6 @@ function kg_testimonial_metabox_html( $post ) {
     wp_nonce_field( 'kg_save_testimonial', 'kg_testimonial_nonce' );
     $quote   = get_post_meta( $post->ID, '_kg_testi_quote', true );
     $role    = get_post_meta( $post->ID, '_kg_testi_role',  true );
-    $img_url = get_post_meta( $post->ID, '_kg_testi_img',   true );
     $order   = get_post_meta( $post->ID, '_kg_testi_order', true );
     ?>
     <table class="form-table">
@@ -60,13 +59,6 @@ function kg_testimonial_metabox_html( $post ) {
         <tr>
             <th><label for="kg_testi_role">Role / Company</label></th>
             <td><input type="text" id="kg_testi_role" name="kg_testi_role" value="<?php echo esc_attr( $role ); ?>" style="width:100%;" placeholder="e.g. COO, Global Logistics Tech"></td>
-        </tr>
-        <tr>
-            <th><label for="kg_testi_img">Photo URL</label></th>
-            <td>
-                <input type="url" id="kg_testi_img" name="kg_testi_img" value="<?php echo esc_attr( $img_url ); ?>" style="width:100%;" placeholder="https://...">
-                <p class="description">Upload a photo via <em>Media Library</em>, copy its URL, and paste it here.</p>
-            </td>
         </tr>
         <tr>
             <th><label for="kg_testi_order">Display Order</label></th>
@@ -92,9 +84,6 @@ function kg_save_testimonial_meta( $post_id ) {
     if ( isset( $_POST['kg_testi_role'] ) ) {
         update_post_meta( $post_id, '_kg_testi_role', sanitize_text_field( $_POST['kg_testi_role'] ) );
     }
-    if ( isset( $_POST['kg_testi_img'] ) ) {
-        update_post_meta( $post_id, '_kg_testi_img', esc_url_raw( $_POST['kg_testi_img'] ) );
-    }
     if ( isset( $_POST['kg_testi_order'] ) ) {
         update_post_meta( $post_id, '_kg_testi_order', absint( $_POST['kg_testi_order'] ) );
     }
@@ -108,7 +97,6 @@ function kg_testimonial_columns( $cols ) {
         'title'          => 'Author Name',
         'kg_testi_quote' => 'Quote',
         'kg_testi_role'  => 'Role / Company',
-        'kg_testi_photo' => 'Photo',
         'kg_testi_order' => 'Order',
     );
 }
@@ -121,14 +109,6 @@ function kg_testimonial_column_content( $col, $post_id ) {
             break;
         case 'kg_testi_role':
             echo esc_html( get_post_meta( $post_id, '_kg_testi_role', true ) );
-            break;
-        case 'kg_testi_photo':
-            $url = get_post_meta( $post_id, '_kg_testi_img', true );
-            if ( $url ) {
-                echo '<img src="' . esc_url( $url ) . '" width="40" height="40" style="object-fit:cover;border-radius:50%;display:block;">';
-            } else {
-                echo '<span style="color:#999;">—</span>';
-            }
             break;
         case 'kg_testi_order':
             echo esc_html( get_post_meta( $post_id, '_kg_testi_order', true ) ?: '0' );

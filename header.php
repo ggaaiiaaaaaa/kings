@@ -69,20 +69,7 @@
                                             <span class="desc">A legacy of empowering workers since 1999.</span>
                                         </div>
                                     </a>
-                                    <a href="<?php echo esc_url(home_url('/story/#vision-mission')); ?>" class="mega-feature-link">
-                                        <div class="feature-link-icon">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <polygon
-                                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                                                </polygon>
-                                            </svg>
-                                        </div>
-                                        <div class="feature-link-text">
-                                            <span class="title">Mission & Values</span>
-                                            <span class="desc">Discover our cooperative advantage and vision.</span>
-                                        </div>
-                                    </a>
+
                                     <a href="<?php echo esc_url(home_url('/news/')); ?>" class="mega-feature-link">
                                         <div class="feature-link-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -182,14 +169,16 @@
                         'items_wrap'     => '<ul class="nav-menu-list">%3$s</ul>',
                     ) );
                 } else { ?>
-                <a href="<?php echo esc_url(home_url('/careers/')); ?>" class="nav-link">Find a Job</a>
+                <a href="<?php echo esc_url(home_url('/our-jobs/')); ?>" class="nav-link">Our Jobs</a>
+                <a href="<?php echo esc_url(home_url('/careers/')); ?>" class="nav-link">Apply Now</a>
                 <a href="https://zckings.azurewebsites.net/" class="nav-link" target="_blank" rel="noopener">Member Portal</a>
-                <a href="<?php echo esc_url(home_url('/wp-login.php')); ?>" class="nav-link">Log In</a>
+                <a href="https://zckings.azurewebsites.net/" class="nav-link" target="_blank" rel="noopener">Log In</a>
                 <?php } ?>
             </div>
 
             <!-- Mobile Toggle -->
             <button class="mobile-toggle" aria-label="Toggle Menu">
+                <span></span>
                 <span></span>
                 <span></span>
             </button>

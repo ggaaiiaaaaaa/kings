@@ -60,17 +60,6 @@ function kg_save_application_post( $data ) {
     update_post_meta( $post_id, 'kg_app_cv_url',   esc_url_raw( $data['cv_url'] ) );
     update_post_meta( $post_id, 'kg_app_status',   'screening' );
     update_post_meta( $post_id, 'kg_app_client',   '' );
-    
-    // Dynamic Fields
-    if(!empty($data['job_type'])) update_post_meta( $post_id, 'kg_app_job_type', sanitize_text_field($data['job_type']) );
-    if(!empty($data['notice_period'])) update_post_meta( $post_id, 'kg_app_notice_period', sanitize_text_field($data['notice_period']) );
-    if(!empty($data['expected_salary'])) update_post_meta( $post_id, 'kg_app_expected_salary', sanitize_text_field($data['expected_salary']) );
-    if(!empty($data['available_hours'])) update_post_meta( $post_id, 'kg_app_available_hours', sanitize_text_field($data['available_hours']) );
-    if(!empty($data['shift_pref'])) update_post_meta( $post_id, 'kg_app_shift_pref', sanitize_text_field($data['shift_pref']) );
-    if(!empty($data['portfolio'])) update_post_meta( $post_id, 'kg_app_portfolio', esc_url_raw($data['portfolio']) );
-    if(!empty($data['tin'])) update_post_meta( $post_id, 'kg_app_tin', sanitize_text_field($data['tin']) );
-    if(!empty($data['internet_speed'])) update_post_meta( $post_id, 'kg_app_internet_speed', sanitize_text_field($data['internet_speed']) );
-    if(!empty($data['backup_power'])) update_post_meta( $post_id, 'kg_app_backup_power', sanitize_text_field($data['backup_power']) );
 
     return $post_id;
 }
@@ -143,9 +132,12 @@ function kg_application_column_content( $column, $post_id ) {
 
         case 'kg_cv':
             $cv_url = get_post_meta( $post_id, 'kg_app_cv_url', true );
-            echo $cv_url
-                ? '<a href="' . esc_url( $cv_url ) . '" target="_blank" class="button button-small">⬇ Download CV</a>'
-                : '—';
+            if ( $cv_url ) {
+                $download_url = add_query_arg( 'kg_download_cv', $post_id, home_url( '/' ) );
+                echo '<a href="' . esc_url( $download_url ) . '" target="_blank" class="button button-small">⬇ Download CV</a>';
+            } else {
+                echo '—';
+            }
             break;
     }
 }
@@ -208,7 +200,36 @@ function kg_application_details_box( $post ) {
         </tr>
         <tr>
             <td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Role Applied For</td>
-            <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;"><?php echo esc_html( $role ?: 'Not specified' ); ?></td>
+            <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
+                <?php 
+                $all_jobs = get_posts( array(
+                    'post_type'      => 'jobs',
+                    'post_status'    => 'publish',
+                    'posts_per_page' => -1,
+                    'orderby'        => 'title',
+                    'order'          => 'ASC',
+                ) );
+                ?>
+                <select name="kg_app_role" style="width:100%; max-width:400px; padding:6px 10px; font-size:14px; border: 1px solid #ccc; border-radius: 4px;">
+                    <option value="">— Select / Assign a Job Role —</option>
+                    <?php 
+                    $found_current = false;
+                    if ( ! empty( $all_jobs ) ) {
+                        foreach ( $all_jobs as $job ) {
+                            $job_title = $job->post_title;
+                            $selected = selected( $role, $job_title, false );
+                            if ( $selected ) {
+                                $found_current = true;
+                            }
+                            echo '<option value="' . esc_attr( $job_title ) . '" ' . $selected . '>' . esc_html( $job_title ) . '</option>';
+                        }
+                    }
+                    if ( ! empty( $role ) && ! $found_current ) {
+                        echo '<option value="' . esc_attr( $role ) . '" selected>' . esc_html( $role ) . ' (Custom/Legacy)</option>';
+                    }
+                    ?>
+                </select>
+            </td>
         </tr>
         <tr>
             <td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">LinkedIn</td>
@@ -221,41 +242,14 @@ function kg_application_details_box( $post ) {
         <tr>
             <td style="padding:10px 8px;font-weight:600;">CV File</td>
             <td style="padding:10px 8px;">
-                <?php if ( $cv_url ) : ?>
-                    <a href="<?php echo esc_url( $cv_url ); ?>" target="_blank" class="button button-primary">⬇ Download CV</a>
+                <?php if ( $cv_url ) : 
+                    $download_url = add_query_arg( 'kg_download_cv', $post->ID, home_url( '/' ) );
+                ?>
+                    <a href="<?php echo esc_url( $download_url ); ?>" target="_blank" class="button button-primary">⬇ Download CV</a>
                 <?php else : ?>—<?php endif; ?>
             </td>
         </tr>
-        <?php 
-        $job_type = get_post_meta( $post->ID, 'kg_app_job_type', true );
-        if ($job_type === 'FULL_TIME') : ?>
-        <tr>
-            <td style="padding:10px 8px;font-weight:600;border-top:2px solid #f0f0f0;">Notice Period</td>
-            <td style="padding:10px 8px;border-top:2px solid #f0f0f0;"><?php echo esc_html( get_post_meta( $post->ID, 'kg_app_notice_period', true ) ?: '—' ); ?></td>
-        </tr>
-        <tr>
-            <td style="padding:10px 8px;font-weight:600;border-top:1px solid #f0f0f0;">Expected Salary</td>
-            <td style="padding:10px 8px;border-top:1px solid #f0f0f0;">PHP <?php echo esc_html( get_post_meta( $post->ID, 'kg_app_expected_salary', true ) ?: '—' ); ?></td>
-        </tr>
-        <?php elseif ($job_type === 'PART_TIME') : ?>
-        <tr>
-            <td style="padding:10px 8px;font-weight:600;border-top:2px solid #f0f0f0;">Available Hours</td>
-            <td style="padding:10px 8px;border-top:2px solid #f0f0f0;"><?php echo esc_html( get_post_meta( $post->ID, 'kg_app_available_hours', true ) ?: '—' ); ?></td>
-        </tr>
-        <tr>
-            <td style="padding:10px 8px;font-weight:600;border-top:1px solid #f0f0f0;">Shift Preference</td>
-            <td style="padding:10px 8px;border-top:1px solid #f0f0f0;"><?php echo esc_html( get_post_meta( $post->ID, 'kg_app_shift_pref', true ) ?: '—' ); ?></td>
-        </tr>
-        <?php elseif ($job_type === 'OTHER') : ?>
-        <tr>
-            <td style="padding:10px 8px;font-weight:600;border-top:2px solid #f0f0f0;">Internet Speed</td>
-            <td style="padding:10px 8px;border-top:2px solid #f0f0f0;"><?php echo esc_html( get_post_meta( $post->ID, 'kg_app_internet_speed', true ) ?: '—' ); ?> Mbps</td>
-        </tr>
-        <tr>
-            <td style="padding:10px 8px;font-weight:600;border-top:1px solid #f0f0f0;">Backup Power</td>
-            <td style="padding:10px 8px;border-top:1px solid #f0f0f0;"><?php echo esc_html( get_post_meta( $post->ID, 'kg_app_backup_power', true ) ?: '—' ); ?></td>
-        </tr>
-        <?php endif; ?>
+
     </table>
     <?php
 }
@@ -301,6 +295,10 @@ function kg_save_application_status( $post_id ) {
         update_post_meta( $post_id, 'kg_app_client', sanitize_text_field( $_POST['kg_app_client'] ) );
     }
 
+    if ( isset( $_POST['kg_app_role'] ) ) {
+        update_post_meta( $post_id, 'kg_app_role', sanitize_text_field( $_POST['kg_app_role'] ) );
+    }
+
     /* — Email applicant when status changes to hired — */
     if ( $new_status !== $old_status && $new_status === 'hired' ) {
         kg_notify_applicant_status( $post_id, 'accepted' );
@@ -310,6 +308,49 @@ function kg_save_application_status( $post_id ) {
     }
 }
 add_action( 'save_post_kg_application', 'kg_save_application_status' );
+
+/**
+ * Auto-sync Dashboard headcount when an application is marked hired/deployed.
+ * Counts all hired+deployed applications that match the same role,
+ * then updates job_filled_headcount on the related Job post.
+ */
+function kg_sync_job_headcount_on_status_change( $post_id ) {
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+    if ( get_post_type( $post_id ) !== 'kg_application' ) return;
+
+    $status = get_post_meta( $post_id, 'kg_app_status', true );
+    if ( ! in_array( $status, array( 'hired', 'deployed' ), true ) ) return;
+
+    $role = get_post_meta( $post_id, 'kg_app_role', true );
+    if ( ! $role ) return;
+
+    // Find the Job post matching this role (by title)
+    $jobs = get_posts( array(
+        'post_type'      => 'jobs',
+        'post_status'    => 'publish',
+        'posts_per_page' => 1,
+        'title'          => $role,
+        'fields'         => 'ids',
+    ) );
+    if ( empty( $jobs ) ) return;
+    $job_id = $jobs[0];
+
+    // Count all hired + deployed applications for this role
+    $filled = new WP_Query( array(
+        'post_type'      => 'kg_application',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+        'meta_query'     => array(
+            'relation' => 'AND',
+            array( 'key' => 'kg_app_role',   'value' => $role ),
+            array( 'key' => 'kg_app_status', 'value' => array( 'hired', 'deployed' ), 'compare' => 'IN' ),
+        ),
+    ) );
+
+    update_post_meta( $job_id, 'job_filled_headcount', $filled->found_posts );
+}
+add_action( 'save_post_kg_application', 'kg_sync_job_headcount_on_status_change', 20 );
 
 /**
  * Sends a branded status-update email to the applicant.
@@ -341,7 +382,7 @@ function kg_notify_applicant_status( $post_id, $status ) {
             . kg_email_para( 'Following a thorough evaluation of your qualifications by our talent acquisition team, we have opted to proceed with other candidates whose profiles more closely align with our immediate operational requirements.' )
             . kg_email_banner( 'We will retain your Curriculum Vitae in our secure database and may contact you should a suitable opportunity arise in the future.' )
             . kg_email_para( 'We thank you for the time invested in this process and wish you continued success in your professional endeavors.' )
-            . kg_email_button( 'View Other Opportunities', home_url('/jobs/') );
+            . kg_email_button( 'View Other Opportunities', home_url('/our-jobs/') );
     }
 
     wp_mail(
@@ -379,7 +420,7 @@ function kg_application_status_filter_query( $query ) {
         ( $_GET['post_type'] ?? '' ) === 'kg_application' &&
         ! empty( $_GET['kg_status_filter'] )
     ) {
-        $allowed = array( 'pending', 'accepted', 'rejected' );
+        $allowed = array_keys( kg_ats_statuses() );
         $filter  = $_GET['kg_status_filter'];
         if ( in_array( $filter, $allowed, true ) ) {
             $query->set( 'meta_query', array(
@@ -503,9 +544,12 @@ function kg_application_admin_scripts( $hook ) {
                     .then(function (data) {
                         if (data.success) {
                             var colors = {
-                                pending:  'background:#fef3c7;color:#92400e;',
-                                accepted: 'background:#d1fae5;color:#065f46;',
-                                rejected: 'background:#fee2e2;color:#991b1b;',
+                                screening:    'background:#dbeafe;color:#1e40af;',
+                                interviewing: 'background:#ede9fe;color:#6d28d9;',
+                                hired:        'background:#d1fae5;color:#065f46;',
+                                deployed:     'background:#dcfce7;color:#15803d;',
+                                benched:      'background:#fef3c7;color:#92400e;',
+                                blacklisted:  'background:#fee2e2;color:#991b1b;',
                             };
                             el.style.cssText = 'padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;border:2px solid transparent;cursor:pointer;' + (colors[status] || '');
                         } else {
@@ -522,3 +566,39 @@ function kg_application_admin_scripts( $hook ) {
     <?php
 }
 add_action( 'admin_footer', 'kg_application_admin_scripts' );
+
+/**
+ * Handles secure resume downloads for authenticated administrators and recruiters.
+ */
+function kg_handle_secure_cv_download() {
+    if ( isset( $_GET['kg_download_cv'] ) ) {
+        $post_id = absint( $_GET['kg_download_cv'] );
+        if ( ! current_user_can( 'edit_posts' ) ) {
+            wp_die( 'Permission denied. You must be logged in as an administrator or recruiter to access candidate resumes.', 'Access Denied', array( 'response' => 403 ) );
+        }
+        
+        $cv_url = get_post_meta( $post_id, 'kg_app_cv_url', true );
+        if ( ! $cv_url ) {
+            wp_die( 'CV file not found.', 'Not Found', array( 'response' => 404 ) );
+        }
+        
+        $upload_dir = wp_upload_dir();
+        $filename = basename( $cv_url );
+        $cv_path = $upload_dir['basedir'] . '/secure-cvs/' . $filename;
+        
+        if ( ! file_exists( $cv_path ) ) {
+            wp_die( 'CV file does not exist on disk.', 'Not Found', array( 'response' => 404 ) );
+        }
+        
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . (function_exists('mime_content_type') ? mime_content_type($cv_path) : 'application/octet-stream'));
+        header('Content-Disposition: attachment; filename="' . basename($cv_path) . '"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($cv_path));
+        readfile($cv_path);
+        exit;
+    }
+}
+add_action( 'init', 'kg_handle_secure_cv_download' );

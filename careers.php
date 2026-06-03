@@ -27,17 +27,19 @@ $page_schema = [
     ],
 ];
 
+$page_hero_bg     = kg_get_field('careers_bg', 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=2000&q=80');
+
 get_header();
 ?>
 
     <!-- Premium Hero -->
     <?php
-    $careers_headline = kg_get_field('careers_headline', 'Build Your Future<br><span style="color:var(--neutral-yellow));">Own Your Career</span>');
+    $careers_headline = kg_get_field('careers_headline', 'Build Your Future<br><span style="color:var(--neutral-yellow);">Own Your Career</span>');
     $careers_desc = kg_get_field('careers_desc', 'Join the Philippines\' leading worker-owned cooperative. Get profit-sharing, career coaching, and a network of 10,000+ professionals.');
     ?>
     <?php
     // Hero background: use ACF image or plain gradient fallback
-    $careers_bg = kg_get_field('careers_bg', '');
+    $careers_bg = kg_get_field('careers_bg', 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=2000&q=80');
     $careers_bg_style = !empty($careers_bg) ? "background-image: linear-gradient(rgba(10, 37, 64, 0.75), rgba(10, 37, 64, 0.85)), url('" . esc_url($careers_bg) . "');" : '';
     ?>
     <section class="page-hero" style="<?php echo $careers_bg_style; ?>">
@@ -116,7 +118,7 @@ get_header();
             <!-- Step 2: Contact Info -->
             <div id="step-2" class="career-step">
                 <div style="display:flex;flex-direction:column;gap:1.25rem;">
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="careers-name-row">
                         <input type="text" id="app-fname" placeholder="First Name" required
                             style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;"
                             onfocus="this.style.borderColor='var(--main-blue)'"
@@ -134,89 +136,9 @@ get_header();
                         style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;"
                         onfocus="this.style.borderColor='var(--main-blue)'"
                         onblur="this.style.borderColor='var(--border-color)'">
-                    <select id="app-role"
-                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;color:var(--text-muted);background:var(--bg-white);transition:var(--transition);outline:none;"
-                        onfocus="this.style.borderColor='var(--main-blue)'"
-                        onblur="this.style.borderColor='var(--border-color)'">
-                        <option value="">Preferred Role (Optional)</option>
-                        <?php
-                        // Pull live job titles from the database
-                        $jobs_for_dropdown = get_posts( array(
-                            'post_type'      => 'jobs',
-                            'post_status'    => 'publish',
-                            'posts_per_page' => -1,
-                            'orderby'        => 'title',
-                            'order'          => 'ASC',
-                        ) );
-                        if ( $jobs_for_dropdown ) :
-                            foreach ( $jobs_for_dropdown as $job ) :
-                                // Skip fully-filled positions
-                                $target = (int) get_post_meta( $job->ID, 'job_target_headcount', true );
-                                $filled = (int) get_post_meta( $job->ID, 'job_filled_headcount', true );
-                                if ( $target > 0 && $filled >= $target ) continue;
-                                
-                                $jtype = get_post_meta( $job->ID, 'job_type', true ) ?: 'FULL_TIME';
-                                echo '<option value="' . esc_attr( $job->post_title ) . '" data-job-type="' . esc_attr($jtype) . '">' . esc_html( $job->post_title ) . '</option>';
-                            endforeach;
-                        else :
-                            // Fallback static options when no jobs CPT posts exist
-                        ?>
-                        <option value="Customer Support" data-job-type="FULL_TIME">Customer Support</option>
-                        <option value="Virtual Assistant" data-job-type="OTHER">Virtual Assistant</option>
-                        <option value="Graphic Designer" data-job-type="CONTRACTOR">Graphic Designer</option>
-                        <option value="Web Developer" data-job-type="FULL_TIME">Web Developer</option>
-                        <option value="Accountant / Bookkeeper" data-job-type="PART_TIME">Accountant / Bookkeeper</option>
-                        <option value="Digital Marketing" data-job-type="FULL_TIME">Digital Marketing</option>
-                        <option value="Data Entry Specialist" data-job-type="OTHER">Data Entry Specialist</option>
-                        <?php endif; ?>
-                        <option value="Other" data-job-type="">Other</option>
-                    </select>
-                    <input type="url" id="app-linkedin" placeholder="LinkedIn URL (Optional)"
-                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;"
-                        onfocus="this.style.borderColor='var(--main-blue)'"
-                        onblur="this.style.borderColor='var(--border-color)'">
-                </div>
-
-                <!-- Dynamic Blocks -->
-                <div id="criteria-FULL_TIME" class="criteria-block" style="display:none; flex-direction:column; gap:1rem; margin-top: 1rem;">
-                    <input type="text" id="app-notice-period" placeholder="How soon can you start? (Notice Period)"
-                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-size:0.95rem;width:100%;outline:none;">
-                    <input type="number" id="app-expected-salary" placeholder="Expected Monthly Salary (PHP)"
-                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-size:0.95rem;width:100%;outline:none;">
-                </div>
-
-                <div id="criteria-PART_TIME" class="criteria-block" style="display:none; flex-direction:column; gap:1rem; margin-top: 1rem;">
-                    <select id="app-available-hours" style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-size:0.95rem;width:100%;color:var(--text-muted);outline:none;">
-                        <option value="">Select Available Hours/Week</option>
-                        <option value="10-20">10-20 hours</option>
-                        <option value="20-30">20-30 hours</option>
-                        <option value="30+">30+ hours</option>
-                    </select>
-                    <select id="app-shift-pref" style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-size:0.95rem;width:100%;color:var(--text-muted);outline:none;">
-                        <option value="">Select Shift Preference</option>
-                        <option value="Morning">Morning</option>
-                        <option value="Evening">Evening</option>
-                        <option value="Night">Night</option>
-                        <option value="Weekends">Weekends</option>
-                        <option value="Flexible">Flexible</option>
-                    </select>
-                </div>
-
-                <div id="criteria-CONTRACTOR" class="criteria-block" style="display:none; flex-direction:column; gap:1rem; margin-top: 1rem;">
-                    <input type="url" id="app-portfolio" placeholder="Portfolio / Past Work Link"
-                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-size:0.95rem;width:100%;outline:none;">
-                    <input type="text" id="app-tin" placeholder="TIN / Business Registration Number"
-                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-size:0.95rem;width:100%;outline:none;">
-                </div>
-
-                <div id="criteria-OTHER" class="criteria-block" style="display:none; flex-direction:column; gap:1rem; margin-top: 1rem;">
-                    <input type="number" id="app-internet-speed" placeholder="Internet Speed (Mbps)"
-                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-size:0.95rem;width:100%;outline:none;">
-                    <select id="app-backup-power" style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-size:0.95rem;width:100%;color:var(--text-muted);outline:none;">
-                        <option value="">Do you have a backup power supply?</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                    </select>
+                    
+                    <!-- Role input is hidden now, capturing context automatically from URL if present -->
+                    <input type="hidden" id="app-role" value="<?php echo esc_attr($_GET['role'] ?? ''); ?>">
                 </div>
 
                 <!-- honeypot -->
@@ -281,8 +203,6 @@ get_header();
                             class="review-value">—</span></div>
                     <div class="review-row"><span class="review-label">Preferred Role</span><span id="rev-role"
                             class="review-value">—</span></div>
-                    <div class="review-row"><span class="review-label">LinkedIn</span><span id="rev-linkedin"
-                            class="review-value">—</span></div>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:0.75rem;align-items:center;margin-top:1.25rem;">
                     <a href="<?php echo esc_url(home_url('/')); ?>" class="btn btn-outline"
@@ -291,7 +211,6 @@ get_header();
             </div>
         </div>
     </div>
-
 
     <!-- Careers Page JS -->
     <style>
@@ -367,10 +286,7 @@ get_header();
 
         .career-step.active {
             display: block;
-            animation: fadeUp 0.4s ease-out;
         }
-
-
 
         /* Drag hover */
         #cv-dropzone.drag-over {
@@ -389,7 +305,6 @@ get_header();
             z-index: 9999;
             align-items: center;
             justify-content: center;
-            animation: fadeIn 0.3s ease-out;
         }
 
         .career-modal-overlay.visible {
@@ -403,7 +318,6 @@ get_header();
             width: 90%;
             position: relative;
             box-shadow: var(--shadow-xl);
-            animation: fadeUp 0.4s ease-out;
         }
 
         .career-modal-close {
@@ -453,42 +367,16 @@ get_header();
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
     </style>
 
     <script>
         // Multi-step wizard
         let currentStep = 1;
 
-        // Auto-select role from URL ?role= parameter (from job card "Apply Now")
-        (function () {
-            var params = new URLSearchParams(window.location.search);
-            var roleParam = params.get('role');
-            if (!roleParam) return;
-            var sel = document.getElementById('app-role');
-            if (!sel) return;
-            var opts = sel.options;
-            for (var i = 0; i < opts.length; i++) {
-                if (opts[i].value.toLowerCase() === roleParam.toLowerCase() ||
-                    opts[i].text.toLowerCase()  === roleParam.toLowerCase()) {
-                    sel.selectedIndex = i;
-                    sel.style.color = 'var(--text-dark)';
-                    break;
-                }
-            }
-        })();
         function goToStep(step) {
             document.querySelectorAll('.career-step').forEach(s => s.classList.remove('active'));
             document.getElementById('step-' + step).classList.add('active');
+            
             const steps = document.querySelectorAll('.cprog-step');
             const lines = document.querySelectorAll('.cprog-line');
             steps.forEach((s, i) => {
@@ -548,7 +436,6 @@ get_header();
             const email    = document.getElementById('app-email').value.trim();
             const phone    = document.getElementById('app-phone').value.trim();
             const role     = document.getElementById('app-role').value;
-            const linkedin = document.getElementById('app-linkedin').value.trim();
             const cvFile   = cvInput.files[0];
 
             const errBox = document.getElementById('careers-error');
@@ -558,13 +445,11 @@ get_header();
             if (!fname || !lname || !email) {
                 errMsg.textContent = 'Please fill in your first name, last name, and email.';
                 errBox.style.display = 'block';
-                errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 return;
             }
             if (!cvFile) {
                 errMsg.textContent = 'Please upload your CV before submitting.';
                 errBox.style.display = 'block';
-                errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 return;
             }
 
@@ -580,24 +465,8 @@ get_header();
             formData.append('app_email',    email);
             formData.append('app_phone',    phone);
             formData.append('app_role',     role);
-            formData.append('app_linkedin', linkedin);
             formData.append('app_cv',       cvFile, cvFile.name);
             formData.append('kg_hp_field',  document.getElementById('kg_hp_careers').value);
-
-            // Get job type for backend processing
-            const selectedOption = document.getElementById('app-role').options[document.getElementById('app-role').selectedIndex];
-            const jobType = selectedOption ? (selectedOption.getAttribute('data-job-type') || '') : '';
-            formData.append('app_job_type', jobType);
-
-            // Append dynamic fields
-            formData.append('app_notice_period', document.getElementById('app-notice-period') ? document.getElementById('app-notice-period').value : '');
-            formData.append('app_expected_salary', document.getElementById('app-expected-salary') ? document.getElementById('app-expected-salary').value : '');
-            formData.append('app_available_hours', document.getElementById('app-available-hours') ? document.getElementById('app-available-hours').value : '');
-            formData.append('app_shift_pref', document.getElementById('app-shift-pref') ? document.getElementById('app-shift-pref').value : '');
-            formData.append('app_portfolio', document.getElementById('app-portfolio') ? document.getElementById('app-portfolio').value : '');
-            formData.append('app_tin', document.getElementById('app-tin') ? document.getElementById('app-tin').value : '');
-            formData.append('app_internet_speed', document.getElementById('app-internet-speed') ? document.getElementById('app-internet-speed').value : '');
-            formData.append('app_backup_power', document.getElementById('app-backup-power') ? document.getElementById('app-backup-power').value : '');
 
             fetch(KG_AJAX.url, { method: 'POST', body: formData })
                 .then(r => r.json())
@@ -608,7 +477,6 @@ get_header();
                         document.getElementById('rev-email').textContent   = email;
                         document.getElementById('rev-phone').textContent   = phone || '—';
                         document.getElementById('rev-role').textContent    = role  || '—';
-                        document.getElementById('rev-linkedin').textContent = linkedin || '—';
 
                         document.getElementById('modal-buttons').style.display = 'flex';
                         document.getElementById('modal-review').style.display  = 'none';
@@ -618,7 +486,6 @@ get_header();
                         const errBox = document.getElementById('careers-error');
                         document.getElementById('careers-error-msg').textContent = (data.data && data.data.message) ? data.data.message : 'Submission failed. Please try again.';
                         errBox.style.display = 'block';
-                        errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     }
                 })
                 .catch(() => {
@@ -642,10 +509,9 @@ get_header();
         function closeModal() {
             document.getElementById('success-modal').classList.remove('visible');
             document.body.style.overflow = '';
-            // Reset form to step 1
             goToStep(1);
             removeFile();
-            document.querySelectorAll('#step-2 input, #step-2 select').forEach(el => { el.value = ''; });
+            document.querySelectorAll('#step-2 input').forEach(el => { el.value = ''; });
         }
 
         // Close on overlay click
@@ -655,6 +521,3 @@ get_header();
     </script>
 
 <?php get_footer(); ?>
-
-
-

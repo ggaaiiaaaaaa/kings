@@ -1,0 +1,70 @@
+# =====================================================================
+# KINGS GROUP — PRODUCTION APACHE SERVER OVERRIDES (.htaccess)
+# =====================================================================
+
+# 1. FORCE HTTPS REDIRECT
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# 2. DISABLE DIRECTORY BROWSING
+# Prevents visitors from viewing directory indexes of assets, themes, or plugins.
+Options -Indexes
+
+# 3. SECURE CORE SYSTEM FILES
+# Blocks direct access to wp-config.php and htaccess itself.
+<Files wp-config.php>
+    Order Allow,Deny
+    Deny from all
+</Files>
+<Files .htaccess>
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# 4. BLOCK XML-RPC TO MITIGATE BRUTE FORCE & DDoS ATTACKS
+# Direct access to xmlrpc.php is commonly targeted by malicious bots.
+<Files xmlrpc.php>
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# 5. INJECT SECURITY HEADERS
+<IfModule mod_headers.c>
+    # Prevent clickjacking / frame injection
+    Header set X-Frame-Options "SAMEORIGIN"
+    
+    # Enable XSS filtering in browsers
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Prevent mime type sniffing
+    Header set X-Content-Type-Options "nosniff"
+    
+    # Enforce secure referrer policy
+    Header set Referrer-Policy "no-referrer-when-downgrade"
+    
+    # HSTS (HTTP Strict Transport Security) - Enable ONLY after confirming SSL works perfectly!
+    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+</IfModule>
+
+# 6. BLOCK PHP EXECUTION IN SENSITIVE DIRECTORIES
+# Place a separate .htaccess containing only this rule inside /wp-content/uploads/
+# to neutralize any uploaded PHP backdoors.
+# <Files *.php>
+#     deny from all
+# </Files>
+
+# =====================================================================
+# STANDARD WORDPRESS REWRITE RULES (LEAVE INTACT BELOW)
+# =====================================================================
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>

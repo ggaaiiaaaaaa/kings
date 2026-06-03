@@ -21,9 +21,15 @@ get_header();
                     </div>
                     <h1 class="section-title" style="text-align: left;"><?php the_title(); ?></h1>
                     <div class="post-content" style="margin-top: 2rem; line-height: 1.8; color: var(--text-body);">
-                        <?php if ( has_post_thumbnail() ) : ?>
+                        <?php 
+                        $custom_img_url = get_post_meta(get_the_ID(), '_kg_post_image', true);
+                        if ( has_post_thumbnail() ) : ?>
                             <div class="post-thumbnail" style="margin-bottom: 2rem; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-md);">
                                 <?php the_post_thumbnail('large', array('style' => 'width:100%; height:auto; display:block;')); ?>
+                            </div>
+                        <?php elseif (!empty($custom_img_url)) : ?>
+                            <div class="post-thumbnail" style="margin-bottom: 2rem; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-md);">
+                                <?php echo kg_img($custom_img_url, get_the_title(), 'img-fluid', 'width:100%; height:auto; display:block;'); ?>
                             </div>
                         <?php endif; ?>
                         <?php the_content(); ?>

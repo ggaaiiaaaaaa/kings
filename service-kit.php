@@ -29,6 +29,7 @@ $page_schema = [
     ],
 ];
 
+$page_hero_bg = kg_get_field('skit_bg', 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2000&q=80');
 get_header();
 ?>
 
@@ -36,8 +37,10 @@ get_header();
     <?php
     $skit_headline = kg_get_field('skit_headline', 'HR & Payroll System');
     $skit_desc = kg_get_field('skit_desc', 'Kings Information Technology (KIT)');
+    $skit_bg = kg_get_field('skit_bg', 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2000&q=80');
+    $skit_bg_style = !empty($skit_bg) ? "background-image: linear-gradient(rgba(10, 37, 64, 0.75), rgba(10, 37, 64, 0.85)), url('" . esc_url($skit_bg) . "');" : '';
     ?>
-    <section class="kit-hero">
+    <section class="kit-hero" style="<?php echo $skit_bg_style; ?>">
         <div class="hero-inner">
             <h1><?php echo wp_kses_post($skit_headline); ?></h1>
             <p class="hero-sub"><?php echo esc_html($skit_desc); ?></p>
@@ -69,8 +72,8 @@ get_header();
 
             <!-- Redesigned Overlapping Images -->
             <?php
-            $skit_intro_img1 = function_exists('get_field') ? get_field('skit_intro_img1', get_queried_object_id()) : '';
-            $skit_intro_img2 = function_exists('get_field') ? get_field('skit_intro_img2', get_queried_object_id()) : '';
+            $skit_intro_img1 = kg_get_field('skit_intro_img1', 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80');
+            $skit_intro_img2 = kg_get_field('skit_intro_img2', 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80');
             ?>
             <div class="stacked-images-container">
                 <div class="img-back">
@@ -94,7 +97,7 @@ get_header();
                 </div>
 
                 <div class="image-wrapper" style="box-shadow: var(--shadow-xl); border-radius: 24px; overflow: hidden;">
-                    <?php $skit_hww_img = function_exists('get_field') ? get_field('skit_hww_img', get_queried_object_id()) : ''; echo kg_img($skit_hww_img, 'KIT Platform Workflow', 'image-placeholder', 'width: 100%; height: 100%; object-fit: cover;'); ?>
+                    <?php $skit_hww_img = kg_get_field('skit_hww_img', 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80'); echo kg_img($skit_hww_img, 'KIT Platform Workflow', 'image-placeholder', 'width: 100%; height: 100%; object-fit: cover;'); ?>
                 </div>
             </div>
 

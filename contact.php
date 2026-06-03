@@ -61,13 +61,14 @@ $page_schema = [
     ],
 ];
 
+$page_hero_bg = kg_get_field('contact_bg', 'https://images.unsplash.com/photo-1497366858526-0766cadbe8fa?auto=format&fit=crop&w=2000&q=80');
 get_header();
 ?>
 
     <?php
     $contact_headline = kg_get_field('contact_headline', 'Contact Us');
     $contact_desc = kg_get_field('contact_desc', 'We are here to help. Reach out to our team for any inquiries.');
-    $contact_bg = kg_get_field('contact_bg', '');
+    $contact_bg = kg_get_field('contact_bg', 'https://images.unsplash.com/photo-1497366858526-0766cadbe8fa?auto=format&fit=crop&w=2000&q=80');
     ?>
     <section class="page-hero"
         style="background-image: linear-gradient(rgba(10, 37, 64, 0.7), rgba(10, 37, 64, 0.7)), url('<?php echo esc_url($contact_bg); ?>');">
@@ -236,7 +237,7 @@ get_header();
                         
                         <?php if (!empty($email)): ?>
                             <div class="premium-info-item">
-                                <div class="premium-info-box">
+                                <div class="premium-icon-box">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                                 </div>
                                 <div class="premium-info-text">
@@ -327,7 +328,7 @@ get_header();
 
         .info-card.glass-card {
             background: linear-gradient(135deg, var(--main-blue) 0%, var(--main-blue-light) 100%);
-            padding: 4rem 3rem;
+            padding: 3.5rem 3rem;
             color: white;
             border: 1px solid rgba(255,255,255,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -335,6 +336,10 @@ get_header();
             overflow: hidden;
             border-radius: 24px;
             box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2rem;
         }
 
         .info-card.glass-card:hover {
@@ -383,7 +388,7 @@ get_header();
             font-size: 1.35rem;
             font-weight: 500;
             color: white;
-            margin-bottom: 2rem;
+            margin-bottom: 0;
             letter-spacing: -0.01em;
             display: flex;
             align-items: center;

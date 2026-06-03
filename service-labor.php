@@ -29,6 +29,7 @@ $page_schema = [
     ],
 ];
 
+$page_hero_bg = kg_get_field('slab_bg', 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80');
 get_header();
 ?>
 
@@ -36,8 +37,10 @@ get_header();
     <?php
     $slab_headline = kg_get_field('slab_headline', 'Managed Services &<br>Offshore Staff Leasing');
     $slab_desc = kg_get_field('slab_desc', 'End-to-end workforce solutions powered by the Philippines\' leading worker-owned cooperative. From recruitment to payroll — we handle it all.');
+    $slab_bg = kg_get_field('slab_bg', 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80');
+    $slab_bg_style = !empty($slab_bg) ? "background-image: linear-gradient(rgba(10, 37, 64, 0.75), rgba(10, 37, 64, 0.85)), url('" . esc_url($slab_bg) . "');" : '';
     ?>
-    <section class="labor-hero">
+    <section class="labor-hero" style="<?php echo $slab_bg_style; ?>">
         <div class="hero-inner">
             <h1><?php echo wp_kses_post($slab_headline); ?></h1>
             <p class="hero-sub"><?php echo esc_html($slab_desc); ?></p>
@@ -67,7 +70,7 @@ get_header();
             </div>
 
             <div class="service-intro-image">
-                <?php $slab_intro_img = function_exists('get_field') ? get_field('slab_intro_img', get_queried_object_id()) : ''; echo kg_img($slab_intro_img, 'Corporate team strategy meeting'); ?>
+                <?php $slab_intro_img = kg_get_field('slab_intro_img', 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1200&q=80'); echo kg_img($slab_intro_img, 'Corporate team strategy meeting'); ?>
             </div>
         </div>
 
@@ -78,7 +81,7 @@ get_header();
             $slab_managed_desc = kg_get_field('slab_managed_desc', 'Focused on local companies in the Philippines, providing an innovative <strong>Manpower Service Cooperative</strong> model to maximize contractual worker productivity.');
             ?>
             <div class="comparison-header">
-                <h3><?php echo esc_html($slab_managed_title); ?></h3>
+                <h2><?php echo esc_html($slab_managed_title); ?></h2>
                 <p style="color: var(--text-muted); font-size: 1.15rem; max-width: 700px; margin: 0 auto;"><?php echo wp_kses_post($slab_managed_desc); ?></p>
             </div>
 
@@ -96,7 +99,7 @@ get_header();
             <div class="feature-grid">
                 <div class="feature-card">
                     <div class="feature-card-image">
-                        <?php $sf1 = function_exists('get_field') ? get_field('slab_feat1_img', get_queried_object_id()) : ''; echo kg_img($sf1, 'Team synergy'); ?>
+                        <?php $sf1 = kg_get_field('slab_feat1_img', 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=600&q=80'); echo kg_img($sf1, 'Team synergy'); ?>
                     </div>
                     <div class="feature-card-content">
                         <h4><?php echo esc_html($slab_feat1_title); ?></h4>
@@ -106,7 +109,7 @@ get_header();
 
                 <div class="feature-card">
                     <div class="feature-card-image">
-                        <?php $sf2 = function_exists('get_field') ? get_field('slab_feat2_img', get_queried_object_id()) : ''; echo kg_img($sf2, 'Self employed workers'); ?>
+                        <?php $sf2 = kg_get_field('slab_feat2_img', 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=600&q=80'); echo kg_img($sf2, 'Self employed workers'); ?>
                     </div>
                     <div class="feature-card-content">
                         <h4><?php echo esc_html($slab_feat2_title); ?></h4>
@@ -116,7 +119,7 @@ get_header();
 
                 <div class="feature-card">
                     <div class="feature-card-image">
-                        <?php $sf3 = function_exists('get_field') ? get_field('slab_feat3_img', get_queried_object_id()) : ''; echo kg_img($sf3, 'Flexible engagement tracking'); ?>
+                        <?php $sf3 = kg_get_field('slab_feat3_img', 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=80'); echo kg_img($sf3, 'Flexible engagement tracking'); ?>
                     </div>
                     <div class="feature-card-content">
                         <h4><?php echo esc_html($slab_feat3_title); ?></h4>
@@ -126,7 +129,7 @@ get_header();
 
                 <div class="feature-card">
                     <div class="feature-card-image">
-                        <?php $sf4 = function_exists('get_field') ? get_field('slab_feat4_img', get_queried_object_id()) : ''; echo kg_img($sf4, 'Analytics and productivity'); ?>
+                        <?php $sf4 = kg_get_field('slab_feat4_img', 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?auto=format&fit=crop&w=600&q=80'); echo kg_img($sf4, 'Analytics and productivity'); ?>
                     </div>
                     <div class="feature-card-content">
                         <h4><?php echo esc_html($slab_feat4_title); ?></h4>
@@ -142,18 +145,18 @@ get_header();
             ?>
             <div class="split-content" style="margin-top: 5rem;">
                 <div class="split-text">
-                    <h3><?php echo esc_html($slab_manpower_title); ?></h3>
+                    <h2><?php echo esc_html($slab_manpower_title); ?></h2>
                     <?php echo wp_kses_post($slab_manpower_text); ?>
                 </div>
                 <div class="image-wrapper">
-                    <?php $slab_mp_img = function_exists('get_field') ? get_field('slab_manpower_img', get_queried_object_id()) : ''; echo kg_img($slab_mp_img, 'Professional meeting', 'image-placeholder'); ?>
+                    <?php $slab_mp_img = kg_get_field('slab_manpower_img', 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1200&q=80'); echo kg_img($slab_mp_img, 'Professional meeting', 'image-placeholder'); ?>
                 </div>
             </div>
 
             <!-- Premium Comparison Table -->
             <div class="comparison-container">
                 <div class="comparison-header">
-                    <h3>The Cooperative Advantage</h3>
+                    <h2>The Cooperative Advantage</h2>
                     <p style="color: var(--text-muted);">Comparing Direct Hire, Agency, and The Kings model.</p>
                 </div>
 
@@ -315,7 +318,7 @@ get_header();
             $lease_desc = kg_get_field('slab_lease_desc', 'Primarily for our Offshore Clients in countries such as Australia and the United States of America.');
             ?>
             <div class="comparison-header">
-                <h3><?php echo esc_html($lease_title); ?></h3>
+                <h2><?php echo esc_html($lease_title); ?></h2>
                 <p style="color: var(--text-muted); font-size: 1.15rem; max-width: 700px; margin: 0 auto;"><?php echo esc_html($lease_desc); ?></p>
             </div>
 
@@ -325,12 +328,12 @@ get_header();
             ?>
             <div class="split-content" style="margin-top: 4rem;">
                 <div class="split-text">
-                    <h3><?php echo esc_html($slab_offshore_title); ?></h3>
+                    <h2><?php echo esc_html($slab_offshore_title); ?></h2>
                     <?php echo wp_kses_post($slab_offshore_text); ?>
                 </div>
                 <!-- Placeholder Image for Remote Teams -->
                 <div class="image-wrapper">
-                    <?php $slab_off_img = function_exists('get_field') ? get_field('slab_offshore_img', get_queried_object_id()) : ''; echo kg_img($slab_off_img, 'Remote offshore team', 'image-placeholder'); ?>
+                    <?php $slab_off_img = kg_get_field('slab_offshore_img', 'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=80'); echo kg_img($slab_off_img, 'Remote offshore team', 'image-placeholder'); ?>
                 </div>
             </div>
 
@@ -346,7 +349,7 @@ get_header();
             ?>
             <div class="split-content reverse" style="margin-top: 5rem;">
                 <div class="split-text">
-                    <h3><?php echo esc_html($slab_improve_title); ?></h3>
+                    <h2><?php echo esc_html($slab_improve_title); ?></h2>
                     <p><?php echo esc_html($slab_improve_desc); ?></p>
 
                     <ul style="list-style:none; padding:0; margin-top:2rem;">
@@ -378,7 +381,7 @@ get_header();
                 </div>
                 <!-- Placeholder Image for Office Setup -->
                 <div class="image-wrapper">
-                    <?php $slab_imp_img = function_exists('get_field') ? get_field('slab_improve_img', get_queried_object_id()) : ''; echo kg_img($slab_imp_img, 'Modern office workspace', 'image-placeholder'); ?>
+                    <?php $slab_imp_img = kg_get_field('slab_improve_img', 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80'); echo kg_img($slab_imp_img, 'Modern office workspace', 'image-placeholder'); ?>
                 </div>
             </div>
 
@@ -387,7 +390,7 @@ get_header();
             $slab_onboard_desc = kg_get_field('slab_onboard_desc', 'Your team in the Philippines is legally employed and managed by The Kings, but they report directly to you. Here is how we get started.');
             ?>
             <div class="comparison-header" style="margin-top: 8rem;">
-                <h3><?php echo esc_html($slab_onboard_title); ?></h3>
+                <h2><?php echo esc_html($slab_onboard_title); ?></h2>
                 <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;"><?php echo esc_html($slab_onboard_desc); ?></p>
             </div>
 
@@ -475,7 +478,7 @@ get_header();
             <!-- Comparison Table: BPO vs Kings vs Incorporation -->
             <div class="comparison-container" style="margin-top: 8rem;">
                 <div class="comparison-header">
-                    <h3>Difference against BPO & Incorporation</h3>
+                    <h2>Difference against BPO & Incorporation</h2>
                     <p style="color: var(--text-muted);">See why Kings Managed Staff Leasing stands out.</p>
                 </div>
 
@@ -500,7 +503,7 @@ get_header();
                             <tr>
                                 <td>Longer Term Costs</td>
                                 <td><span style="color: var(--accent-red); font-weight: 700;">High</span></td>
-                                <td><span style="color: var(--neutral-yellow); font-weight: 700;">Medium</span></td>
+                                <td><span style="color: var(--text-gold-light); font-weight: 700;">Medium</span></td>
                                 <td class="col-kings-td"><span
                                         style="color: var(--sec-accent-green); font-weight: 700;">Low</span></td>
                             </tr>

@@ -43,7 +43,7 @@ window.addEventListener('scroll', updateHeader);
 const observerOptions = {
     root: null,
     rootMargin: '0px',
-    threshold: 0.15
+    threshold: 0.01
 };
 
 const observer = new IntersectionObserver((entries, observer) => {
@@ -188,7 +188,7 @@ initTestimonialSlider('testimonials-track-story', 'prev-testi-story', 'next-test
 window.addEventListener('scroll', () => {
     const scrollBar = document.getElementById('scrollBar');
     if (!scrollBar) return;
-    
+
     const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     const scrolled = (winScroll / height) * 100;
@@ -231,37 +231,85 @@ const mobileToggle = document.querySelector('.mobile-toggle');
 const mobileNav = document.createElement('div');
 mobileNav.className = 'mobile-nav';
 
-// Construct Mobile Menu Content
+// Construct Mobile Menu Content matching the desktop main nav
 mobileNav.innerHTML = `
-    <div class="mobile-nav-link" style="margin-bottom: 1.5rem;">
+    <div class="mobile-nav-header" style="width: 100%; display: flex; justify-content: center; margin-bottom: 0.5rem; flex-shrink: 0;">
         <img src="${logoWhitePath}" alt="Kings Group" style="height: 54px; width: auto;">
     </div>
-    <a href="${KG_THEME.homeUrl}" class="mobile-nav-link">Home</a>
-    <a href="${KG_THEME.homeUrl}story/" class="mobile-nav-link">Our Story</a>
-    <a href="${KG_THEME.homeUrl}service-labor/" class="mobile-nav-link">Services</a>
-    <a href="${KG_THEME.homeUrl}network/" class="mobile-nav-link">Network</a>
-    <a href="${KG_THEME.homeUrl}careers/" class="mobile-nav-link">Find a Job</a>
-    <div class="mobile-nav-link" style="display: flex; flex-direction: column; gap: 1.25rem; width: 100%; max-width: 300px; margin-top: 1.5rem;">
-        <a href="${KG_THEME.homeUrl}quote/" class="btn btn-gold" style="width: 100%;">Get a Quote</a>
-        <a href="${KG_THEME.homeUrl}members/" class="btn btn-outline" style="width: 100%; border-color: rgba(255,255,255,0.4); color: white;">Member Login</a>
+    
+    <div class="mobile-nav-links-container" style="display: flex; flex-direction: column; align-items: center; gap: 1.2rem; width: 100%; overflow-y: auto; max-height: 70vh; padding: 1rem 0;">
+        <a href="${KG_THEME.homeUrl}" class="mobile-nav-link">Home</a>
+        
+        <div class="mobile-nav-dropdown">
+            <button class="mobile-nav-link mobile-dropdown-toggle">
+                About
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left: 0.25rem;"><path d="M6 9l6 6 6-6"></path></svg>
+            </button>
+            <div class="mobile-dropdown-menu">
+                <div class="mobile-dropdown-section">
+                    <span class="mobile-dropdown-section-title">Company</span>
+                    <a href="${KG_THEME.homeUrl}story/" class="mobile-sub-link">Our Story</a>
+                    <a href="${KG_THEME.homeUrl}news/" class="mobile-sub-link">News</a>
+                    <a href="${KG_THEME.homeUrl}community/" class="mobile-sub-link">Community</a>
+                </div>
+                <div class="mobile-dropdown-section">
+                    <span class="mobile-dropdown-section-title">Services</span>
+                    <a href="${KG_THEME.homeUrl}service-labor/" class="mobile-sub-link">Labor Management</a>
+                    <a href="${KG_THEME.homeUrl}service-kit/" class="mobile-sub-link">HR & Tech (KIT)</a>
+                </div>
+                <div class="mobile-dropdown-section">
+                    <span class="mobile-dropdown-section-title">Network</span>
+                    <a href="${KG_THEME.homeUrl}network/" class="mobile-sub-link">Client Engagements</a>
+                </div>
+            </div>
+        </div>
+
+        <a href="${KG_THEME.homeUrl}our-jobs/" class="mobile-nav-link">Our Jobs</a>
+        <a href="${KG_THEME.homeUrl}careers/" class="mobile-nav-link">Apply Now</a>
+        <a href="https://zckings.azurewebsites.net/" target="_blank" rel="noopener" class="mobile-nav-link">Member Portal</a>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.85rem; width: 100%; max-width: 280px; margin-top: 1rem; padding-bottom: 1rem;">
+            <a href="${KG_THEME.homeUrl}quote/" class="btn btn-gold" style="width: 100%;">Get a Quote</a>
+            <a href="https://zckings.azurewebsites.net/" target="_blank" rel="noopener" class="btn btn-outline" style="width: 100%; border-color: rgba(255,255,255,0.4); color: white;">Log In</a>
+        </div>
     </div>
 `;
 document.body.appendChild(mobileNav);
 
+// Toggle about dropdown accordion
+const mobileDropdownToggle = mobileNav.querySelector('.mobile-dropdown-toggle');
+const mobileDropdownMenu = mobileNav.querySelector('.mobile-dropdown-menu');
+
+if (mobileDropdownToggle && mobileDropdownMenu) {
+    mobileDropdownToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        mobileDropdownToggle.classList.toggle('active');
+        mobileDropdownMenu.classList.toggle('active');
+    });
+}
+
 if (mobileToggle) {
+    // Set initial WCAG accessibility states
+    mobileToggle.setAttribute('aria-expanded', 'false');
+    mobileToggle.setAttribute('aria-controls', 'mobile-nav');
+    mobileNav.id = 'mobile-nav';
+
     mobileToggle.addEventListener('click', () => {
-        mobileToggle.classList.toggle('active');
+        const isActive = mobileToggle.classList.toggle('active');
         mobileNav.classList.toggle('active');
+        mobileToggle.setAttribute('aria-expanded', isActive ? 'true' : 'false');
         document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
     });
 }
 
-// Close mobile menu on link click
+// Close mobile menu on link click (ignoring the dropdown toggle trigger)
 const mobileLinks = mobileNav.querySelectorAll('a');
 mobileLinks.forEach(link => {
     link.addEventListener('click', () => {
         mobileToggle.classList.remove('active');
         mobileNav.classList.remove('active');
+        mobileToggle.setAttribute('aria-expanded', 'false');
         document.body.style.overflow = '';
     });
 });
@@ -272,36 +320,30 @@ mobileLinks.forEach(link => {
                .affiliate-showcase-image, .team-card-inner
    ───────────────────────────────────────── */
 (function initTilt() {
-    const TILT_SELECTORS = [
-        '.engagement-card',
-        '.folder-item',
-        '.feature-card',
-        '.affiliate-showcase-image',
-        '.testimonial-card',
-        '.st-item',
-    ];
+    // Disabled 3D tilt on request to optimize visual flow
+    const TILT_SELECTORS = [];
 
-    const MAX_TILT   = 8;   // degrees
-    const MAX_LIFT   = 6;   // px translateZ
-    const RESET_MS   = 300;
+    const MAX_TILT = 8;   // degrees
+    const MAX_LIFT = 6;   // px translateZ
+    const RESET_MS = 300;
 
     function applyTilt(el) {
         el.classList.add('tilt-card');
 
         el.addEventListener('mousemove', (e) => {
-            const rect   = el.getBoundingClientRect();
-            const cx     = rect.left + rect.width  / 2;
-            const cy     = rect.top  + rect.height / 2;
-            const dx     = (e.clientX - cx) / (rect.width  / 2); // -1 → 1
-            const dy     = (e.clientY - cy) / (rect.height / 2); // -1 → 1
-            const rotX   = -dy * MAX_TILT;
-            const rotY   =  dx * MAX_TILT;
+            const rect = el.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const dx = (e.clientX - cx) / (rect.width / 2); // -1 → 1
+            const dy = (e.clientY - cy) / (rect.height / 2); // -1 → 1
+            const rotX = -dy * MAX_TILT;
+            const rotY = dx * MAX_TILT;
             el.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(${MAX_LIFT}px)`;
         });
 
         el.addEventListener('mouseleave', () => {
             el.style.transition = `transform ${RESET_MS}ms cubic-bezier(0.16,1,0.3,1)`;
-            el.style.transform  = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateZ(0)';
+            el.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateZ(0)';
             setTimeout(() => { el.style.transition = ''; }, RESET_MS);
         });
     }
@@ -317,26 +359,8 @@ mobileLinks.forEach(link => {
    at 40% of scroll speed for depth.
    ───────────────────────────────────────── */
 (function initParallax() {
-    const heroBg = document.querySelector('.hero-bg-media');
-
-    if (!heroBg) return;
-
-    // Respect reduced-motion preference
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    let ticking = false;
-
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                const scrollY = window.scrollY;
-                // Move at 40% of scroll speed, downward
-                heroBg.style.transform = `translateY(${scrollY * 0.4}px)`;
-                ticking = false;
-            });
-            ticking = true;
-        }
-    });
+    // Parallax hero scrolling disabled on request
+    return;
 })();
 
 
@@ -347,11 +371,11 @@ const solutionPanels = document.querySelectorAll('.solution-panel');
 toggleBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         const targetId = btn.getAttribute('data-target');
-        
+
         // Update Buttons
         toggleBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        
+
         // Update Panels
         solutionPanels.forEach(panel => {
             if (panel.id === targetId) {
