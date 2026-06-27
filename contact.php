@@ -88,8 +88,14 @@ get_header();
             <!-- TOP SECTION: Get In Touch (Form) -->
             <div class="contact-card contact-form-card" style="margin-bottom: 4rem;">
                 <?php
-                $form_title = kg_get_field('contact_form_title', 'Get In Touch');
-                $form_desc = kg_get_field('contact_form_desc', 'THE KINGS is a community of jobs and workspaces. We are excited to welcome you to THE KINGS!');
+                $is_ph = (kg_get_user_geo() === 'PH');
+                if ($is_ph) {
+                    $form_title = kg_get_field('contact_form_title_ph', 'Your Trusted Partner for Reliable Manpower Solutions');
+                    $form_desc = kg_get_field('contact_form_desc_ph', 'Helping businesses find qualified, reliable, and job-ready manpower across a wide range of industries, Kings Group has been connecting employers with skilled Filipino talent since 1999.');
+                } else {
+                    $form_title = kg_get_field('contact_form_title_intl', 'Scale Your Business With Elite Talent');
+                    $form_desc = kg_get_field('contact_form_desc_intl', 'Unlock high-performance offshore staffing solutions from the Philippines. Connect with our experts to build your dedicated global team.');
+                }
                 $form_shortcode = kg_get_field('contact_form_shortcode', '[contact-form-7 id="123" title="Contact form 1"]');
                 ?>
                 
@@ -120,30 +126,34 @@ get_header();
 
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
                             <div>
-                                <label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;">Your Name *</label>
+                                <label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;"><?php echo esc_html(kg_get_field('contact_name_label', 'Your Name *')); ?></label>
                                 <input type="text" name="contact_name" required placeholder="e.g. Maria Santos"
                                     style="width:100%;padding:0.9rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;outline:none;transition:var(--transition);box-sizing:border-box;"
                                     onfocus="this.style.borderColor='var(--main-blue)'" onblur="this.style.borderColor='var(--border-color)'">
                             </div>
                             <div>
-                                <label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;">Email Address *</label>
+                                <label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;"><?php echo esc_html(kg_get_field('contact_email_label', 'Email Address *')); ?></label>
                                 <input type="email" name="contact_email" required placeholder="you@company.com"
                                     style="width:100%;padding:0.9rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;outline:none;transition:var(--transition);box-sizing:border-box;"
                                     onfocus="this.style.borderColor='var(--main-blue)'" onblur="this.style.borderColor='var(--border-color)'">
                             </div>
                         </div>
                         <div style="margin-bottom:1.25rem;">
-                            <label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;">Subject</label>
+                            <label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;"><?php echo esc_html(kg_get_field('contact_subject_label', 'Subject')); ?></label>
                             <input type="text" name="contact_subject" placeholder="How can we help?"
                                 style="width:100%;padding:0.9rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;outline:none;transition:var(--transition);box-sizing:border-box;"
                                 onfocus="this.style.borderColor='var(--main-blue)'" onblur="this.style.borderColor='var(--border-color)'">
                         </div>
                         <div style="margin-bottom:1.75rem;">
-                            <label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;">Message *</label>
+                            <label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;"><?php echo esc_html(kg_get_field('contact_message_label', 'Message *')); ?></label>
                             <textarea name="contact_message" required rows="6" placeholder="Tell us about your inquiry..."
                                 style="width:100%;padding:0.9rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;outline:none;resize:vertical;transition:var(--transition);box-sizing:border-box;"
                                 onfocus="this.style.borderColor='var(--main-blue)'" onblur="this.style.borderColor='var(--border-color)'"></textarea>
                         </div>
+
+                        <!-- Cloudflare Turnstile CAPTCHA Widget -->
+                        <div class="cf-turnstile" data-sitekey="<?php echo esc_attr(defined('CF_TURNSTILE_SITE_KEY') ? CF_TURNSTILE_SITE_KEY : ''); ?>" data-appearance="interaction-only" style="margin-bottom:1.25rem;"></div>
+
                         <button type="submit" id="contact-submit" class="btn btn-primary" style="padding:1rem 2.5rem;font-size:1rem;width:100%;">
                             Send Message
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -173,14 +183,17 @@ get_header();
                                     successBox.style.display = 'block';
                                     document.getElementById('contact-success-msg').textContent = data.data.message;
                                     this.reset();
+                                    if (typeof turnstile !== 'undefined') turnstile.reset();
                                 } else {
                                     errorBox.style.display = 'block';
                                     document.getElementById('contact-error-msg').textContent = data.data.message;
+                                    if (typeof turnstile !== 'undefined') turnstile.reset();
                                 }
                             })
                             .catch(() => {
                                 errorBox.style.display = 'block';
                                 document.getElementById('contact-error-msg').textContent = 'Network error. Please try again.';
+                                if (typeof turnstile !== 'undefined') turnstile.reset();
                             })
                             .finally(() => {
                                 btn.disabled = false;
@@ -253,7 +266,8 @@ get_header();
                 <div class="info-card glass-card">
                     <?php
                     $visit_title = kg_get_field('contact_visit_title', 'Visit Us');
-                    $address = kg_get_field('contact_address', 'Kings Headquarters, 100 Doña Soledad Avenue, Better Living, Paranaque City, Metro Manila, Philippines, 1711');
+                    $address = kg_get_field('contact_address', 'DVN Building, Melaño Calixto St, Zamboanga City, Zamboanga del Sur');
+                    $address_2 = kg_get_field('contact_address_2', '100 Doña Soledad Avenue, Better Living, Paranaque City, Metro Manila, Philippines, 1711');
                     ?>
                     
                     <?php if (!empty($visit_title)): ?>
@@ -263,7 +277,8 @@ get_header();
                         </h3>
                     <?php endif; ?>
                     
-                    <div class="info-details-premium">
+                    <div class="info-details-premium" style="width: 100%;">
+                        <!-- Headquarters Zamboanga -->
                         <?php if (!empty($address)): ?>
                             <div class="premium-info-item">
                                 <div class="premium-icon-box premium-icon-box--green">
@@ -281,6 +296,25 @@ get_header();
                                 </div>
                             </div>
                         <?php endif; ?>
+
+                        <!-- Manila Branch -->
+                        <?php if (!empty($address_2)): ?>
+                            <div class="premium-info-item" style="border-top: 1px solid rgba(255,255,255,0.15); padding-top: 1.5rem; margin-top: 0.5rem;">
+                                <div class="premium-icon-box premium-icon-box--green">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                </div>
+                                <div class="premium-info-text">
+                                    <div class="premium-info-label">Manila Office</div>
+                                    <p class="premium-info-value" style="margin: 0; line-height: 1.6;">
+                                        <?php echo wp_kses_post(nl2br($address_2)); ?>
+                                    </p>
+                                    <a href="https://maps.google.com/?q=<?php echo urlencode(strip_tags($address_2)); ?>" target="_blank" rel="noopener noreferrer" class="premium-info-value info-link" style="color: var(--sec-accent-green); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1rem;">
+                                        Get Directions
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
                 
@@ -291,7 +325,7 @@ get_header();
 
     <section class="section map-section" style="position: relative; height: 60vh; min-height: 500px; width: 100%; overflow: hidden; background: var(--bg-subtle);">
         <iframe 
-            src="https://maps.google.com/maps?q=Better%20Living%20Subdivision,%20100%20Do%C3%B1a%20Soledad%20Ave,%20Para%C3%B1aque,%201711%20Metro%20Manila&t=&z=17&ie=UTF8&iwloc=B&output=embed" 
+            src="https://maps.google.com/maps?q=DVN%20Building,%20Mela%C3%B1o%20Calixto%20St,%20Zamboanga%20City&t=&z=17&ie=UTF8&iwloc=B&output=embed" 
             width="100%" 
             height="100%" 
             style="border:0; position: absolute; inset: 0; z-index: 0;" 

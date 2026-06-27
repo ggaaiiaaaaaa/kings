@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <?php
+  global $page_title, $page_description, $page_og_image, $page_hero_bg, $page_schema;
+
   // --- SEO: Build page URL ---
   // Use WordPress home_url() when available, else reconstruct from server vars.
   $kg_site_url = function_exists('get_bloginfo') ? get_bloginfo('url') : 'https://kingsgroup.com.ph';
@@ -14,7 +16,11 @@
     : rtrim($kg_site_url, '/') . (isset($_SERVER['REQUEST_URI']) ? strtok($_SERVER['REQUEST_URI'], '?') : '/');
 
   // --- SEO: Resolve per-page values ---
-  $kg_title = $page_title ?? 'The Kings Group';
+  if (!empty($page_title)) {
+      $kg_title = (strpos($page_title, 'Kings Group') === false) ? $page_title . ' | The Kings Group' : $page_title;
+  } else {
+      $kg_title = 'The Kings Group';
+  }
   $kg_description = $page_description ?? 'Elite talent acquisition and ethical staffing solutions. Discover Kings Group\'s managed services and labor management for businesses.';
   $kg_og_image = $page_og_image ?? kg_asset('img/[LOGO] Main Logo White.webp');
   ?>
@@ -97,4 +103,49 @@
     echo "\n</script>\n";
   endif;
   ?>
+  <script>
+    // Client-side geo-routing redirects to prevent issues with server-side caching on GoDaddy
+    (function() {
+      // Helper to read cookies
+      function getCookie(name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+      }
+
+      var geo = getCookie('kg_user_geo');
+      // If we don't have a cookie yet, fall back to the server-side detected geo value
+      if (!geo) {
+        geo = '<?php echo esc_js(kg_get_user_geo()); ?>';
+      }
+      
+      // Inject CSS rules immediately to avoid showing both layouts side-by-side
+      if (geo) {
+        var style = document.createElement('style');
+        if (geo === 'PH') {
+          style.innerHTML = '.intl-only { display: none !important; }';
+        } else {
+          style.innerHTML = '.ph-only { display: none !important; }';
+        }
+        document.head.appendChild(style);
+      }
+
+      // Check if consent has been accepted. If not accepted yet, still allow geo redirection.
+      if (!geo) return; 
+
+      var path = window.location.pathname;
+
+      if (geo === 'PH') {
+        // PH users trying to access get-a-quote or quote pages
+        if (path.indexOf('/quote') !== -1 || path.indexOf('quote.php') !== -1) {
+          window.location.replace("<?php echo esc_url(home_url('/our-jobs/')); ?>");
+        }
+      } else {
+        // International users trying to access careers or jobs pages
+        if (path.indexOf('/careers') !== -1 || path.indexOf('/our-jobs') !== -1 || path.indexOf('careers.php') !== -1 || path.indexOf('our-jobs.php') !== -1) {
+          window.location.replace("<?php echo esc_url(home_url('/quote/')); ?>");
+        }
+      }
+    })();
+  </script>
 </head>

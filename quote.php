@@ -26,7 +26,7 @@ $page_schema = [
     ],
 ];
 
-$page_hero_bg = kg_get_field('quote_bg', 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2000&q=80');
+$page_hero_bg = kg_get_field('quote_bg', kg_asset('img/quote/hero-quote.JPG'));
 get_header();
 ?>
 
@@ -34,7 +34,7 @@ get_header();
 <?php
 $quote_headline = kg_get_field('quote_headline', 'Build Your Team');
 $quote_desc = kg_get_field('quote_desc', 'Get a custom quote for managed services, staff leasing, or HR tech solutions.');
-$quote_bg = kg_get_field('quote_bg', 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2000&q=80');
+$quote_bg = kg_get_field('quote_bg', kg_asset('img/quote/hero-quote.JPG'));
 ?>
 <section class="page-hero"
     style="background-image: linear-gradient(rgba(10, 37, 64, 0.7), rgba(10, 37, 64, 0.7)), url('<?php echo esc_url($quote_bg); ?>');">
@@ -105,11 +105,11 @@ $quote_bg = kg_get_field('quote_bg', 'https://images.unsplash.com/photo-15220718
             <!-- Currency Switcher -->
             <div
                 style="display:flex;align-items:center;gap:0.5rem;background:rgba(10,37,64,0.06);padding:0.25rem;border-radius:30px;">
-                <button type="button" id="curr-USD" class="currency-btn active"
-                    style="padding:0.4rem 1rem;font-size:0.85rem;font-weight:700;border:none;border-radius:20px;background:var(--main-blue);color:#fff;cursor:pointer;transition:var(--transition);"
-                    onclick="switchCurrency('USD')">USD ($)</button>
-                <button type="button" id="curr-AUD" class="currency-btn"
+                <button type="button" id="curr-USD" class="currency-btn"
                     style="padding:0.4rem 1rem;font-size:0.85rem;font-weight:700;border:none;border-radius:20px;background:none;color:var(--text-muted);cursor:pointer;transition:var(--transition);"
+                    onclick="switchCurrency('USD')">USD ($)</button>
+                <button type="button" id="curr-AUD" class="currency-btn active"
+                    style="padding:0.4rem 1rem;font-size:0.85rem;font-weight:700;border:none;border-radius:20px;background:var(--main-blue);color:#fff;cursor:pointer;transition:var(--transition);"
                     onclick="switchCurrency('AUD')">AUD (A$)</button>
                 <button type="button" id="curr-PHP" class="currency-btn"
                     style="padding:0.4rem 1rem;font-size:0.85rem;font-weight:700;border:none;border-radius:20px;background:none;color:var(--text-muted);cursor:pointer;transition:var(--transition);"
@@ -200,6 +200,10 @@ $quote_bg = kg_get_field('quote_bg', 'https://images.unsplash.com/photo-15220718
                         <!-- honeypot -->
                         <input type="text" name="kg_hp_field" id="kg_hp_quote" style="display:none;" tabindex="-1"
                             autocomplete="off">
+                        
+                        <!-- Cloudflare Turnstile CAPTCHA Widget -->
+                        <div class="cf-turnstile" data-sitekey="<?php echo esc_attr(defined('CF_TURNSTILE_SITE_KEY') ? CF_TURNSTILE_SITE_KEY : ''); ?>" data-appearance="interaction-only" style="margin-bottom: 1.25rem;"></div>
+
                         <button type="submit" class="btn btn-gold" id="btnSubmitQuote" disabled>
                             Request Detailed Quote
                         </button>
@@ -266,11 +270,16 @@ $quote_bg = kg_get_field('quote_bg', 'https://images.unsplash.com/photo-15220718
                         ),
                     ),
                 ));
+                $seen_titles = array();
                 if ($jobs_query->have_posts()):
                     while ($jobs_query->have_posts()):
                         $jobs_query->the_post();
-                        $job_id = get_the_ID();
                         $job_title = get_the_title();
+                        if ( in_array( $job_title, $seen_titles, true ) ) {
+                            continue;
+                        }
+                        $seen_titles[] = $job_title;
+                        $job_id = get_the_ID();
                         $job_desc = get_the_excerpt();
                         $base_price = get_post_meta($job_id, 'base_price', true) ?: 1000;
                         ?>
@@ -350,7 +359,7 @@ $quote_bg = kg_get_field('quote_bg', 'https://images.unsplash.com/photo-15220718
 
 <script>
     const cartData = [];
-    let currentCurrency = 'USD';
+    let currentCurrency = 'AUD';
 
     const currencyConfig = {
         USD: { symbol: '$', rate: 1.0, suffix: '/mo' },
@@ -587,6 +596,8 @@ $quote_bg = kg_get_field('quote_bg', 'https://images.unsplash.com/photo-15220718
         const convertedTotal = Math.round(totalPrice * cfg.rate);
         const totalFormatted = cfg.symbol + convertedTotal.toLocaleString() + cfg.suffix;
 
+        const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]')?.value || '';
+
         const body = new FormData();
         body.append('action', 'kg_submit_quote');
         body.append('kg_nonce', KG_AJAX.quote_nonce);
@@ -598,6 +609,7 @@ $quote_bg = kg_get_field('quote_bg', 'https://images.unsplash.com/photo-15220718
         body.append('quote_discount_amount', '0');
         body.append('quote_total', totalFormatted);
         body.append('kg_hp_field', document.getElementById('kg_hp_quote').value);
+        body.append('cf-turnstile-response', turnstileResponse);
 
         fetch(KG_AJAX.url, { method: 'POST', body })
             .then(r => r.json())
@@ -614,16 +626,19 @@ $quote_bg = kg_get_field('quote_bg', 'https://images.unsplash.com/photo-15220718
                     document.getElementById('quoteName').value = '';
                     document.getElementById('quoteEmail').value = '';
                     updateCartUI();
+                    if (typeof turnstile !== 'undefined') turnstile.reset();
                 } else {
                     showQuoteError(data.data && data.data.message ? data.data.message : 'Something went wrong. Please try again.');
                     btn.disabled = false;
                     btn.textContent = 'Request Detailed Quote';
+                    if (typeof turnstile !== 'undefined') turnstile.reset();
                 }
             })
             .catch(() => {
                 showQuoteError('Network error. Please check your connection and try again.');
                 btn.disabled = false;
                 btn.textContent = 'Request Detailed Quote';
+                if (typeof turnstile !== 'undefined') turnstile.reset();
             });
     }
 

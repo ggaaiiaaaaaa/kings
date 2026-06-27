@@ -32,13 +32,13 @@ define('WP_ALLOW_DATABASE_REPAIR', false);
 // 5. PRODUCTION SMTP CONFIGURATION (MAILING BACKBONE)
 // Bypasses local mail delivery issues and handles transactional messages securely via SMTP.
 // These map directly to the custom phpmailer_init hook in your theme's functions.php.
-define('KG_SMTP_HOST', 'smtp.gmail.com');             // Replace with your SMTP server host
+define('KG_SMTP_HOST', 'smtp.mailersend.net');             // Replace with your SMTP server host
 define('KG_SMTP_PORT', 587);                          // 587 (TLS) or 465 (SSL)
-define('KG_SMTP_USER', 'rhonjames95@gmail.com');      // Your Gmail SMTP username
-define('KG_SMTP_PASS', 'ufoo fzql surd zzag');    // Replace with your Google App Password for rhonjames95@gmail.com
-define('KG_SMTP_FROM', 'rhonjames95@gmail.com');      // Send-from address (must match SMTP user)
+define('KG_SMTP_USER', 'MS_JSxsDz@kingsgroup.com.ph');      // Your SMTP username
+define('KG_SMTP_PASS', 'mssp.iLuKe9F.vywj2lpm2y1l7oqz.HcrOa0V');    // Your SMTP Key / Password
+define('KG_SMTP_FROM', 'info@kingsgroup.com.ph');      // Send-from address (must match SMTP user)
 define('KG_SMTP_FROMNAME', 'Kings Group Notification');   // Display name for emails
-define('KG_INQUIRY_EMAIL', 'rhonjames95@gmail.com');      // General contact inquiries recipient email
-define('KG_CAREER_EMAIL', 'rhonjames95@gmail.com');      // Careers/Applications recipient email
-define('KG_QUOTE_EMAIL', 'rhonjames95@gmail.com');      // Team Builder/Quote requests recipient email
-define('KG_ADMIN_EMAIL', 'rhonjames95@gmail.com');      // Master fallback admin recipient email
+define('KG_INQUIRY_EMAIL', 'info@kingsgroup.com.ph');      // General contact inquiries recipient email
+define('KG_CAREER_EMAIL', 'info@kingsgroup.com.ph');      // Careers/Applications recipient email
+define('KG_QUOTE_EMAIL', 'info@kingsgroup.com.ph');      // Team Builder/Quote requests recipient email
+define('KG_ADMIN_EMAIL', 'info@kingsgroup.com.ph');      // Master fallback admin recipient email

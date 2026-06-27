@@ -24,6 +24,38 @@ function kg_check_honeypot() {
     }
 }
 
+function kg_verify_turnstile() {
+    if ( ! defined('CF_TURNSTILE_SECRET_KEY') || empty(CF_TURNSTILE_SECRET_KEY) ) {
+        return;
+    }
+    
+    $token = $_POST['cf-turnstile-response'] ?? '';
+    if ( empty($token) ) {
+        wp_send_json_error( array( 'message' => 'Security check failed. Please complete the CAPTCHA.' ), 400 );
+    }
+    
+    $remote_ip = $_SERVER['REMOTE_ADDR'] ?? '';
+    
+    $response = wp_remote_post( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
+        'body' => array(
+            'secret'   => CF_TURNSTILE_SECRET_KEY,
+            'response' => $token,
+            'remoteip' => $remote_ip,
+        ),
+    ) );
+    
+    if ( is_wp_error( $response ) ) {
+        wp_send_json_error( array( 'message' => 'Unable to verify CAPTCHA. Please try again.' ), 500 );
+    }
+    
+    $body = wp_remote_retrieve_body( $response );
+    $result = json_decode( $body, true );
+    
+    if ( empty($result['success']) ) {
+        wp_send_json_error( array( 'message' => 'CAPTCHA verification failed. Please try again.' ), 400 );
+    }
+}
+
 /**
  * Flushes a JSON success response to the browser immediately,
  * then keeps PHP running so emails send after the connection closes.
@@ -86,6 +118,7 @@ function kg_send_mail( $to, $subject, $body, $headers = array(), $attachments = 
 function kg_handle_contact() {
     kg_verify_nonce( $_POST['kg_nonce'] ?? '', 'kg_contact_nonce' );
     kg_check_honeypot();
+    kg_verify_turnstile();
 
     $name    = sanitize_text_field(     $_POST['contact_name']    ?? '' );
     $email   = sanitize_email(          $_POST['contact_email']   ?? '' );
@@ -98,16 +131,27 @@ function kg_handle_contact() {
 
     $to_email = defined('KG_INQUIRY_EMAIL') ? KG_INQUIRY_EMAIL : (defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : 'info@kingsgroup.com.ph');
 
-    /* — Email to Kings Group — */
-    $body = kg_email_heading( 'Website Inquiry Notification' )
-        . kg_email_para( 'A new inquiry has been submitted via the Kings Manpower corporate website. Please review the details below and ensure a timely response.' )
-        . '<table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;margin-bottom:24px;">'
+    $contact_details = '<table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;margin-bottom:24px;">'
         . kg_email_row( 'Name',    $name )
         . kg_email_row( 'Email',   '<a href="mailto:' . esc_attr($email) . '" style="color:#0A2540;">' . esc_html($email) . '</a>' )
         . kg_email_row( 'Subject', $subject )
         . kg_email_row( 'Message', nl2br( esc_html($message) ) )
-        . '</table>'
-        . kg_email_banner( 'To respond, please reply directly to this email. The sender\'s address is configured as the reply-to destination.' );
+        . '</table>';
+
+    /* — Email to Kings Group (Admin Alert) — */
+    $parsed_admin = kg_get_parsed_email( 'contact_admin', array(
+        '{contact_subject}' => $subject,
+        '{contact_details}' => $contact_details,
+    ) );
+
+    $admin_subject = $parsed_admin ? $parsed_admin['subject'] : 'Contact Inquiry: ' . $subject;
+    $admin_body = kg_email_heading( $parsed_admin ? $parsed_admin['heading'] : 'Website Inquiry Notification' ) . ( $parsed_admin ? $parsed_admin['body'] : '' );
+    if ( $parsed_admin && ! empty( $parsed_admin['banner'] ) ) {
+        $admin_body .= kg_email_banner( $parsed_admin['banner'] );
+    }
+    if ( $parsed_admin && ! empty( $parsed_admin['btn_text'] ) && ! empty( $parsed_admin['btn_link'] ) ) {
+        $admin_body .= kg_email_button( $parsed_admin['btn_text'], $parsed_admin['btn_link'] );
+    }
 
     $headers = array(
         'Content-Type: text/html; charset=UTF-8',
@@ -127,24 +171,28 @@ function kg_handle_contact() {
     /* — Respond to browser immediately, send emails after — */
     kg_flush_response( array( 'message' => 'Your message has been sent. We\'ll be in touch soon!' ) );
 
-    kg_send_mail( $to_email, 'Contact Inquiry: ' . $subject, kg_email_wrap( 'Contact Inquiry: ' . $subject, $body ), $headers );
+    kg_send_mail( $to_email, $admin_subject, kg_email_wrap( $admin_subject, $admin_body ), $headers );
 
-    /* — Auto-reply to visitor — */
-    $reply_body = kg_email_heading( 'Inquiry Acknowledgment' )
-        . kg_email_para( 'Dear ' . esc_html($name) . ',' )
-        . kg_email_para( 'Thank you for contacting Kings Manpower. We acknowledge receipt of your inquiry and appreciate your interest in our services. Our team is currently reviewing your message and will provide a comprehensive response shortly.' )
-        . '<table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;margin-bottom:24px;">'
-        . kg_email_row( 'Your Name',    $name )
-        . kg_email_row( 'Subject',      $subject )
-        . kg_email_row( 'Your Message', nl2br( esc_html($message) ) )
-        . '</table>'
-        . kg_email_banner( 'Please expect a response from our representatives within 24 to 48 hours.' )
-        . kg_email_button( 'Visit Our Website', home_url('/') );
+    /* — Auto-reply to visitor (Client Acknowledgment) — */
+    $parsed_client = kg_get_parsed_email( 'contact_client', array(
+        '{name}'            => esc_html($name),
+        '{contact_subject}' => $subject,
+        '{contact_details}' => $contact_details,
+    ) );
+
+    $client_subject = $parsed_client ? $parsed_client['subject'] : 'Inquiry Acknowledgment — Kings Manpower';
+    $client_body = kg_email_heading( $parsed_client ? $parsed_client['heading'] : 'Inquiry Acknowledgment' ) . ( $parsed_client ? $parsed_client['body'] : '' );
+    if ( $parsed_client && ! empty( $parsed_client['banner'] ) ) {
+        $client_body .= kg_email_banner( $parsed_client['banner'] );
+    }
+    if ( $parsed_client && ! empty( $parsed_client['btn_text'] ) && ! empty( $parsed_client['btn_link'] ) ) {
+        $client_body .= kg_email_button( $parsed_client['btn_text'], $parsed_client['btn_link'] );
+    }
 
     kg_send_mail(
         $email,
-        'Inquiry Acknowledgment — Kings Manpower',
-        kg_email_wrap( 'Inquiry Acknowledgment', $reply_body ),
+        $client_subject,
+        kg_email_wrap( $client_subject, $client_body ),
         array( 'Content-Type: text/html; charset=UTF-8' )
     );
 
@@ -168,23 +216,104 @@ function kg_secure_upload_directory($dirs) {
 function kg_handle_application() {
     kg_verify_nonce( $_POST['kg_nonce'] ?? '', 'kg_careers_nonce' );
     kg_check_honeypot();
+    kg_verify_turnstile();
 
     $fname    = sanitize_text_field( $_POST['app_fname']    ?? '' );
     $lname    = sanitize_text_field( $_POST['app_lname']    ?? '' );
     $email    = sanitize_email(      $_POST['app_email']    ?? '' );
     $phone    = sanitize_text_field( $_POST['app_phone']    ?? '' );
-    $role     = sanitize_text_field( $_POST['app_role']     ?? '' );
     $fullname = trim( $fname . ' ' . $lname );
 
-    if ( ! $fname || ! $lname || ! is_email( $email ) ) {
-        wp_send_json_error( array( 'message' => 'Please fill in your name and email.' ), 422 );
+    if ( ! $fname || ! $lname || ( empty( $email ) && empty( $phone ) ) || ( ! empty( $email ) && ! is_email( $email ) ) ) {
+        wp_send_json_error( array( 'message' => 'Please fill in your name and email or phone number.' ), 422 );
     }
+
+    // Capture preferred roles
+    $preferred_roles = array();
+    if ( ! empty( $_POST['app_preferred_roles'] ) ) {
+        if ( is_array( $_POST['app_preferred_roles'] ) ) {
+            $preferred_roles = array_map( 'sanitize_text_field', $_POST['app_preferred_roles'] );
+        } else {
+            // Check for JSON string
+            $decoded = json_decode( stripslashes( $_POST['app_preferred_roles'] ), true );
+            if ( is_array( $decoded ) ) {
+                $preferred_roles = array_map( 'sanitize_text_field', $decoded );
+            } else {
+                $preferred_roles = array_filter( array_map( 'trim', explode( ',', sanitize_text_field( $_POST['app_preferred_roles'] ) ) ) );
+            }
+        }
+    }
+
+    $purpose = sanitize_text_field( $_POST['app_purpose'] ?? '' );
+    if ( $purpose !== 'pooling' && empty( $preferred_roles ) ) {
+        wp_send_json_error( array( 'message' => 'Please select at least one preferred position.' ), 422 );
+    }
+
+    // 1. Single Active Application Check & 14-Day Cooldown Check
+    if ( ! empty( $email ) ) {
+        $last_apps = get_posts( array(
+            'post_type'      => 'kg_application',
+            'posts_per_page' => 1,
+            'orderby'        => 'date',
+            'order'          => 'DESC',
+            'meta_query'     => array(
+                array( 'key' => 'kg_app_email', 'value' => $email )
+            )
+        ) );
+
+        if ( ! empty( $last_apps ) ) {
+            $last_app = $last_apps[0];
+            $status = get_post_meta( $last_app->ID, 'kg_app_status', true ) ?: 'screening';
+            
+            if ( $status !== 'rejected' ) {
+                wp_send_json_error( array( 'message' => 'You already have an active application in progress.' ), 422 );
+            } else {
+                $date_diff = ( time() - strtotime( $last_app->post_date ) ) / DAY_IN_SECONDS;
+                if ( $date_diff < 14 ) {
+                    wp_send_json_error( array( 'message' => 'Please wait ' . ceil( 14 - $date_diff ) . ' more days before reapplying.' ), 422 );
+                }
+            }
+        }
+    }
+
+    // 2. Position Closure Validation
+    if ( ! empty( $preferred_roles ) ) {
+        $any_open = false;
+        foreach ( $preferred_roles as $role_title ) {
+            $job_posts = get_posts( array(
+                'post_type'      => 'jobs',
+                'title'          => $role_title,
+                'posts_per_page' => 1,
+                'post_status'    => 'publish',
+            ) );
+            if ( ! empty( $job_posts ) ) {
+                $is_closed = get_post_meta( $job_posts[0]->ID, 'job_closed', true );
+                if ( ! $is_closed ) {
+                    $any_open = true;
+                }
+            } else {
+                $any_open = true; // Fallback for custom entries
+            }
+        }
+        if ( ! $any_open ) {
+            wp_send_json_error( array( 'message' => 'All selected positions are currently closed.' ), 422 );
+        }
+    }
+
+    $role = ! empty( $preferred_roles ) ? $preferred_roles[0] : sanitize_text_field( $_POST['app_role'] ?? '' );
 
     $cv_url  = '';
     $cv_path = '';
 
     if ( empty( $_FILES['app_cv'] ) || $_FILES['app_cv']['error'] !== UPLOAD_ERR_OK ) {
         wp_send_json_error( array( 'message' => 'Please upload your CV (PDF or DOCX).' ), 422 );
+    }
+
+    /* — Sanitize the file name to replace spaces and underscores with hyphens — */
+    if ( ! empty( $_FILES['app_cv']['name'] ) ) {
+        $raw_name = $_FILES['app_cv']['name'];
+        $clean_name = preg_replace( '/[\s_]+/', '-', $raw_name );
+        $_FILES['app_cv']['name'] = sanitize_file_name( $clean_name );
     }
 
     /* — Validate file type & size — */
@@ -239,24 +368,75 @@ function kg_handle_application() {
             'email'    => $email,
             'phone'    => $phone,
             'role'     => $role,
+            'preferred_roles' => $preferred_roles,
             'linkedin' => '',
             'cv_url'   => $cv_url,
+            // Demographic metadata
+            'mname'         => sanitize_text_field( $_POST['app_mname'] ?? '' ),
+            'purpose'       => sanitize_text_field( $_POST['app_purpose'] ?? '' ),
+            'gender'        => sanitize_text_field( $_POST['app_gender'] ?? '' ),
+            'birthday'      => sanitize_text_field( $_POST['app_birthday'] ?? '' ),
+            // Text address fields
+            'street'        => sanitize_text_field( $_POST['app_street'] ?? '' ),
+            'region'        => sanitize_text_field( $_POST['app_region'] ?? '' ),
+            'city'          => sanitize_text_field( $_POST['app_city'] ?? '' ),
+            'barangay'      => sanitize_text_field( $_POST['app_barangay'] ?? '' ),
+            // Numeric PSGC codes
+            'region_code'   => sanitize_text_field( $_POST['app_region_code'] ?? '' ),
+            'city_code'     => sanitize_text_field( $_POST['app_city_code'] ?? '' ),
+            'barangay_code' => sanitize_text_field( $_POST['app_barangay_code'] ?? '' ),
         ) );
     }
 
+
     $download_url = $app_post_id ? add_query_arg( 'kg_download_cv', $app_post_id, home_url( '/' ) ) : $cv_url;
 
-    /* — Email to Kings Group — */
-    $body = kg_email_heading( 'Candidate Application Notification' )
-        . kg_email_para( 'A new employment application has been successfully submitted via the Kings Manpower careers portal. The candidate\'s details are enclosed for your evaluation.' )
-        . '<table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;margin-bottom:24px;">'
+    /* — Email Routing & Recruiter Lookup — */
+    $recruiter_email = '';
+    $recruiter_name = '';
+    if ( ! empty( $role ) ) {
+        $job_posts = get_posts( array(
+            'post_type'      => 'jobs',
+            'title'          => $role,
+            'posts_per_page' => 1,
+            'post_status'    => 'any',
+        ) );
+        if ( ! empty( $job_posts ) ) {
+            $author_id = $job_posts[0]->post_author;
+            $author_user = get_userdata( $author_id );
+            if ( $author_user ) {
+                $recruiter_email = $author_user->user_email;
+                $recruiter_name  = $author_user->display_name;
+            }
+        }
+    }
+
+    $mail_recipient = ! empty( $recruiter_email ) ? $recruiter_email : $to_email;
+    $edit_url = $app_post_id ? get_edit_post_link( $app_post_id ) : '';
+
+    $submission_details = '<div style="border:1px solid #e8ecf0;border-radius:8px;padding:20px;margin-bottom:24px;background:#ffffff;">'
         . kg_email_row( 'Full Name',      $fullname )
         . kg_email_row( 'Email',          '<a href="mailto:' . esc_attr($email) . '" style="color:#0A2540;">' . esc_html($email) . '</a>' )
         . kg_email_row( 'Phone',          $phone ?: '—' )
-        . kg_email_row( 'Preferred Role', $role  ?: 'Not specified' )
+        . kg_email_row( 'Preferred Roles', !empty($preferred_roles) ? implode(', ', $preferred_roles) : ($role ?: 'Not specified') )
         . kg_email_row( 'CV File',        '<a href="' . esc_url($download_url) . '" style="color:#00D09C;font-weight:600;">Download CV (Secure)</a>' )
-        . '</table>'
-        . kg_email_banner( 'The candidate\'s Curriculum Vitae is attached to this email and archived within the corporate media library.' );
+        . '</div>';
+
+    /* — Email to Kings Group (Admin & Recruiter Alert) — */
+    $parsed_admin = kg_get_parsed_email( 'admin_submission', array(
+        '{applicant_name}'     => $fullname,
+        '{submission_details}' => $submission_details,
+        '{edit_url}'           => $edit_url,
+    ) );
+
+    $admin_subject = $parsed_admin ? $parsed_admin['subject'] : 'New Application: ' . $fullname . ( $role ? ' — ' . $role : '' );
+    $admin_body = kg_email_heading( $parsed_admin ? $parsed_admin['heading'] : 'Applicant Application Notification' ) . ( $parsed_admin ? $parsed_admin['body'] : '' );
+    if ( $parsed_admin && ! empty( $parsed_admin['banner'] ) ) {
+        $admin_body .= kg_email_banner( $parsed_admin['banner'] );
+    }
+    if ( $parsed_admin && ! empty( $parsed_admin['btn_text'] ) && ! empty( $parsed_admin['btn_link'] ) ) {
+        $admin_body .= kg_email_button( $parsed_admin['btn_text'], $parsed_admin['btn_link'] );
+    }
 
     $headers = array(
         'Content-Type: text/html; charset=UTF-8',
@@ -268,27 +448,18 @@ function kg_handle_application() {
 
     $attachments = $cv_path ? array( $cv_path ) : array();
     kg_send_mail(
-        $to_email,
-        'New Application: ' . $fullname . ( $role ? ' — ' . $role : '' ),
-        kg_email_wrap( 'New CV Application', $body ),
+        $mail_recipient,
+        $admin_subject,
+        kg_email_wrap( 'New CV Application', $admin_body ),
         $headers,
         $attachments
     );
 
-    /* — Auto-reply to applicant — */
-    $reply_body = kg_email_heading( 'Application Acknowledgment' )
-        . kg_email_para( 'Dear ' . esc_html($fname) . ',' )
-        . kg_email_para( 'Thank you for your interest in a career with Kings Manpower. This email confirms the successful receipt of your application for <strong>' . ($role ?: 'a position') . '</strong>.' )
-        . kg_email_para( 'Our talent acquisition team will review your qualifications against our current requirements and the requirements of your preferred role.' )
-        . kg_email_banner( 'Should your profile match our needs, a representative will contact you within 2 to 3 business days to discuss the next steps.' )
-        . kg_email_button( 'View Career Opportunities', home_url('/our-jobs/') );
-
-    kg_send_mail(
-        $email,
-        'Application Acknowledgment — Kings Manpower',
-        kg_email_wrap( 'Application Acknowledgment', $reply_body ),
-        array( 'Content-Type: text/html; charset=UTF-8' )
-    );
+    /* — Auto-reply to applicant based on status (pooling vs screening) — */
+    if ( $app_post_id ) {
+        $initial_status = ( isset( $_POST['app_purpose'] ) && $_POST['app_purpose'] === 'pooling' ) ? 'pooling' : 'screening';
+        kg_notify_applicant_status( $app_post_id, $initial_status );
+    }
 
     exit;
 }
@@ -303,6 +474,7 @@ add_action( 'wp_ajax_kg_submit_application',        'kg_handle_application' );
 function kg_handle_quote() {
     kg_verify_nonce( $_POST['kg_nonce'] ?? '', 'kg_quote_nonce' );
     kg_check_honeypot();
+    kg_verify_turnstile();
 
     $name  = sanitize_text_field( $_POST['quote_name']  ?? '' );
     $email = sanitize_email(      $_POST['quote_email'] ?? '' );
@@ -387,17 +559,24 @@ function kg_handle_quote() {
 
     $to_email = defined('KG_QUOTE_EMAIL') ? KG_QUOTE_EMAIL : (defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : 'hr@kingsgroup.com.ph');
 
-    /* — Email to Kings Group — */
-    $body = kg_email_heading( 'Service Proposal Request Notification' )
-        . kg_email_para( 'A prospective client has submitted a formal request for a service proposal via the Kings Manpower platform. Please review the enclosed workforce configuration.' )
-        . '<table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;margin-bottom:24px;">'
-        . kg_email_row( 'Client Name',  $name )
-        . kg_email_row( 'Work Email',   '<a href="mailto:' . esc_attr($email) . '" style="color:#0A2540;">' . esc_html($email) . '</a>' )
-        . kg_email_row( 'Submitted At', current_time('D, d M Y g:i A') )
-        . '</table>'
-        . '<h3 style="margin:0 0 12px;font-size:16px;font-weight:700;color:#0A2540;">Requested Team Configuration</h3>'
-        . $roles_table
-        . kg_email_banner( 'To initiate correspondence, please reply directly to this email. The prospect\'s email address is designated as the reply-to.' );
+    $quote_total_display = ($quote_total ?: ($sym . number_format($final_total_val, 0) . '/mo'));
+
+    /* — Email to Kings Group (Admin Notification) — */
+    $parsed_admin = kg_get_parsed_email( 'quote_admin', array(
+        '{client_name}'  => $name,
+        '{client_email}' => $email,
+        '{quote_total}'  => $quote_total_display,
+        '{quote_details}'=> $roles_table,
+    ) );
+
+    $admin_subject = $parsed_admin ? $parsed_admin['subject'] : 'Quote Request from ' . $name . ' — ' . $quote_total_display;
+    $admin_body = kg_email_heading( $parsed_admin ? $parsed_admin['heading'] : 'Service Proposal Request Notification' ) . ( $parsed_admin ? $parsed_admin['body'] : '' );
+    if ( $parsed_admin && ! empty( $parsed_admin['banner'] ) ) {
+        $admin_body .= kg_email_banner( $parsed_admin['banner'] );
+    }
+    if ( $parsed_admin && ! empty( $parsed_admin['btn_text'] ) && ! empty( $parsed_admin['btn_link'] ) ) {
+        $admin_body .= kg_email_button( $parsed_admin['btn_text'], $parsed_admin['btn_link'] );
+    }
 
     $headers = array(
         'Content-Type: text/html; charset=UTF-8',
@@ -417,30 +596,36 @@ function kg_handle_quote() {
     /* — Respond to browser immediately, send emails after — */
     kg_flush_response( array(
         'message' => 'Quote submitted! Check your email for your team configuration summary.',
-        'total'   => ($quote_total ?: ($sym . number_format($final_total_val, 0) . '/mo')),
+        'total'   => $quote_total_display,
     ) );
 
     kg_send_mail(
         $to_email,
-        'Quote Request from ' . $name . ' — ' . ($quote_total ?: ($sym . number_format($final_total_val, 0) . '/mo')),
-        kg_email_wrap( 'Service Proposal Request', $body ),
+        $admin_subject,
+        kg_email_wrap( 'Service Proposal Request', $admin_body ),
         $headers
     );
 
     /* — Confirmation email to client — */
-    $client_body = kg_email_heading( 'Proposal Request Acknowledgment' )
-        . kg_email_para( 'Dear ' . esc_html($name) . ',' )
-        . kg_email_para( 'Thank you for considering Kings Manpower as your workforce solutions partner. We have successfully received your service configuration request. Our business development team is currently analyzing your requirements to formulate a comprehensive proposal.' )
-        . '<h3 style="margin:0 0 12px;font-size:16px;font-weight:700;color:#0A2540;">Your Team Configuration Summary</h3>'
-        . $roles_table
-        . kg_email_banner( 'A dedicated representative will contact you within one business day to present a detailed pricing breakdown and discuss your specific needs.' )
-        . kg_email_para( 'Should you require immediate assistance, please reply directly to this correspondence or contact our corporate office at <strong>+63 (2) 87766712</strong>.' )
-        . kg_email_button( 'Visit Kings Manpower', home_url('/') );
+    $parsed_client = kg_get_parsed_email( 'quote_client', array(
+        '{name}'         => esc_html($name),
+        '{quote_total}'  => $quote_total_display,
+        '{quote_details}'=> $roles_table,
+    ) );
+
+    $client_subject = $parsed_client ? $parsed_client['subject'] : 'Your Kings Manpower Service Proposal — ' . $quote_total_display;
+    $client_body = kg_email_heading( $parsed_client ? $parsed_client['heading'] : 'Proposal Request Acknowledgment' ) . ( $parsed_client ? $parsed_client['body'] : '' );
+    if ( $parsed_client && ! empty( $parsed_client['banner'] ) ) {
+        $client_body .= kg_email_banner( $parsed_client['banner'] );
+    }
+    if ( $parsed_client && ! empty( $parsed_client['btn_text'] ) && ! empty( $parsed_client['btn_link'] ) ) {
+        $client_body .= kg_email_button( $parsed_client['btn_text'], $parsed_client['btn_link'] );
+    }
 
     kg_send_mail(
         $email,
-        'Your Kings Manpower Service Proposal — ' . ($quote_total ?: ($sym . number_format($final_total_val, 0) . '/mo')),
-        kg_email_wrap( 'Proposal Request Acknowledgment', $client_body ),
+        $client_subject,
+        kg_email_wrap( $client_subject, $client_body ),
         array( 'Content-Type: text/html; charset=UTF-8' )
     );
 

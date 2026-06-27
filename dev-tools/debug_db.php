@@ -1,6 +1,8 @@
 <?php
 $wp_load = 'C:/xampp/htdocs/kings_cms/wp-load.php';
 require_once($wp_load);
+wp_cache_flush();
+
 
 echo "DEBUG INFO:\n";
 

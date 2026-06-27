@@ -7,7 +7,7 @@ const logoWhitePath = (typeof KG_THEME !== 'undefined') ? KG_THEME.logoWhite : "
 const logoBlackPath = (typeof KG_THEME !== 'undefined') ? KG_THEME.logoBlack : "img/[LOGO] Main Logo Black.webp";
 
 // Determine if we are on the homepage (or a page with a dark hero section)
-const isDarkHeroPage = document.querySelector('.hero') || document.querySelector('.page-hero') || document.querySelector('.labor-hero') || document.querySelector('.kit-hero');
+const isDarkHeroPage = document.querySelector('.hero') || document.querySelector('.page-hero') || document.querySelector('.labor-hero') || document.querySelector('.kit-hero') || document.querySelector('.story-hero-section');
 
 function updateHeader() {
     if (window.scrollY > 50 || !isDarkHeroPage) {
@@ -231,46 +231,71 @@ const mobileToggle = document.querySelector('.mobile-toggle');
 const mobileNav = document.createElement('div');
 mobileNav.className = 'mobile-nav';
 
-// Construct Mobile Menu Content matching the desktop main nav
-mobileNav.innerHTML = `
-    <div class="mobile-nav-header" style="width: 100%; display: flex; justify-content: center; margin-bottom: 0.5rem; flex-shrink: 0;">
-        <img src="${logoWhitePath}" alt="Kings Group" style="height: 54px; width: auto;">
-    </div>
-    
-    <div class="mobile-nav-links-container" style="display: flex; flex-direction: column; align-items: center; gap: 1.2rem; width: 100%; overflow-y: auto; max-height: 70vh; padding: 1rem 0;">
-        <a href="${KG_THEME.homeUrl}" class="mobile-nav-link">Home</a>
-        
-        <div class="mobile-nav-dropdown">
-            <button class="mobile-nav-link mobile-dropdown-toggle">
-                About
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left: 0.25rem;"><path d="M6 9l6 6 6-6"></path></svg>
-            </button>
-            <div class="mobile-dropdown-menu">
-                <div class="mobile-dropdown-section">
-                    <span class="mobile-dropdown-section-title">Company</span>
-                    <a href="${KG_THEME.homeUrl}story/" class="mobile-sub-link">Our Story</a>
-                    <a href="${KG_THEME.homeUrl}news/" class="mobile-sub-link">News</a>
-                    <a href="${KG_THEME.homeUrl}community/" class="mobile-sub-link">Community</a>
-                </div>
-                <div class="mobile-dropdown-section">
-                    <span class="mobile-dropdown-section-title">Services</span>
-                    <a href="${KG_THEME.homeUrl}service-labor/" class="mobile-sub-link">Labor Management</a>
-                    <a href="${KG_THEME.homeUrl}service-kit/" class="mobile-sub-link">HR & Tech (KIT)</a>
-                </div>
-                <div class="mobile-dropdown-section">
-                    <span class="mobile-dropdown-section-title">Network</span>
-                    <a href="${KG_THEME.homeUrl}network/" class="mobile-sub-link">Client Engagements</a>
-                </div>
+// Scraping the active desktop menu items dynamically so they stay in sync
+const clientNavItems = Array.from(document.querySelectorAll('.nav-section.client > ul.nav-menu-list > li > a'));
+const clientQuoteLink = document.querySelector('.nav-section.client > a.nav-link[href*="quote"]');
+const applicantNavItems = Array.from(document.querySelectorAll('.nav-section.applicant > a.nav-link'));
+
+// Build links HTML dynamically
+let linksHtml = '';
+const hasDesktopHome = clientNavItems.some(item => item.textContent.trim().toLowerCase() === 'home');
+if (!hasDesktopHome) {
+    linksHtml += `<a href="${KG_THEME.homeUrl}" class="mobile-nav-link">Home</a>`;
+}
+
+// Add client menu links
+clientNavItems.forEach(item => {
+    linksHtml += `<a href="${item.href}" class="mobile-nav-link">${item.textContent.trim()}</a>`;
+});
+
+// Add custom styled About menu accordion section
+linksHtml += `
+    <div class="mobile-nav-dropdown">
+        <button class="mobile-nav-link mobile-dropdown-toggle">
+            About
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left: 0.25rem;"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <div class="mobile-dropdown-menu">
+            <div class="mobile-dropdown-section">
+                <span class="mobile-dropdown-section-title">Company</span>
+                <a href="${KG_THEME.homeUrl}story/" class="mobile-sub-link">Our Story</a>
+                <a href="${KG_THEME.homeUrl}news/" class="mobile-sub-link">News</a>
+                <a href="${KG_THEME.homeUrl}community/" class="mobile-sub-link">Community</a>
+            </div>
+            <div class="mobile-dropdown-section">
+                <span class="mobile-dropdown-section-title">Services</span>
+                <a href="${KG_THEME.homeUrl}service-labor/" class="mobile-sub-link">Labor Management</a>
+                <a href="${KG_THEME.homeUrl}service-kit/" class="mobile-sub-link">HR & Tech (KIT)</a>
+            </div>
+            <div class="mobile-dropdown-section">
+                <span class="mobile-dropdown-section-title">Network</span>
+                <a href="${KG_THEME.homeUrl}network/" class="mobile-sub-link">Client Engagements</a>
             </div>
         </div>
+    </div>
+`;
 
-        <a href="${KG_THEME.homeUrl}our-jobs/" class="mobile-nav-link">Our Jobs</a>
-        <a href="${KG_THEME.homeUrl}careers/" class="mobile-nav-link">Apply Now</a>
-        <a href="https://zckings.azurewebsites.net/" target="_blank" rel="noopener" class="mobile-nav-link">Member Portal</a>
+// Add applicant menu items (e.g. Our Jobs, Shop, Log In, Apply Now depending on geo layout)
+applicantNavItems.forEach(item => {
+    linksHtml += `<a href="${item.href}" class="mobile-nav-link">${item.textContent.trim()}</a>`;
+});
+
+let bottomButtonsHtml = '';
+if (clientQuoteLink) {
+    bottomButtonsHtml += `<a href="${clientQuoteLink.href}" class="btn btn-gold" style="width: 100%;">${clientQuoteLink.textContent.trim()}</a>`;
+}
+// Find the Member Portal / Log In link from desktop if any
+const loginLink = document.querySelector('.nav-section.applicant a[href*="azurewebsites.net"]');
+if (loginLink) {
+    bottomButtonsHtml += `<a href="${loginLink.href}" target="_blank" rel="noopener" class="btn btn-outline" style="width: 100%; border-color: rgba(255,255,255,0.4); color: white;">${loginLink.textContent.trim()}</a>`;
+}
+
+mobileNav.innerHTML = `
+    <div class="mobile-nav-links-container" style="display: flex; flex-direction: column; align-items: center; gap: 1.2rem; width: 100%; overflow-y: auto; max-height: 70vh; padding: 1rem 0; margin-top: 5rem;">
+        ${linksHtml}
         
         <div style="display: flex; flex-direction: column; gap: 0.85rem; width: 100%; max-width: 280px; margin-top: 1rem; padding-bottom: 1rem;">
-            <a href="${KG_THEME.homeUrl}quote/" class="btn btn-gold" style="width: 100%;">Get a Quote</a>
-            <a href="https://zckings.azurewebsites.net/" target="_blank" rel="noopener" class="btn btn-outline" style="width: 100%; border-color: rgba(255,255,255,0.4); color: white;">Log In</a>
+            ${bottomButtonsHtml}
         </div>
     </div>
 `;
@@ -390,4 +415,182 @@ toggleBtns.forEach(btn => {
         });
     });
 });
+
+
+/* ─────────────────────────────────────────
+   PHASE 3 — DYNAMIC ADDRESS & CV SANITIZER
+   ───────────────────────────────────────── */
+
+// 1. Dynamic Address cascades using the PSGC API
+function initPSGCAddressCascades(regionSelectId, citySelectId, barangaySelectId, hiddenRegionCodeId, hiddenCityCodeId, hiddenBarangayCodeId) {
+    const regionSelect = document.getElementById(regionSelectId);
+    const citySelect = document.getElementById(citySelectId);
+    const barangaySelect = document.getElementById(barangaySelectId);
+
+    if (!regionSelect || !citySelect || !barangaySelect) return;
+
+    // Clear and populate initial default option
+    regionSelect.innerHTML = '<option value="">Select Region</option>';
+
+    // Fetch and populate regions
+    fetch('https://psgc.gitlab.io/api/regions/')
+        .then(res => res.json())
+        .then(data => {
+            // Put NCR region first
+            const ncr = data.find(r => r.name === 'NCR' || r.name.includes('Metropolitan Manila'));
+            if (ncr) {
+                data = data.filter(r => r.name !== ncr.name);
+                data.unshift(ncr);
+            }
+            data.forEach(region => {
+                const opt = document.createElement('option');
+                opt.value = region.name;
+                opt.dataset.code = region.code;
+                opt.textContent = region.name;
+                regionSelect.appendChild(opt);
+            });
+        })
+        .catch(err => {
+            console.error('Failed to fetch regions:', err);
+            // Fallback: make select fields regular inputs if API is blocked or offline
+            enableAddressFallbacks(regionSelect, citySelect, barangaySelect);
+        });
+
+    // Region Change
+    regionSelect.addEventListener('change', () => {
+        const selectedOpt = regionSelect.options[regionSelect.selectedIndex];
+        const regionCode = selectedOpt ? selectedOpt.dataset.code : '';
+        
+        if (hiddenRegionCodeId) {
+            const hiddenRegionInput = document.getElementById(hiddenRegionCodeId);
+            if (hiddenRegionInput) hiddenRegionInput.value = regionCode || '';
+        }
+
+        citySelect.innerHTML = '<option value="">Select City / Municipality</option>';
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+
+        if (regionCode) {
+            citySelect.disabled = false;
+            fetch(`https://psgc.gitlab.io/api/regions/${regionCode}/cities-municipalities/`)
+                .then(res => res.json())
+                .then(data => {
+                    data.sort((a, b) => a.name.localeCompare(b.name));
+                    data.forEach(city => {
+                        const opt = document.createElement('option');
+                        opt.value = city.name;
+                        opt.dataset.code = city.code;
+                        opt.textContent = city.name;
+                        citySelect.appendChild(opt);
+                    });
+                })
+                .catch(err => console.error('Failed to fetch cities:', err));
+        } else {
+            citySelect.disabled = true;
+            barangaySelect.disabled = true;
+        }
+    });
+
+    // City Change
+    citySelect.addEventListener('change', () => {
+        const selectedOpt = citySelect.options[citySelect.selectedIndex];
+        const cityCode = selectedOpt ? selectedOpt.dataset.code : '';
+
+        if (hiddenCityCodeId) {
+            const hiddenCityInput = document.getElementById(hiddenCityCodeId);
+            if (hiddenCityInput) hiddenCityInput.value = cityCode || '';
+        }
+
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+
+        if (cityCode) {
+            barangaySelect.disabled = false;
+            fetch(`https://psgc.gitlab.io/api/cities-municipalities/${cityCode}/barangays/`)
+                .then(res => res.json())
+                .then(data => {
+                    data.sort((a, b) => a.name.localeCompare(b.name));
+                    data.forEach(brgy => {
+                        const opt = document.createElement('option');
+                        opt.value = brgy.name;
+                        opt.dataset.code = brgy.code;
+                        opt.textContent = brgy.name;
+                        barangaySelect.appendChild(opt);
+                    });
+                })
+                .catch(err => console.error('Failed to fetch barangays:', err));
+        } else {
+            barangaySelect.disabled = true;
+        }
+    });
+
+    // Barangay Change
+    barangaySelect.addEventListener('change', () => {
+        const selectedOpt = barangaySelect.options[barangaySelect.selectedIndex];
+        const brgyCode = selectedOpt ? selectedOpt.dataset.code : '';
+
+        if (hiddenBarangayCodeId) {
+            const hiddenBrgyInput = document.getElementById(hiddenBarangayCodeId);
+            if (hiddenBrgyInput) hiddenBrgyInput.value = brgyCode || '';
+        }
+    });
+}
+
+function enableAddressFallbacks(regionSelect, citySelect, barangaySelect) {
+    const makeInput = (selectEl, placeholder) => {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = selectEl.id;
+        input.name = selectEl.name;
+        input.className = selectEl.className;
+        input.placeholder = placeholder;
+        input.required = selectEl.required;
+        input.style.cssText = 'padding:0.8rem 1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.875rem;width:100%;transition:var(--transition);outline:none;';
+        selectEl.parentNode.replaceChild(input, selectEl);
+    };
+    makeInput(regionSelect, 'Region');
+    makeInput(citySelect, 'City / Municipality');
+    makeInput(barangaySelect, 'Barangay');
+}
+
+// Filename Sanitation utility
+function sanitizeCVFilename(fileInputEl, fileDisplayEl) {
+    if (!fileInputEl) return;
+
+    fileInputEl.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            const file = this.files[0];
+            const originalName = file.name;
+            const cleanName = originalName.replace(/[\s_]+/g, '-');
+            
+            if (originalName !== cleanName) {
+                // Rename file object programmatically
+                try {
+                    const blob = file.slice(0, file.size, file.type);
+                    const newFile = new File([blob], cleanName, { type: file.type });
+                    
+                    // Re-bind file to the input using DataTransfer API
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(newFile);
+                    fileInputEl.files = dataTransfer.files;
+
+                    // Show sanitation feedback
+                    if (fileDisplayEl) {
+                        fileDisplayEl.innerHTML = `File sanitized for compatibility: <strong style="color:var(--main-blue);">${cleanName}</strong>`;
+                        fileDisplayEl.style.display = 'block';
+                    }
+                } catch(e) {
+                    console.error('Filename renaming failed, using fallback display.');
+                    if (fileDisplayEl) {
+                        fileDisplayEl.innerHTML = `Selected file: <strong>${originalName}</strong>`;
+                        fileDisplayEl.style.display = 'block';
+                    }
+                }
+            } else {
+                if (fileDisplayEl) {
+                    fileDisplayEl.innerHTML = `Selected file: <strong>${cleanName}</strong>`;
+                    fileDisplayEl.style.display = 'block';
+                }
+            }
+        }
+    });
+}
 

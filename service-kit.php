@@ -2,176 +2,200 @@
 /* Template Name: Service Kit */
 ?>
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
     require_once 'functions.php';
 }
-$page_title       = 'HR & Payroll System (KIT) | Kings Group Cooperative';
-$page_description = 'Streamline your HR and payroll with Kings Group\'s specialized KIT system, designed for efficient labor management.';
+$page_title = 'HR & Payroll Management & KIT System | Kings Group Cooperative';
+$page_description = 'Human resource management, consulting and benefits administration are crucial aspects of the business that The Kings can manage for you.';
 
 // JSON-LD: Service schema for KIT (SoftwareApplication + Service hybrid)
 $page_schema = [
-    '@context'    => 'https://schema.org',
-    '@type'       => 'Service',
-    '@id'         => 'https://kingsgroup.com.ph/service-kit/#service',
-    'name'        => 'Kings Information Technology (KIT) — HR & Payroll System',
-    'url'         => 'https://kingsgroup.com.ph/service-kit/',
-    'description' => 'Streamline your HR and payroll with Kings Group\'s specialized KIT system, designed for efficient labor management.',
-    'provider'    => [ '@id' => 'https://kingsgroup.com.ph/#organization' ],
-    'areaServed'  => [ '@type' => 'Country', 'name' => 'Philippines' ],
-    'serviceType' => 'HR Technology',
-    'category'    => 'Human Resources Software',
-    'breadcrumb'  => [
-        '@type'           => 'BreadcrumbList',
+    '@context' => 'https://schema.org',
+    '@type' => 'Service',
+    '@id' => 'https://kingsgroup.com.ph/service-kit/#service',
+    'name' => 'HR & Payroll Management & Kings Information Technology (KIT)',
+    'url' => 'https://kingsgroup.com.ph/service-kit/',
+    'description' => 'Human resource management, consulting and benefits administration are crucial aspects of the business that The Kings can manage for you.',
+    'provider' => ['@id' => 'https://kingsgroup.com.ph/#organization'],
+    'areaServed' => ['@type' => 'Country', 'name' => 'Philippines'],
+    'serviceType' => 'HR & Payroll Services',
+    'category' => 'Human Resources & Payroll',
+    'breadcrumb' => [
+        '@type' => 'BreadcrumbList',
         'itemListElement' => [
-            [ '@type' => 'ListItem', 'position' => 1, 'name' => 'Home',                'item' => 'https://kingsgroup.com.ph/' ],
-            [ '@type' => 'ListItem', 'position' => 2, 'name' => 'HR & Payroll (KIT)', 'item' => 'https://kingsgroup.com.ph/service-kit/' ],
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => 'https://kingsgroup.com.ph/'],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'HR & Payroll (KIT)', 'item' => 'https://kingsgroup.com.ph/service-kit/'],
         ],
     ],
 ];
 
-$page_hero_bg = kg_get_field('skit_bg', 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2000&q=80');
+$page_hero_bg = kg_get_field('skit_bg', kg_asset('img/service-kit/hero-kit.png'));
 get_header();
 ?>
 
-    <!-- Premium Animated Hero -->
+<!-- Premium Animated Hero -->
+<?php
+$skit_headline = kg_get_field('skit_headline', 'HR & Kings Information Technology (KIT)');
+$skit_desc = kg_get_field('skit_desc', 'Proprietary Kings Information Technology System');
+$skit_bg = kg_get_field('skit_bg', kg_asset('img/service-kit/hero-kit.png'));
+$skit_bg_style = !empty($skit_bg) ? "background-image: linear-gradient(rgba(10, 37, 64, 0.75), rgba(10, 37, 64, 0.85)), url('" . esc_url($skit_bg) . "');" : '';
+?>
+<section class="kit-hero" style="<?php echo $skit_bg_style; ?>">
+    <div class="hero-inner">
+        <h1><?php echo esc_html($skit_headline); ?></h1>
+        <p class="hero-sub"><?php echo esc_html($skit_desc); ?></p>
+    </div>
+</section>
+
+<!-- Main Content Area -->
+<main class="service-content container">
+    <!-- HR & Payroll Management Intro Section (Split Layout below Hero) -->
     <?php
-    $skit_headline = kg_get_field('skit_headline', 'HR & Payroll System');
-    $skit_desc = kg_get_field('skit_desc', 'Kings Information Technology (KIT)');
-    $skit_bg = kg_get_field('skit_bg', 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2000&q=80');
-    $skit_bg_style = !empty($skit_bg) ? "background-image: linear-gradient(rgba(10, 37, 64, 0.75), rgba(10, 37, 64, 0.85)), url('" . esc_url($skit_bg) . "');" : '';
+    $skit_hr_title = kg_get_field('skit_hr_title', 'HR & Payroll Management');
+    $skit_hr_desc = kg_get_field('skit_hr_desc', 'Human resource management, consulting and benefits administration are crucial aspects of the business that The Kings can manage for you. Payroll and HR Experts from The Kings, who are familiar with the local laws and taxations will handle your employees so you can focus on the revenue-generating activities of your business. They can either be placed in your office or work from our own corporate offices in Parañaque City.');
+    $skit_hr_list = kg_get_field('skit_hr_list');
     ?>
-    <section class="kit-hero" style="<?php echo $skit_bg_style; ?>">
-        <div class="hero-inner">
-            <h1><?php echo wp_kses_post($skit_headline); ?></h1>
-            <p class="hero-sub"><?php echo esc_html($skit_desc); ?></p>
+    <div class="split-content animate-on-scroll" style="align-items: center; margin-bottom: 6rem; gap: 4rem;">
+        <div class="split-text">
+            <h2 style="margin-bottom: 1.5rem;"><?php echo esc_html($skit_hr_title); ?></h2>
+            <div style="font-size: 1.1rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 2rem;">
+                <?php echo wp_kses_post(wpautop($skit_hr_desc)); ?>
+            </div>
+            
+            <?php if (!empty($skit_hr_list)) : ?>
+                <ul style="list-style: none; padding: 0; margin: 0; text-align: left;">
+                    <?php
+                    $hr_items = explode("\n", $skit_hr_list);
+                    foreach ($hr_items as $item) :
+                        $item = trim($item);
+                        if (empty($item)) continue;
+                        ?>
+                        <li style="margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--text-body); display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="color: var(--sec-accent-green); font-weight: bold;">✓</span> <?php echo esc_html($item); ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else : ?>
+                <ul style="list-style: none; padding: 0; margin: 0; text-align: left;">
+                    <li style="margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--text-body); display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="color: var(--sec-accent-green); font-weight: bold;">✓</span> Recruitment, Selection and Deployment
+                    </li>
+                    <li style="margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--text-body); display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="color: var(--sec-accent-green); font-weight: bold;">✓</span> Orientation and Training
+                    </li>
+                    <li style="margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--text-body); display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="color: var(--sec-accent-green); font-weight: bold;">✓</span> Timekeeping and Payroll
+                    </li>
+                    <li style="margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--text-body); display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="color: var(--sec-accent-green); font-weight: bold;">✓</span> Compensation Programs
+                    </li>
+                    <li style="margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--text-body); display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="color: var(--sec-accent-green); font-weight: bold;">✓</span> Management and Legal Processes
+                    </li>
+                </ul>
+            <?php endif; ?>
+        </div>
+        <div class="image-wrapper" style="box-shadow: var(--shadow-xl); border-radius: 24px; overflow: hidden; aspect-ratio: 4/3; width: 100%;">
+            <?php 
+            $skit_hr_img = kg_get_field('skit_hr_img', kg_asset('img/service-labor/kings-labor-content1.JPG')); 
+            echo kg_img($skit_hr_img, 'HR and Payroll Management Consulting', 'image-placeholder', 'width: 100%; height: 100%; object-fit: cover;'); 
+            ?>
+        </div>
+    </div>
+
+
+    <?php
+    $skit_kit_title = kg_get_field('skit_kit_title', 'Kings Information Technology (KIT)');
+    $skit_kit_label = kg_get_field('skit_kit_label', 'HR & Payroll System');
+    $skit_kit_desc = kg_get_field('skit_kit_desc', "Kings Information Technology is a software the company aimed to create offering the best solution for the Philippines HR demands— Philippines has a great need for a localized software that is why KIT was born.\n\nOur goal is to help companies in the Philippines grow through our suite of backend solutions that address payroll, HR and recruitment challenges.");
+    ?>
+    <div class="service-intro animate-on-scroll" style="margin-bottom: 6rem;">
+        <!-- Single Image Wrapper -->
+        <div class="image-wrapper" style="box-shadow: var(--shadow-xl); border-radius: 24px; overflow: hidden; aspect-ratio: 4/3; width: 100%;">
+            <?php 
+            $skit_intro_img1 = kg_get_field('skit_intro_img1', kg_asset('img/service-kit/skit-intro-img1.png')); 
+            echo kg_img($skit_intro_img1, 'KIT Platform HR Dashboard', 'image-placeholder', 'width: 100%; height: 100%; object-fit: cover;'); 
+            ?>
+        </div>
+
+        <div class="service-intro-text">
+            <h2 class="intro-lead" style="margin-bottom: 1.5rem;"><?php echo esc_html($skit_kit_title); ?></h2>
+            <div style="line-height: 1.75;">
+                <?php echo wp_kses_post(wpautop($skit_kit_desc)); ?>
+            </div>
+        </div>
+    </div>
+
+    <?php
+    $skit_hww_title = kg_get_field('skit_hww_title', 'HOW WE WORK');
+    $skit_hww_desc = kg_get_field('skit_hww_desc', 'Our work structure is uniquely tailored to a process that involves accountability, transparency and drive from all our teams. The Kings practices the flexibility of continuously adapting to changes and trends in the industry focusing on the delivering of quality product for our client’s satisfaction. We make sure we deliver on-time, with the best quality, right at your fingertips.');
+    $skit_hww_list = kg_get_field('skit_hww_list');
+    ?>
+    <section class="animate-on-scroll" id="how-we-work" style="margin-bottom: 8rem;">
+        <div class="split-content" style="margin-top: 5rem;">
+            <div class="split-text">
+                <h3 style="font-size: 2.5rem; margin-bottom: 1.5rem;"><?php echo esc_html($skit_hww_title); ?></h3>
+                <div style="font-size: 1.1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 2rem;">
+                    <?php echo wp_kses_post(wpautop($skit_hww_desc)); ?>
+                </div>
+                
+                <?php if (!empty($skit_hww_list)) : ?>
+                    <ul style="list-style: none; padding: 0; margin: 0; text-align: left;">
+                        <?php
+                        $hww_items = explode("\n", $skit_hww_list);
+                        foreach ($hww_items as $item) :
+                            $item = trim($item);
+                            if (empty($item)) continue;
+                            ?>
+                            <li style="margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--text-body); display: flex; align-items: center; gap: 0.75rem;">
+                                <span style="color: var(--sec-accent-green); font-weight: bold;">✓</span> <?php echo esc_html($item); ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php else : ?>
+                    <ul style="list-style: none; padding: 0; margin: 0; text-align: left;">
+                        <li style="margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--text-body); display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="color: var(--sec-accent-green); font-weight: bold;">✓</span> Time and Attendance Monitoring
+                        </li>
+                        <li style="margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--text-body); display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="color: var(--sec-accent-green); font-weight: bold;">✓</span> Payslip Generation (Online Viewing)
+                        </li>
+                        <li style="margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--text-body); display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="color: var(--sec-accent-green); font-weight: bold;">✓</span> Government mandated remittances and reports
+                        </li>
+                        <li style="margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--text-body); display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="color: var(--sec-accent-green); font-weight: bold;">✓</span> Updated Report on Payroll and Tax
+                        </li>
+                        <li style="margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--text-body); display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="color: var(--sec-accent-green); font-weight: bold;">✓</span> Handling Labor Management related issues
+                        </li>
+                        <li style="margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--text-body); display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="color: var(--sec-accent-green); font-weight: bold;">✓</span> Employer access to Employees' Time record
+                        </li>
+                    </ul>
+                <?php endif; ?>
+            </div>
+
+            <div class="image-wrapper" style="box-shadow: var(--shadow-xl); border-radius: 24px; overflow: hidden;">
+                <?php $skit_hww_img = kg_get_field('skit_hww_img', kg_asset('img/service-kit/how-we-work.JPG'));
+                echo kg_img($skit_hww_img, 'KIT Platform Workflow', 'image-placeholder', 'width: 100%; height: 100%; object-fit: cover;'); ?>
+            </div>
         </div>
     </section>
 
-    <!-- Main Content Area -->
-    <main class="service-content container">
-        <div class="service-intro animate-on-scroll">
-            <div class="service-intro-text">
-                <?php
-                $skit_intro_title = kg_get_field('skit_intro_title', 'Empowering Growth through Localized Software.');
-                $skit_intro_desc = kg_get_field('skit_intro_desc', 'Kings Information Technology (KIT) is a software the company created offering the best solution for the Philippines HR demands. The Philippines has a great need for a localized software that is why KIT was born.\n\nOur goal is to help companies in the Philippines grow through our suite of backend solutions that address payroll, HR and recruitment challenges.');
-                ?>
-                <h2 class="intro-lead"><?php echo esc_html($skit_intro_title); ?></h2>
-                <?php echo wpautop(wp_kses_post($skit_intro_desc)); ?>
-
-                <?php
-                $skit_intro_pills_raw = kg_get_field('skit_intro_pills', "Tailored for the Philippines\nEnd-to-end HR Solution\nAutomated Payroll");
-                $skit_intro_pills_lines = array_filter( array_map( 'trim', explode( "\n", $skit_intro_pills_raw ) ) );
-                ?>
-                <div class="pills-container" style="margin-top: 2.5rem;">
-                    <?php foreach ( $skit_intro_pills_lines as $pill_line ) : ?>
-                    <span class="pill-item"><span style="color:var(--sec-accent-green); margin-right: 0.5rem;">✓</span>
-                        <?php echo esc_html( $pill_line ); ?></span>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-
-            <!-- Redesigned Overlapping Images -->
-            <?php
-            $skit_intro_img1 = kg_get_field('skit_intro_img1', 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80');
-            $skit_intro_img2 = kg_get_field('skit_intro_img2', 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80');
-            ?>
-            <div class="stacked-images-container">
-                <div class="img-back">
-                    <?php echo kg_img($skit_intro_img1, 'HR Dashboard Analytics'); ?>
-                </div>
-                <div class="img-front">
-                    <?php echo kg_img($skit_intro_img2, 'Team using software'); ?>
-                </div>
+    <!-- Moving Forward -->
+    <?php
+    $skit_mf_title = kg_get_field('skit_mf_title', 'Moving Forward');
+    $skit_mf_desc = kg_get_field('skit_mf_desc', 'The Kings has a smooth track record and an expert in the said industry for over 10 years. We will be glad to meet with you, personally or virtually, to clarify any concern and work on the engagement that fits your current and future requirements.');
+    ?>
+    <section class="animate-on-scroll" style="margin-top: 6rem; margin-bottom: 4rem; text-align: center;">
+        <div style="background: rgba(10, 37, 64, 0.02); border: 1px solid var(--border-color); border-radius: 24px; padding: 4.5rem 3rem; max-width: 900px; margin: 0 auto; box-shadow: var(--shadow-sm);">
+            <h2 style="font-size: 2.25rem; font-family: var(--font-header); margin-bottom: 1.5rem; font-weight: 700; color: var(--main-blue);"><?php echo esc_html($skit_mf_title); ?></h2>
+            <div style="font-size: 1.15rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 0; max-width: 750px; margin-left: auto; margin-right: auto;">
+                <?php echo wp_kses_post(wpautop($skit_mf_desc)); ?>
             </div>
         </div>
-
-        <section class="animate-on-scroll" id="how-we-work" style="margin-bottom: 8rem;">
-            <div class="split-content reverse" style="margin-top: 5rem;">
-                <div class="split-text">
-                    <?php
-                    $skit_hww_title = kg_get_field('skit_hww_title', 'How We Work');
-                    $skit_hww_text = kg_get_field('skit_hww_text', 'Our work structure is uniquely tailored to a process that involves accountability, transparency and drive from all our teams. The Kings practices the flexibility of continuously adapting to changes and trends in the industry focusing on the delivering of quality product for our client\'s satisfaction. We make sure we deliver on-time, with the best quality, right at your fingertips.');
-                    ?>
-                    <h3 style="font-size: 2.5rem; margin-bottom: 1.5rem;"><?php echo esc_html( $skit_hww_title ); ?></h3>
-                    <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 2rem;"><?php echo wp_kses_post( $skit_hww_text ); ?></p>
-                </div>
-
-                <div class="image-wrapper" style="box-shadow: var(--shadow-xl); border-radius: 24px; overflow: hidden;">
-                    <?php $skit_hww_img = kg_get_field('skit_hww_img', 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80'); echo kg_img($skit_hww_img, 'KIT Platform Workflow', 'image-placeholder', 'width: 100%; height: 100%; object-fit: cover;'); ?>
-                </div>
-            </div>
-
-            <!-- Features Grid -->
-            <?php
-            $skit_feat_defaults = array(
-                1 => array( 'title' => 'Time & Attendance Monitoring',  'desc' => 'Automated and accurate tracking of employee hours seamlessly integrated with your customized rules.' ),
-                2 => array( 'title' => 'Payslip Generation',            'desc' => 'Instant online viewing and generation of detailed, fully compliant digital payslips for all team members.' ),
-                3 => array( 'title' => 'Government Reports',            'desc' => 'Hassle-free automated handling of government-mandated remittances and regulatory reports.' ),
-                4 => array( 'title' => 'Payroll & Tax Reporting',       'desc' => 'Access updated, comprehensive reports on payroll expenses and taxation at any time.' ),
-                5 => array( 'title' => 'Labor Issue Processing',        'desc' => 'Dedicated support and systematic handling for all labor management related issues.' ),
-                6 => array( 'title' => 'Employer Access Portal',        'desc' => 'Full transparency with dedicated employer access to view and audit employees\' time records instantly.' ),
-            );
-            $skit_feat_icon_styles = array(
-                1 => 'background: rgba(0, 208, 156, 0.1); color: var(--sec-accent-green);',
-                2 => 'background: rgba(255, 209, 102, 0.15); color: #E5A910;',
-                3 => 'background: rgba(38, 196, 133, 0.1); color: var(--sec-accent-green);',
-                4 => 'background: rgba(10, 37, 64, 0.05); color: var(--main-blue);',
-                5 => 'background: rgba(229, 62, 62, 0.1); color: #E53E3E;',
-                6 => 'background: rgba(0, 208, 156, 0.1); color: var(--sec-accent-green);',
-            );
-            $skit_feat_svgs = array(
-                1 => '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>',
-                2 => '<rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line>',
-                3 => '<path d="M14 2H6a2 2 0 0 0-2-2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>',
-                4 => '<line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>',
-                5 => '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>',
-                6 => '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line>',
-            );
-            ?>
-            <div class="features-grid"
-                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 4rem;">
-                <?php for ( $i = 1; $i <= 6; $i++ ) :
-                    $feat_title = function_exists('get_field') && get_field( 'skit_feat' . $i . '_title', get_queried_object_id() )
-                        ? get_field( 'skit_feat' . $i . '_title', get_queried_object_id() )
-                        : $skit_feat_defaults[ $i ]['title'];
-                    $feat_desc = function_exists('get_field') && get_field( 'skit_feat' . $i . '_desc', get_queried_object_id() )
-                        ? get_field( 'skit_feat' . $i . '_desc', get_queried_object_id() )
-                        : $skit_feat_defaults[ $i ]['desc'];
-                ?>
-                <!-- Card <?php echo $i; ?> -->
-                <div class="feature-card"
-                    style="background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 2.5rem; transition: var(--transition); box-shadow: var(--shadow-sm);">
-                    <div class="icon-box"
-                        style="width: 60px; height: 60px; <?php echo esc_attr( $skit_feat_icon_styles[ $i ] ); ?> border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <?php echo $skit_feat_svgs[ $i ]; ?>
-                        </svg>
-                    </div>
-                    <h4 style="font-size: 1.25rem; color: var(--main-blue); margin-bottom: 1rem;"><?php echo esc_html( $feat_title ); ?></h4>
-                    <p style="color: var(--text-muted); line-height: 1.6; margin: 0;"><?php echo wp_kses_post( $feat_desc ); ?></p>
-                </div>
-                <?php endfor; ?>
-            </div>
-        </section>
-
-        <!-- Moving Forward -->
-        <?php
-        $skit_forward_title = kg_get_field('skit_forward_title', 'Moving Forward');
-        $skit_forward_text = kg_get_field('skit_forward_text', 'The Kings has a smooth track record and an expert in the said industry for over 10 years. We will be glad to meet with you, personally or virtually, to clarify any concern and work on the engagement that fits your current and future requirements.');
-        ?>
-        <section class="section"
-            style="padding: 4rem 2rem; margin-top: 4rem; text-align: center; background: rgba(10, 37, 64, 0.02); border-radius: 24px;">
-            <div class="container animate-on-scroll" style="max-width: 800px; margin: 0 auto;">
-                <h2 class="section-title" style="margin-bottom: 1.5rem; font-size: 2.25rem;"><?php echo esc_html( $skit_forward_title ); ?></h2>
-                <p style="font-size: 1.15rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 0;">
-                    <?php echo wp_kses_post( $skit_forward_text ); ?>
-                </p>
-            </div>
-        </section>
-    </main>
+    </section>
+</main>
 
 <?php get_footer(); ?>
-
-
-

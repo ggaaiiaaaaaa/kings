@@ -1,53 +1,45 @@
 <?php
 /* Template Name: Community */
-$page_hero_bg = kg_get_field('comm_hero_bg', 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=2000&q=80');
+$page_hero_bg = kg_get_field('comm_hero_bg', kg_asset('img/community/hero-community.png'));
 get_header();
 ?>
 
 <!-- Hero -->
 <?php
-$comm_hero_title = kg_get_field('comm_hero_title', 'Our Commitment to Community');
-$comm_hero_desc  = kg_get_field('comm_hero_desc', 'Building a sustainable future through education, empowerment, and shared success.');
-$comm_hero_bg    = kg_get_field('comm_hero_bg', 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=2000&q=80');
+$comm_hero_bg    = kg_get_field('comm_hero_bg', kg_asset('img/community/hero-community.png'));
 $comm_hero_bg_style = !empty($comm_hero_bg) ? "background-image: linear-gradient(rgba(10, 37, 64, 0.75), rgba(10, 37, 64, 0.75)), url('" . esc_url($comm_hero_bg) . "');" : '';
 ?>
 <section class="page-hero community-hero" style="<?php echo $comm_hero_bg_style; ?>">
     <div class="container text-center">
-        <h1 class="animate-on-scroll">
-            <?php echo esc_html($comm_hero_title); ?></h1>
-        <p class="animate-on-scroll"
-            style="max-width: 750px; margin: 0 auto; color: rgba(255,255,255,0.85); font-size: 1.25rem;"><?php echo esc_html($comm_hero_desc); ?></p>
+        <h1 class="animate-on-scroll">Community</h1>
+        <p class="animate-on-scroll" style="max-width: 750px; margin: 1rem auto 0; color: rgba(255,255,255,0.85); font-size: 1.5rem;">Building a sustainable future through education, empowerment, and shared success.</p>
     </div>
 </section>
 
 
-<!-- Introduction / Impact -->
+<!-- Queens Section -->
+<section class="section section-bg-light" style="padding: 8rem 0;">
+    <div class="container" style="text-align: center;">
+        <h2 class="section-title" style="margin-bottom: 2.5rem; color: var(--main-blue);">Queens of Kings Group</h2>
+        <?php
+        $queens_img = kg_get_field('comm_queens_img', kg_asset('img/community/queens-of-kingsgroup.png'));
+        echo kg_img($queens_img, 'Queens of Kings Group', 'img-fluid', 'max-width: 600px; width: 100%; border-radius: 20px; box-shadow: var(--shadow-lg); display: block; margin: 0 auto;');
+        ?>
+    </div>
+</section>
+
+<!-- Real Impact Section (moved below Queens) -->
 <section class="section section-bg-white" style="padding: 8rem 0;">
     <div class="container">
         <?php
-        $stat1_num   = kg_get_field('comm_stat1_num', '500+');
-        $stat1_label = kg_get_field('comm_stat1_label', 'Scholarships Awarded');
-        $stat2_num   = kg_get_field('comm_stat2_num', '100%');
-        $stat2_label = kg_get_field('comm_stat2_label', 'Member Focused');
-        $impact_img  = kg_get_field('comm_impact_img', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80');
+        $impact_img  = kg_get_field('comm_impact_img', kg_asset('img/community/community-impact.JPG'));
         ?>
-        <div class="impact-intro-grid animate-on-scroll">
+        <div class="impact-intro-grid animate-on-scroll is-visible">
             <div class="impact-text">
-                <h2 class="section-title" style="text-align: left; margin-bottom: 2rem;">Real Impact, <br><span
-                        class="text-gradient">Real Lives.</span></h2>
+                <h2 class="section-title" style="text-align: left; margin-bottom: 2rem;">Impact</h2>
                 <p style="font-size: 1.2rem; color: var(--text-body); line-height: 1.8; margin-bottom: 2.5rem;">
                     <?php echo esc_html(kg_get_field('comm_impact_intro', 'Community is essential to our mission and it is our responsibility to support the aspirations of our members by providing scholarships to our members and their dependents.')); ?>
                 </p>
-                <div class="impact-stats">
-                    <div class="stat-item">
-                        <span class="stat-num"><?php echo esc_html($stat1_num); ?></span>
-                        <span class="stat-label"><?php echo esc_html($stat1_label); ?></span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-num"><?php echo esc_html($stat2_num); ?></span>
-                        <span class="stat-label"><?php echo esc_html($stat2_label); ?></span>
-                    </div>
-                </div>
             </div>
             <div class="impact-image-box">
                 <div class="impact-img-container">
@@ -58,49 +50,16 @@ $comm_hero_bg_style = !empty($comm_hero_bg) ? "background-image: linear-gradient
     </div>
 </section>
 
-<!-- Queens Section -->
-<section class="section section-bg-light" style="padding: 8rem 0;">
-    <div class="container">
-        <div class="queens-banner glass-card animate-on-scroll">
-            <div class="queens-content">
-                <h2 class="section-title" style="text-align: left; margin-bottom: 1.5rem; color: var(--main-blue);">
-                    <?php echo esc_html(kg_get_field('comm_queens_title', 'Queens of Kings Group')); ?></h2>
-                <p style="color: var(--text-body); font-size: 1.1rem; line-height: 1.7; margin-bottom: 2rem;">
-                    <?php echo esc_html(kg_get_field('comm_queens_desc', 'Dedicated to empowering women within the Kings Group network through specialized resources, mentorship, and support structures designed for professional and personal growth.')); ?>
-                </p>
-                <a href="<?php echo esc_url(home_url('/contact/')); ?>" class="btn btn-outline">Join the Network</a>
-            </div>
-            <div class="queens-visual">
-                <div class="queens-img-container">
-                    <?php
-                    $queens_img = kg_get_field('comm_queens_img', kg_asset('img/queens-of-kingsgroup.avif'));
-                    echo kg_img($queens_img, 'Queens of Kings Group', 'img-fluid');
-                    ?>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Home Culinary School Feature -->
 <section class="section section-bg-white" style="padding: 8rem 0;">
     <div class="container">
         <div class="culinary-showcase animate-on-scroll">
-            <?php
-            $culinary_tag   = kg_get_field('comm_culinary_tag', 'Education');
-            $culinary_title = kg_get_field('comm_culinary_title', 'Home Culinary & Technical School');
-            $culinary_sub   = kg_get_field('comm_culinary_sub', 'Empowering our members with sustainable livelihood programs and TESDA-accredited training.');
-            ?>
-            <div class="culinary-header text-center">
-                <h2 class="section-title"><?php echo esc_html($culinary_title); ?></h2>
-                <p class="section-subtitle"><?php echo esc_html($culinary_sub); ?></p>
-            </div>
 
             <div class="culinary-grid">
                 <div class="culinary-info-card">
                     <div class="card-media">
                         <?php
-                        $culinary_img = kg_get_field('comm_culinary_img', 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1200&q=80');
+                        $culinary_img = kg_get_field('comm_culinary_img', kg_asset('img/community/community-culinary.png'));
                         echo kg_img($culinary_img, 'Home Culinary School');
                         ?>
                     </div>
@@ -115,17 +74,29 @@ $comm_hero_bg_style = !empty($comm_hero_bg) ? "background-image: linear-gradient
                 </div>
 
                 <div class="courses-card glass-card">
-                    <h3>Available Programs</h3>
-                    <p>TESDA accredited and certified certifications for professional growth.</p>
+                    <h3><?php echo esc_html(kg_get_field('comm_courses_title', 'Available Programs')); ?></h3>
+                    <p><?php echo esc_html(kg_get_field('comm_courses_subtitle', 'TESDA accredited and certified certifications for professional growth.')); ?></p>
                     <ul class="course-list">
-                        <li><span class="check">✓</span> Culinary Arts</li>
-                        <li><span class="check">✓</span> Cookery NC II</li>
-                        <li><span class="check">✓</span> Bread and Pastry NC II</li>
-                        <li><span class="check">✓</span> Food and Beverage Services NC II</li>
-                        <li><span class="check">✓</span> Housekeeping NC II</li>
+                        <?php
+                        $courses_list = kg_get_field('comm_courses_list');
+                        if (!empty($courses_list)) :
+                            $courses = explode("\n", $courses_list);
+                            foreach ($courses as $course) :
+                                $course = trim($course);
+                                if (empty($course)) continue;
+                                ?>
+                                <li><span class="check">✓</span> <?php echo esc_html($course); ?></li>
+                            <?php endforeach; ?>
+                        <?php else : ?>
+                            <li><span class="check">✓</span> Culinary Arts</li>
+                            <li><span class="check">✓</span> Cookery NC II</li>
+                            <li><span class="check">✓</span> Bread and Pastry NC II</li>
+                            <li><span class="check">✓</span> Food and Beverage Services NC II</li>
+                            <li><span class="check">✓</span> Housekeeping NC II</li>
+                        <?php endif; ?>
                     </ul>
-                    <a href="https://thehomeculinaryschool.com/" target="_blank" rel="noopener noreferrer"
-                        class="btn btn-gold btn-block">Apply for Scholarship</a>
+                    <a href="<?php echo esc_url(kg_get_field('comm_scholarship_btn_url', 'https://thehomeculinaryschool.com/')); ?>" target="_blank" rel="noopener noreferrer"
+                        class="btn btn-gold btn-block"><?php echo esc_html(kg_get_field('comm_scholarship_btn_text', 'Apply for Scholarship')); ?></a>
                 </div>
             </div>
         </div>

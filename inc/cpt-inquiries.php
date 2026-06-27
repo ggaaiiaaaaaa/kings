@@ -181,21 +181,38 @@ function kg_notify_inquiry_status( $post_id, $status ) {
     if ( ! $email ) return;
 
     if ( $status === 'in_progress' ) {
-        $mail_subject = 'Inquiry Update: In Progress — Kings Manpower';
-        $body = kg_email_heading( 'Inquiry Status: In Progress' )
-            . kg_email_para( 'Dear ' . esc_html($fname) . ',' )
-            . kg_email_para( 'This correspondence serves to inform you that your inquiry regarding <strong>"' . esc_html($subject) . '"</strong> is currently under active review by our assigned specialists.' )
-            . kg_email_para( 'A representative will communicate our findings or request additional information shortly.' )
-            . kg_email_banner( 'We appreciate your patience as we ensure a comprehensive resolution to your request.' )
-            . kg_email_button( 'Visit Kings Manpower', home_url('/') );
+        $parsed = kg_get_parsed_email( 'inquiry_in_progress', array(
+            '{fname}'           => esc_html($fname),
+            '{inquiry_subject}' => esc_html($subject),
+        ) );
+        if ( ! empty( $parsed ) ) {
+            $mail_subject = $parsed['subject'];
+            $body = kg_email_heading( $parsed['heading'] ) . $parsed['body'];
+            if ( ! empty( $parsed['banner'] ) ) {
+                $body .= kg_email_banner( $parsed['banner'] );
+            }
+            if ( ! empty( $parsed['btn_text'] ) && ! empty( $parsed['btn_link'] ) ) {
+                $body .= kg_email_button( $parsed['btn_text'], $parsed['btn_link'] );
+            }
+        } else {
+            return;
+        }
     } elseif ( $status === 'resolved' ) {
-        $mail_subject = 'Inquiry Update: Resolved — Kings Manpower';
-        $body = kg_email_heading( 'Inquiry Status: Resolved' )
-            . kg_email_para( 'Dear ' . esc_html($fname) . ',' )
-            . kg_email_para( 'We are writing to confirm that your inquiry regarding <strong>"' . esc_html($subject) . '"</strong> has been marked as <strong style="color:#00D09C;">resolved</strong> within our system.' )
-            . kg_email_para( 'We trust our representatives have addressed your concerns satisfactorily. Should you require further assistance or clarification, please do not hesitate to initiate a new inquiry or reply to this correspondence.' )
-            . kg_email_banner( 'Thank you for choosing Kings Manpower as your trusted partner.' )
-            . kg_email_button( 'Visit Kings Manpower', home_url('/') );
+        $parsed = kg_get_parsed_email( 'inquiry_update', array(
+            '{inquiry_subject}' => esc_html($subject)
+        ) );
+        if ( ! empty( $parsed ) ) {
+            $mail_subject = $parsed['subject'];
+            $body = kg_email_heading( $parsed['heading'] ) . $parsed['body'];
+            if ( ! empty( $parsed['banner'] ) ) {
+                $body .= kg_email_banner( $parsed['banner'] );
+            }
+            if ( ! empty( $parsed['btn_text'] ) && ! empty( $parsed['btn_link'] ) ) {
+                $body .= kg_email_button( $parsed['btn_text'], $parsed['btn_link'] );
+            }
+        } else {
+            return;
+        }
     } else {
         return; // Don't send emails for 'new'
     }
@@ -470,34 +487,40 @@ function kg_notify_quote_status( $post_id, $status ) {
     $name  = get_post_meta( $post_id, 'kg_quote_name',  true );
     $email = get_post_meta( $post_id, 'kg_quote_email', true );
     $fname = explode( ' ', $name )[0];
+    $fullname = $name;
 
     if ( ! $email ) return;
 
+    $replacements = array(
+        '{fname}'    => esc_html( $fname ),
+        '{fullname}' => esc_html( $fullname ),
+    );
+
     if ( $status === 'contacted' ) {
-        $mail_subject = 'Proposal Update: Under Review — Kings Manpower';
-        $body = kg_email_heading( 'Proposal Status: Under Review' )
-            . kg_email_para( 'Dear ' . esc_html($fname) . ',' )
-            . kg_email_para( 'This is to inform you that your service configuration request has been assigned to a dedicated business development representative. We are currently finalizing the details of your proposal.' )
-            . kg_email_banner( 'You can expect a direct communication from our team shortly to present the formal proposal and discuss any customized requirements.' )
-            . kg_email_button( 'Visit Kings Manpower', home_url('/') );
+        $parsed = kg_get_parsed_email( 'quote_update_contacted', $replacements );
     } elseif ( $status === 'converted' ) {
-        $mail_subject = 'Welcome to Kings Manpower — Partnership Confirmed';
-        $body = kg_email_heading( 'Partnership Confirmed' )
-            . kg_email_para( 'Dear ' . esc_html($fname) . ',' )
-            . kg_email_para( 'We are delighted to officially welcome you as a valued partner of Kings Manpower. Your service proposal has been marked as <strong style="color:#00D09C;">confirmed</strong> within our system.' )
-            . kg_email_para( 'Our account management team is currently preparing your onboarding materials and service level agreements (SLAs).' )
-            . kg_email_banner( 'We look forward to delivering exceptional workforce solutions that drive your operational success.' )
-            . kg_email_button( 'Visit Kings Manpower', home_url('/') );
+        $parsed = kg_get_parsed_email( 'quote_update_converted', $replacements );
     } else {
         return; // Don't send emails for 'pending' or 'closed'
     }
 
-    wp_mail(
-        $email,
-        $mail_subject,
-        kg_email_wrap( $mail_subject, $body ),
-        array( 'Content-Type: text/html; charset=UTF-8' )
-    );
+    if ( ! empty( $parsed ) ) {
+        $mail_subject = $parsed['subject'];
+        $body = kg_email_heading( $parsed['heading'] ) . $parsed['body'];
+        if ( ! empty( $parsed['banner'] ) ) {
+            $body .= kg_email_banner( $parsed['banner'] );
+        }
+        if ( ! empty( $parsed['btn_text'] ) && ! empty( $parsed['btn_link'] ) ) {
+            $body .= kg_email_button( $parsed['btn_text'], $parsed['btn_link'] );
+        }
+
+        wp_mail(
+            $email,
+            $mail_subject,
+            kg_email_wrap( $mail_subject, $body ),
+            array( 'Content-Type: text/html; charset=UTF-8' )
+        );
+    }
 }
 
 /* — Filter — */

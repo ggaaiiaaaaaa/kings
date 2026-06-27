@@ -27,7 +27,7 @@ $page_schema = [
     ],
 ];
 
-$page_hero_bg     = kg_get_field('careers_bg', 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=2000&q=80');
+$page_hero_bg     = kg_get_field('careers_bg', kg_asset('img/our-jobs/hr-coordinator.png'));
 
 get_header();
 ?>
@@ -39,13 +39,13 @@ get_header();
     ?>
     <?php
     // Hero background: use ACF image or plain gradient fallback
-    $careers_bg = kg_get_field('careers_bg', 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=2000&q=80');
+    $careers_bg = kg_get_field('careers_bg', kg_asset('img/our-jobs/hr-coordinator.png'));
     $careers_bg_style = !empty($careers_bg) ? "background-image: linear-gradient(rgba(10, 37, 64, 0.75), rgba(10, 37, 64, 0.85)), url('" . esc_url($careers_bg) . "');" : '';
     ?>
     <section class="page-hero" style="<?php echo $careers_bg_style; ?>">
         <div class="container text-center">
-            <h1><?php echo wp_kses_post($careers_headline); ?></h1>
-            <p><?php echo esc_html($careers_desc); ?></p>
+            <h1 style="font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem;"><?php echo wp_kses_post($careers_headline); ?></h1>
+            <p style="font-size: 1.25rem; line-height: 1.6; max-width: 700px; margin: 0 auto; color: rgba(255, 255, 255, 0.85);"><?php echo esc_html($careers_desc); ?></p>
             <div style="margin-top:2rem;animation:fadeUp 1s ease-out 0.5s both;"></div>
         </div>
     </section>
@@ -58,7 +58,7 @@ get_header();
     <section id="apply" style="padding:5rem 0;background:var(--bg-white);">
         <div class="container" style="max-width:720px;">
             <div style="text-align:center;margin-bottom:2.5rem;">
-                <h2 class="section-title" style="margin-bottom:0.75rem;"><?php echo esc_html($careers_form_title); ?></h2>
+                <h2 class="section-title" style="margin-bottom:0.75rem; white-space: nowrap;"><?php echo esc_html($careers_form_title); ?></h2>
                 <p style="color:var(--text-muted);font-size:1.1rem;"><?php echo wp_kses_post($careers_form_desc); ?></p>
             </div>
 
@@ -67,12 +67,12 @@ get_header();
                 style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:3rem;">
                 <div class="cprog-step active" data-step="1">
                     <div class="cprog-circle">1</div>
-                    <span>Upload CV</span>
+                    <span><?php echo esc_html(kg_get_field('careers_step1_label', 'Upload CV')); ?></span>
                 </div>
                 <div class="cprog-line active"></div>
                 <div class="cprog-step" data-step="2">
                     <div class="cprog-circle">2</div>
-                    <span>Your Info</span>
+                    <span><?php echo esc_html(kg_get_field('careers_step2_label', 'Your Info')); ?></span>
                 </div>
             </div>
 
@@ -82,8 +82,8 @@ get_header();
                     style="border:2px dashed var(--border-color);padding:3rem 2rem;text-align:center;cursor:pointer;transition:var(--transition);background:var(--bg-light);"
                     onclick="document.getElementById('cv-upload').click()">
                     <div
-                        style="width:72px;height:72px;margin:0 auto 1.25rem;background:rgba(0,208,156,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--sec-accent-green)"
+                        style="width:72px;height:72px;margin:0 auto 1.25rem;background:rgba(255,209,102,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-yellow)"
                             stroke-width="2">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                             <polyline points="17 8 12 3 7 8" />
@@ -93,14 +93,14 @@ get_header();
                     <h3 style="color:var(--text-dark);font-size:1.2rem;margin-bottom:0.5rem;">Drag & drop your CV here
                     </h3>
                     <p style="color:var(--text-muted);font-size:0.9rem;">or <span
-                            style="color:var(--sec-accent-green);font-weight:600;text-decoration:underline;">browse
+                            style="color:var(--neutral-yellow);font-weight:600;text-decoration:underline;">browse
                             files</span></p>
                     <p style="color:var(--text-light);font-size:0.8rem;margin-top:0.75rem;">PDF, DOCX — Max 5 MB</p>
                     <input type="file" id="cv-upload" style="display:none;" accept=".pdf,.doc,.docx">
                 </div>
                 <div id="file-info"
-                    style="display:none;margin-top:1rem;padding:1rem 1.25rem;background:rgba(0,208,156,0.06);border:1px solid rgba(0,208,156,0.2);display:none;align-items:center;gap:0.75rem;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sec-accent-green)"
+                    style="display:none;margin-top:1rem;padding:1rem 1.25rem;background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.25);display:none;align-items:center;gap:0.75rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-yellow)"
                         stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                         <polyline points="14 2 14 8 20 8" />
@@ -118,33 +118,209 @@ get_header();
             <!-- Step 2: Contact Info -->
             <div id="step-2" class="career-step">
                 <div style="display:flex;flex-direction:column;gap:1.25rem;">
-                    <div class="careers-name-row">
+                    
+                    <!-- Purpose -->
+                    <div style="margin-bottom:0.5rem;">
+                        <label style="font-weight:600;color:var(--text-dark);display:block;margin-bottom:0.5rem;font-size:0.95rem;">Application Purpose</label>
+                        <div style="display:flex;gap:1.5rem;align-items:center;">
+                            <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.95rem;cursor:pointer;">
+                                <input type="radio" name="app_purpose" value="pooling" checked style="accent-color:var(--main-blue);"> For Pooling (Future Openings)
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.95rem;cursor:pointer;">
+                                <input type="radio" name="app_purpose" value="looking_for_job" style="accent-color:var(--main-blue);"> Looking for a Job (Active Candidate)
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Name Row -->
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:1rem;">
                         <input type="text" id="app-fname" placeholder="First Name" required
-                            style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;"
+                            style="padding:0.8rem 1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.875rem;width:100%;transition:var(--transition);outline:none;"
+                            onfocus="this.style.borderColor='var(--main-blue)'"
+                            onblur="this.style.borderColor='var(--border-color)'">
+                        <input type="text" id="app-mname" placeholder="Middle Name (Optional)"
+                            style="padding:0.8rem 1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.875rem;width:100%;transition:var(--transition);outline:none;"
                             onfocus="this.style.borderColor='var(--main-blue)'"
                             onblur="this.style.borderColor='var(--border-color)'">
                         <input type="text" id="app-lname" placeholder="Last Name" required
-                            style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;"
+                            style="padding:0.8rem 1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.875rem;width:100%;transition:var(--transition);outline:none;"
                             onfocus="this.style.borderColor='var(--main-blue)'"
                             onblur="this.style.borderColor='var(--border-color)'">
                     </div>
-                    <input type="email" id="app-email" placeholder="Email Address" required
-                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;"
-                        onfocus="this.style.borderColor='var(--main-blue)'"
-                        onblur="this.style.borderColor='var(--border-color)'">
-                    <input type="tel" id="app-phone" placeholder="Phone Number"
-                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;"
-                        onfocus="this.style.borderColor='var(--main-blue)'"
-                        onblur="this.style.borderColor='var(--border-color)'">
-                    
-                    <!-- Role input is hidden now, capturing context automatically from URL if present -->
-                    <input type="hidden" id="app-role" value="<?php echo esc_attr($_GET['role'] ?? ''); ?>">
+
+                    <!-- Demographics Row -->
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:1rem;">
+                        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+                            <label for="app-gender" style="font-weight:600;font-size:0.85rem;color:var(--text-muted);">Gender</label>
+                            <select id="app-gender" required
+                                style="padding:0.8rem 1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.875rem;width:100%;transition:var(--transition);outline:none;background:white;"
+                                onfocus="this.style.borderColor='var(--main-blue)'"
+                                onblur="this.style.borderColor='var(--border-color)'">
+                                <option value="" disabled selected>Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Non-Binary">Non-Binary</option>
+                                <option value="Prefer not to say">Prefer not to say</option>
+                            </select>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+                            <label for="app-birthday" style="font-weight:600;font-size:0.85rem;color:var(--text-muted);">Birthdate</label>
+                            <input type="date" id="app-birthday" required
+                                style="padding:0.8rem 1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.875rem;width:100%;transition:var(--transition);outline:none;"
+                                onfocus="this.style.borderColor='var(--main-blue)'"
+                                onblur="this.style.borderColor='var(--border-color)'">
+                        </div>
+                    </div>
+
+                    <!-- Address Cascades -->
+                    <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                        <label style="font-weight:600;color:var(--text-dark);font-size:0.95rem;margin-bottom:0.1rem;">Address Details</label>
+                        <input type="text" id="app-street" placeholder="Street Address" required
+                            style="padding:0.8rem 1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.875rem;width:100%;transition:var(--transition);outline:none;"
+                            onfocus="this.style.borderColor='var(--main-blue)'"
+                            onblur="this.style.borderColor='var(--border-color)'">
+                        
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:1rem;">
+                            <select id="app-region" required
+                                style="padding:0.8rem 1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.875rem;width:100%;transition:var(--transition);outline:none;background:white;color:var(--text-dark);"
+                                onfocus="this.style.borderColor='var(--main-blue)'"
+                                onblur="this.style.borderColor='var(--border-color)'">
+                                <option value="">Select Region</option>
+                            </select>
+                            <select id="app-city" required
+                                style="padding:0.8rem 1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.875rem;width:100%;transition:var(--transition);outline:none;background:white;color:var(--text-dark);"
+                                onfocus="this.style.borderColor='var(--main-blue)'"
+                                onblur="this.style.borderColor='var(--border-color)'">
+                                <option value="">Select City / Municipality</option>
+                            </select>
+                            <select id="app-barangay" required
+                                style="padding:0.8rem 1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.875rem;width:100%;transition:var(--transition);outline:none;background:white;color:var(--text-dark);"
+                                onfocus="this.style.borderColor='var(--main-blue)'"
+                                onblur="this.style.borderColor='var(--border-color)'">
+                                <option value="">Select Barangay</option>
+                            </select>
+                        </div>
+                        <input type="hidden" id="app_region_code" value="">
+                        <input type="hidden" id="app_city_code" value="">
+                        <input type="hidden" id="app_barangay_code" value="">
+                    </div>
+
+                    <!-- Contact Row -->
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:1rem;">
+                        <input type="email" id="app-email" placeholder="Email Address" required
+                            style="padding:0.8rem 1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.875rem;width:100%;transition:var(--transition);outline:none;"
+                            onfocus="this.style.borderColor='var(--main-blue)'"
+                            onblur="this.style.borderColor='var(--border-color)'">
+                        <input type="tel" id="app-phone" placeholder="Phone Number (+63)" required
+                            style="padding:0.8rem 1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.875rem;width:100%;transition:var(--transition);outline:none;"
+                            onfocus="this.style.borderColor='var(--main-blue)'"
+                            onblur="this.style.borderColor='var(--border-color)'">
+                    </div>
+                    <!-- Preferred Roles Checkboxes -->
+                    <div style="margin-top:0.5rem;" id="preferred-roles-container">
+                        <label style="font-weight:600;font-size:0.85rem;color:var(--text-muted);display:block;margin-bottom:0.5rem;">Preferred Role(s) <span style="color:red;">*</span></label>
+                        
+                        <style>
+                            .career-checkbox-container {
+                                max-height: 180px;
+                                overflow-y: auto;
+                                border: 2px solid var(--border-color);
+                                padding: 0.8rem;
+                                background: #ffffff;
+                                transition: border-color 0.3s ease;
+                                box-sizing: border-box;
+                            }
+                            .career-checkbox-container:focus-within {
+                                border-color: var(--main-blue);
+                            }
+                            .career-checkbox-grid {
+                                display: grid;
+                                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                                gap: 0.5rem;
+                            }
+                            .career-checkbox-label {
+                                display: flex;
+                                align-items: center;
+                                gap: 0.6rem;
+                                font-size: 0.85rem;
+                                font-weight: 500;
+                                color: var(--text-dark);
+                                cursor: pointer;
+                                background: var(--bg-light);
+                                padding: 0.5rem 0.75rem;
+                                border: 1px solid var(--border-color);
+                                transition: all 0.2s ease;
+                                user-select: none;
+                            }
+                            .career-checkbox-label:hover {
+                                border-color: var(--main-blue);
+                                background: rgba(10, 37, 64, 0.03);
+                            }
+                            .career-checkbox-label input:checked + span {
+                                font-weight: 600;
+                            }
+                            .career-checkbox-label:has(input:checked) {
+                                border-color: var(--main-blue);
+                                background: rgba(10, 37, 64, 0.05);
+                            }
+                        </style>
+
+                        <div class="career-checkbox-container">
+                            <div class="career-checkbox-grid">
+                                <?php
+                                $open_jobs_query = new WP_Query(array(
+                                    'post_type'      => 'jobs',
+                                    'post_status'    => 'publish',
+                                    'posts_per_page' => -1,
+                                    'orderby'        => 'title',
+                                    'order'          => 'ASC'
+                                ));
+                                $preselected_role = isset($_GET['role']) ? trim($_GET['role']) : '';
+                                
+                                if ($open_jobs_query->have_posts()) {
+                                    $unique_titles = array();
+                                    while ($open_jobs_query->have_posts()) {
+                                        $open_jobs_query->the_post();
+                                        $job_title = trim(get_the_title());
+                                        $is_closed = get_post_meta(get_the_ID(), 'job_closed', true);
+                                        if ($is_closed) {
+                                            continue;
+                                        }
+                                        if (in_array(strtolower($job_title), array_map('strtolower', $unique_titles))) {
+                                            continue;
+                                        }
+                                        $unique_titles[] = $job_title;
+                                    }
+                                    wp_reset_postdata();
+                                    
+                                    if (!empty($unique_titles)) {
+                                        foreach ($unique_titles as $job_title) {
+                                            $checked = (strtolower($job_title) === strtolower($preselected_role)) ? 'checked' : '';
+                                            echo '<label class="career-checkbox-label">';
+                                            echo '<input type="checkbox" name="app_preferred_roles[]" value="' . esc_attr($job_title) . '" ' . $checked . ' style="accent-color:var(--main-blue);cursor:pointer;width:15px;height:15px;margin:0;flex-shrink:0;">';
+                                            echo '<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' . esc_attr($job_title) . '">' . esc_html($job_title) . '</span>';
+                                            echo '</label>';
+                                        }
+                                    } else {
+                                        echo '<p style="color:var(--text-muted);font-size:0.9rem;">No active positions available.</p>';
+                                    }
+                                } else {
+                                    echo '<p style="color:var(--text-muted);font-size:0.9rem;">No active positions available.</p>';
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- honeypot -->
                 <div style="display:none;" aria-hidden="true">
                     <input type="text" id="kg_hp_careers" name="kg_hp_field" value="" tabindex="-1" autocomplete="off">
                 </div>
+
+                <!-- Cloudflare Turnstile CAPTCHA Widget -->
+                <div class="cf-turnstile" data-sitekey="<?php echo esc_attr(defined('CF_TURNSTILE_SITE_KEY') ? CF_TURNSTILE_SITE_KEY : ''); ?>" data-appearance="interaction-only" style="margin-bottom:0.75rem;"></div>
+
                 <div id="careers-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;padding:0.75rem 1rem;margin-bottom:0.75rem;border-radius:6px;">
                     <p style="margin:0;color:#991b1b;font-size:0.9rem;" id="careers-error-msg"></p>
                 </div>
@@ -152,7 +328,7 @@ get_header();
                     <button type="button" class="btn btn-outline" style="flex:1;padding:1rem;"
                         onclick="goToStep(1)">Back</button>
                     <button type="button" class="btn btn-primary"
-                        style="flex:2;padding:1rem;background:var(--sec-accent-green);color:var(--main-blue);font-size:1.05rem;"
+                        style="flex:2;padding:1rem;background:var(--neutral-yellow);color:var(--main-blue);font-size:1.05rem;"
                         onclick="submitApplication()">Submit Application</button>
                 </div>
             </div>
@@ -165,48 +341,47 @@ get_header();
         <div class="career-modal">
             <button class="career-modal-close" onclick="closeModal()">&times;</button>
             <div
-                style="width:80px;height:80px;margin:0 auto 1.5rem;background:rgba(0,208,156,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--sec-accent-green)"
+                style="width:80px;height:80px;margin:0 auto 1.5rem;background:rgba(255,209,102,0.18);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-yellow)"
                     stroke-width="2.5">
                     <polyline points="20 6 9 17 4 12" />
                 </svg>
             </div>
-            <h3 style="font-size:1.6rem;margin-bottom:0.75rem;color:var(--text-dark);text-align:center;">Application
-                Received!</h3>
+            <h3 style="font-size:1.6rem;margin-bottom:0.75rem;color:var(--text-dark);text-align:center;"><?php echo esc_html(kg_get_field('careers_success_title', 'Application Received!')); ?></h3>
             <p
                 style="color:var(--text-muted);font-size:1.05rem;max-width:440px;margin:0 auto 1.25rem;text-align:center;">
-                Thank you for applying. Our talent team will review your profile and reach out within 2–3 business days.
+                <?php echo esc_html(kg_get_field('careers_success_desc', 'Thank you for applying. Our talent team will review your profile and reach out within 2–3 business days.')); ?>
             </p>
             <div id="modal-buttons"
                 style="display:flex;flex-direction:column;gap:0.75rem;align-items:center;margin-top:1.5rem;">
                 <button class="btn btn-primary"
-                    style="padding:0.8rem 2.5rem;background:var(--sec-accent-green);color:var(--main-blue);width:100%;max-width:300px;"
-                    onclick="showReview()">Check Application</button>
+                    style="padding:0.8rem 2.5rem;background:var(--neutral-yellow);color:var(--main-blue);width:100%;max-width:300px;"
+                    onclick="showReview()"><?php echo esc_html(kg_get_field('careers_check_btn', 'Check Application')); ?></button>
                 <a href="<?php echo esc_url(home_url('/')); ?>" class="btn btn-outline"
-                    style="padding:0.8rem 2.5rem;width:100%;max-width:300px;">Back to Home</a>
+                    style="padding:0.8rem 2.5rem;width:100%;max-width:300px;"><?php echo esc_html(kg_get_field('careers_back_btn', 'Back to Home')); ?></a>
             </div>
 
             <!-- Application Review Panel -->
             <div id="modal-review" style="display:none;margin-top:1.5rem;">
                 <h4
                     style="font-size:1rem;color:var(--text-dark);margin-bottom:1rem;text-align:center;text-transform:uppercase;letter-spacing:0.5px;font-size:0.8rem;">
-                    Application Summary</h4>
+                    <?php echo esc_html(kg_get_field('careers_summary_title', 'Application Summary')); ?></h4>
                 <div
                     style="background:var(--bg-light);border:1px solid var(--border-color);padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:0.75rem;">
-                    <div class="review-row"><span class="review-label">CV File</span><span id="rev-cv"
-                            class="review-value">—</span></div>
-                    <div class="review-row"><span class="review-label">Name</span><span id="rev-name"
-                            class="review-value">—</span></div>
-                    <div class="review-row"><span class="review-label">Email</span><span id="rev-email"
-                            class="review-value">—</span></div>
-                    <div class="review-row"><span class="review-label">Phone</span><span id="rev-phone"
-                            class="review-value">—</span></div>
-                    <div class="review-row"><span class="review-label">Preferred Role</span><span id="rev-role"
-                            class="review-value">—</span></div>
+                    <div class="review-row"><span class="review-label"><?php echo esc_html(kg_get_field('careers_rev_cv_label', 'CV File')); ?></span><span id="rev-cv"
+                             class="review-value">—</span></div>
+                    <div class="review-row"><span class="review-label"><?php echo esc_html(kg_get_field('careers_rev_name_label', 'Name')); ?></span><span id="rev-name"
+                             class="review-value">—</span></div>
+                    <div class="review-row"><span class="review-label"><?php echo esc_html(kg_get_field('careers_rev_email_label', 'Email')); ?></span><span id="rev-email"
+                             class="review-value">—</span></div>
+                    <div class="review-row"><span class="review-label"><?php echo esc_html(kg_get_field('careers_rev_phone_label', 'Phone')); ?></span><span id="rev-phone"
+                             class="review-value">—</span></div>
+                    <div class="review-row"><span class="review-label"><?php echo esc_html(kg_get_field('careers_rev_role_label', 'Preferred Role')); ?></span><span id="rev-role"
+                             class="review-value">—</span></div>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:0.75rem;align-items:center;margin-top:1.25rem;">
                     <a href="<?php echo esc_url(home_url('/')); ?>" class="btn btn-outline"
-                        style="padding:0.8rem 2.5rem;width:100%;max-width:300px;">Back to Home</a>
+                        style="padding:0.8rem 2.5rem;width:100%;max-width:300px;"><?php echo esc_html(kg_get_field('careers_back_btn', 'Back to Home')); ?></a>
                 </div>
             </div>
         </div>
@@ -256,9 +431,9 @@ get_header();
         }
 
         .cprog-step.done .cprog-circle {
-            background: var(--sec-accent-green);
-            color: #fff;
-            border-color: var(--sec-accent-green);
+            background: var(--neutral-yellow);
+            color: var(--main-blue);
+            border-color: var(--neutral-yellow);
         }
 
         .cprog-line {
@@ -276,7 +451,7 @@ get_header();
         }
 
         .cprog-line.done {
-            background: var(--sec-accent-green);
+            background: var(--neutral-yellow);
         }
 
         /* Career Steps */
@@ -290,8 +465,8 @@ get_header();
 
         /* Drag hover */
         #cv-dropzone.drag-over {
-            border-color: var(--sec-accent-green);
-            background: rgba(0, 208, 156, 0.04);
+            border-color: var(--neutral-yellow);
+            background: rgba(255, 209, 102, 0.06);
         }
 
         /* Success Modal */
@@ -401,11 +576,11 @@ get_header();
 
         cvInput.addEventListener('change', function () {
             if (this.files.length > 0) {
-                fileName.textContent = this.files[0].name;
                 fileInfo.style.display = 'flex';
                 dropzone.style.display = 'none';
                 btnStep1.style.opacity = '1';
                 btnStep1.style.pointerEvents = 'auto';
+                fileName.textContent = this.files[0].name;
             }
         });
 
@@ -417,36 +592,94 @@ get_header();
             btnStep1.style.pointerEvents = 'none';
         }
 
-        // Drag & drop
-        dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
-        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
-        dropzone.addEventListener('drop', e => {
-            e.preventDefault();
-            dropzone.classList.remove('drag-over');
-            if (e.dataTransfer.files.length > 0) {
-                cvInput.files = e.dataTransfer.files;
-                cvInput.dispatchEvent(new Event('change'));
+        // Initialize helpers on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof initPSGCAddressCascades === 'function') {
+                initPSGCAddressCascades('app-region', 'app-city', 'app-barangay', 'app_region_code', 'app_city_code', 'app_barangay_code');
+            }
+            if (typeof sanitizeCVFilename === 'function') {
+                sanitizeCVFilename(cvInput, fileName);
             }
         });
 
         // Submit
         function submitApplication() {
             const fname    = document.getElementById('app-fname').value.trim();
+            const mname    = document.getElementById('app-mname').value.trim();
             const lname    = document.getElementById('app-lname').value.trim();
             const email    = document.getElementById('app-email').value.trim();
             const phone    = document.getElementById('app-phone').value.trim();
-            const role     = document.getElementById('app-role').value;
+            const gender   = document.getElementById('app-gender').value;
+            const birthday = document.getElementById('app-birthday').value;
+            const street   = document.getElementById('app-street').value.trim();
             const cvFile   = cvInput.files[0];
+
+            const purposeElement = document.querySelector('input[name="app_purpose"]:checked');
+            const purpose  = purposeElement ? purposeElement.value : 'pooling';
+
+            const regionEl   = document.getElementById('app-region');
+            const cityEl     = document.getElementById('app-city');
+            const barangayEl = document.getElementById('app-barangay');
+            const region     = regionEl ? regionEl.value.trim() : '';
+            const city       = cityEl ? cityEl.value.trim() : '';
+            const barangay   = barangayEl ? barangayEl.value.trim() : '';
+
+            const regionCode = document.getElementById('app_region_code') ? document.getElementById('app_region_code').value : '';
+            const cityCode   = document.getElementById('app_city_code') ? document.getElementById('app_city_code').value : '';
+            const brgyCode   = document.getElementById('app_barangay_code') ? document.getElementById('app_barangay_code').value : '';
 
             const errBox = document.getElementById('careers-error');
             const errMsg = document.getElementById('careers-error-msg');
             errBox.style.display = 'none';
 
-            if (!fname || !lname || !email) {
-                errMsg.textContent = 'Please fill in your first name, last name, and email.';
+            if (!fname || !lname) {
+                errMsg.textContent = 'Please fill in your first and last name.';
                 errBox.style.display = 'block';
                 return;
             }
+            if (!email) {
+                errMsg.textContent = 'Please enter your email address.';
+                errBox.style.display = 'block';
+                return;
+            }
+            if (!phone) {
+                errMsg.textContent = 'Please enter your phone number.';
+                errBox.style.display = 'block';
+                return;
+            }
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                errMsg.textContent = 'Please provide a valid email address.';
+                errBox.style.display = 'block';
+                return;
+            }
+            if (!gender) {
+                errMsg.textContent = 'Please select your gender.';
+                errBox.style.display = 'block';
+                return;
+            }
+            if (!birthday) {
+                errMsg.textContent = 'Please select your birthdate.';
+                errBox.style.display = 'block';
+                return;
+            }
+            if (!street || !region || !city || !barangay) {
+                errMsg.textContent = 'Please fill in your complete address details.';
+                errBox.style.display = 'block';
+                return;
+            }
+
+            // Extract preferred roles from checkboxes
+            const preferredRoles = [];
+            document.querySelectorAll('input[name="app_preferred_roles[]"]:checked').forEach(cb => {
+                preferredRoles.push(cb.value);
+            });
+
+            if (purpose !== 'pooling' && preferredRoles.length === 0) {
+                errMsg.textContent = 'Please select at least one preferred position.';
+                errBox.style.display = 'block';
+                return;
+            }
+
             if (!cvFile) {
                 errMsg.textContent = 'Please upload your CV before submitting.';
                 errBox.style.display = 'block';
@@ -457,26 +690,41 @@ get_header();
             submitBtn.disabled    = true;
             submitBtn.textContent = 'Submitting…';
 
+            const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]')?.value || '';
+
             const formData = new FormData();
             formData.append('action',       'kg_submit_application');
             formData.append('kg_nonce',     KG_AJAX.careers_nonce);
             formData.append('app_fname',    fname);
+            formData.append('app_mname',    mname);
             formData.append('app_lname',    lname);
             formData.append('app_email',    email);
             formData.append('app_phone',    phone);
-            formData.append('app_role',     role);
+            formData.append('app_purpose',  purpose);
+            formData.append('app_gender',   gender);
+            formData.append('app_birthday', birthday);
+            formData.append('app_street',   street);
+            formData.append('app_region',   region);
+            formData.append('app_city',     city);
+            formData.append('app_barangay', barangay);
+            formData.append('app_region_code', regionCode);
+            formData.append('app_city_code',   cityCode);
+            formData.append('app_barangay_code', brgyCode);
+            formData.append('app_preferred_roles', JSON.stringify(preferredRoles));
+            formData.append('app_role',     preferredRoles.length > 0 ? preferredRoles[0] : '');
             formData.append('app_cv',       cvFile, cvFile.name);
             formData.append('kg_hp_field',  document.getElementById('kg_hp_careers').value);
+            formData.append('cf-turnstile-response', turnstileResponse);
 
             fetch(KG_AJAX.url, { method: 'POST', body: formData })
                 .then(r => r.json())
                 .then(data => {
                     if (data.success) {
                         document.getElementById('rev-cv').textContent      = cvFile.name;
-                        document.getElementById('rev-name').textContent    = fname + ' ' + lname;
-                        document.getElementById('rev-email').textContent   = email;
+                        document.getElementById('rev-name').textContent    = fname + (mname ? ' ' + mname : '') + ' ' + lname;
+                        document.getElementById('rev-email').textContent   = email || '—';
                         document.getElementById('rev-phone').textContent   = phone || '—';
-                        document.getElementById('rev-role').textContent    = role  || '—';
+                        document.getElementById('rev-role').textContent    = preferredRoles.length > 0 ? preferredRoles.join(', ') : 'General Pooling';
 
                         document.getElementById('modal-buttons').style.display = 'flex';
                         document.getElementById('modal-review').style.display  = 'none';
@@ -486,12 +734,14 @@ get_header();
                         const errBox = document.getElementById('careers-error');
                         document.getElementById('careers-error-msg').textContent = (data.data && data.data.message) ? data.data.message : 'Submission failed. Please try again.';
                         errBox.style.display = 'block';
+                        if (typeof turnstile !== 'undefined') turnstile.reset();
                     }
                 })
                 .catch(() => {
                     const errBox = document.getElementById('careers-error');
                     document.getElementById('careers-error-msg').textContent = 'Network error. Please try again.';
                     errBox.style.display = 'block';
+                    if (typeof turnstile !== 'undefined') turnstile.reset();
                 })
                 .finally(() => {
                     submitBtn.disabled    = false;
@@ -512,6 +762,7 @@ get_header();
             goToStep(1);
             removeFile();
             document.querySelectorAll('#step-2 input').forEach(el => { el.value = ''; });
+            document.querySelectorAll('#step-2 select').forEach(el => { el.value = ''; });
         }
 
         // Close on overlay click
