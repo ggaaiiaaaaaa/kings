@@ -411,7 +411,10 @@ function kg_handle_application() {
         }
     }
 
-    $mail_recipient = ! empty( $recruiter_email ) ? $recruiter_email : $to_email;
+    $mail_recipient = array( $to_email );
+    if ( ! empty( $recruiter_email ) && $recruiter_email !== $to_email ) {
+        $mail_recipient[] = $recruiter_email;
+    }
     $edit_url = $app_post_id ? get_edit_post_link( $app_post_id ) : '';
 
     $submission_details = '<div style="border:1px solid #e8ecf0;border-radius:8px;padding:20px;margin-bottom:24px;background:#ffffff;">'

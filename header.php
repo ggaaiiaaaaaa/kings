@@ -19,9 +19,11 @@
                 <div id="kg-consent-text">
                     <strong>Your Privacy Matters</strong>
                     <span>By using this site, you agree to our
-                        <a href="<?php echo esc_url(home_url('/terms/')); ?>" target="_blank" rel="noopener">Terms of Service</a>
+                        <a href="<?php echo esc_url(home_url('/terms/')); ?>" target="_blank" rel="noopener">Terms of
+                            Service</a>
                         and
-                        <a href="<?php echo esc_url(home_url('/privacy/')); ?>" target="_blank" rel="noopener">Privacy Policy</a>.
+                        <a href="<?php echo esc_url(home_url('/privacy/')); ?>" target="_blank" rel="noopener">Privacy
+                            Policy</a>.
                         We use cookies to improve your experience.
                     </span>
                 </div>
@@ -42,15 +44,17 @@
                 backdrop-filter: blur(12px);
                 -webkit-backdrop-filter: blur(12px);
                 border-top: 1px solid rgba(255, 209, 102, 0.3);
-                box-shadow: 0 -4px 32px rgba(0,0,0,0.25);
+                box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.25);
                 transform: translateY(100%);
                 transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
                 display: none;
             }
+
             #kg-consent-banner.kg-consent-visible {
                 display: block;
                 transform: translateY(0);
             }
+
             #kg-consent-inner {
                 max-width: 1200px;
                 margin: 0 auto;
@@ -60,45 +64,52 @@
                 gap: 1.5rem;
                 flex-wrap: wrap;
             }
+
             #kg-consent-text {
                 flex: 1;
                 min-width: 220px;
                 font-size: 0.85rem;
-                color: rgba(255,255,255,0.85);
+                color: rgba(255, 255, 255, 0.85);
                 line-height: 1.5;
                 display: flex;
                 flex-direction: column;
                 gap: 0.2rem;
             }
+
             #kg-consent-text strong {
                 color: #ffd166;
                 font-size: 0.9rem;
             }
+
             #kg-consent-text a {
                 color: #ffd166;
                 text-decoration: underline;
                 font-weight: 600;
             }
+
             #kg-consent-actions {
                 display: flex;
                 gap: 0.65rem;
                 flex-shrink: 0;
                 flex-wrap: wrap;
             }
+
             #kg-consent-decline {
                 padding: 0.55rem 1.25rem;
                 background: transparent;
-                border: 1px solid rgba(255,255,255,0.3);
-                color: rgba(255,255,255,0.7);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                color: rgba(255, 255, 255, 0.7);
                 border-radius: 6px;
                 font-size: 0.82rem;
                 cursor: pointer;
                 transition: all 0.2s;
             }
+
             #kg-consent-decline:hover {
-                border-color: rgba(255,255,255,0.6);
+                border-color: rgba(255, 255, 255, 0.6);
                 color: #fff;
             }
+
             #kg-consent-accept {
                 padding: 0.55rem 1.5rem;
                 background: #ffd166;
@@ -110,24 +121,30 @@
                 cursor: pointer;
                 transition: background 0.2s, transform 0.15s;
             }
+
             #kg-consent-accept:hover {
                 background: #ffdc85;
                 transform: translateY(-1px);
             }
+
             #kg-consent-banner.kg-consent-hidden {
                 transform: translateY(100%);
                 pointer-events: none;
             }
+
             @media (max-width: 600px) {
                 #kg-consent-inner {
                     flex-direction: column;
                     align-items: flex-start;
                     gap: 0.85rem;
                 }
+
                 #kg-consent-actions {
                     width: 100%;
                 }
-                #kg-consent-accept, #kg-consent-decline {
+
+                #kg-consent-accept,
+                #kg-consent-decline {
                     flex: 1;
                     text-align: center;
                 }
@@ -172,14 +189,14 @@
                     if (acceptBtn) {
                         acceptBtn.addEventListener('click', function () {
                             setCookie(CONSENT_KEY, 'true', 30);
-                            try { localStorage.setItem(CONSENT_KEY, 'true'); } catch(e) {}
-                            
+                            try { localStorage.setItem(CONSENT_KEY, 'true'); } catch (e) { }
+
                             // Save IP detected geo region to the cookie instantly
                             var detectedGeo = (typeof KG_THEME !== 'undefined' && KG_THEME.userGeo) ? KG_THEME.userGeo : 'PH';
                             setCookie('kg_user_geo', detectedGeo, 30);
-                            
+
                             hideBanner(banner);
-                            
+
                             // Reload page immediately to apply redirects and hide/show menu items
                             window.location.reload();
                         });
@@ -198,6 +215,7 @@
 
     <!-- Scroll Progress Bar -->
     <div class="scroll-progress" id="scrollBar"></div>
+
 
     <!-- Header: Choose Your Path -->
     <header id="main-header">
@@ -356,6 +374,16 @@
             </div>
 
             <div class="nav-section applicant">
+                <?php $geo_region = kg_get_user_geo(); ?>
+                <div class="nav-region-indicator" style="display: flex; align-items: center; gap: 0.4rem; color: #fff; margin-right: 0.5rem; font-size: 0.85rem; font-weight: 600;">
+                    <?php if ($geo_region === 'PH'): ?>
+                        <img src="https://flagcdn.com/w20/ph.png" alt="PH Flag" width="20" height="15" style="border-radius: 2px; box-shadow: 0 0 2px rgba(0,0,0,0.3);">
+                        <span style="letter-spacing: 0.5px;">PH</span>
+                    <?php else: ?>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        <span style="letter-spacing: 0.5px;">GLOBAL</span>
+                    <?php endif; ?>
+                </div>
                 <a href="<?php echo esc_url(home_url('/our-jobs/')); ?>" class="nav-link ph-only">Our Jobs</a>
                 <a href="https://www.thesocialmanila.com/" class="nav-link" target="_blank" rel="noopener">Shop</a>
                 <a href="https://zckings.azurewebsites.net/" class="nav-link" target="_blank" rel="noopener">Log In</a>

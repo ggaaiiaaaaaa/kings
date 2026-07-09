@@ -300,6 +300,8 @@ if (!function_exists('kingsgroup_setup')):
                 'menu-1' => esc_html__('Primary Client Menu', 'kingsgroup'),
                 'menu-2' => esc_html__('Primary Applicant Menu', 'kingsgroup'),
                 'footer' => esc_html__('Footer Menu', 'kingsgroup'),
+                'footer_company' => esc_html__('Footer Company Links', 'kingsgroup'),
+                'footer_members' => esc_html__('Footer Members Links', 'kingsgroup'),
             )
         );
 
@@ -399,6 +401,111 @@ function kg_create_default_menus()
 }
 add_action('init', 'kg_create_default_menus');
 
+/**
+ * 1. Remove unnecessary roles from dropdown.
+ * Keep Administrator, Editor, and Recruiter.
+ */
+function kg_filter_editable_roles($all_roles)
+{
+    $allowed_roles = array('administrator', 'editor', 'recruiter');
+    foreach ($all_roles as $key => $role) {
+        if (!in_array($key, $allowed_roles)) {
+            unset($all_roles[$key]);
+        }
+    }
+    return $all_roles;
+}
+add_filter('editable_roles', 'kg_filter_editable_roles');
+
+/**
+ * 2. Add Location field to "Add New User" screen
+ */
+function kg_add_user_location_field($user)
+{
+    ?>
+    <table class="form-table" id="kg-recruiter-location-row" style="display:none;">
+        <tr>
+            <th><label for="kg_recruiter_location">Assigned Branch / Location</label></th>
+            <td>
+                <select name="kg_recruiter_location" id="kg_recruiter_location">
+                    <option value="">— Unassigned (All Locations) —</option>
+                    <?php foreach (kg_get_locations() as $key => $label): ?>
+                        <option value="<?php echo esc_attr($key); ?>">
+                            <?php echo esc_html($label); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="description">Recruiters will only be allowed to view and manage job posts and applicants matching this branch location.</p>
+            </td>
+        </tr>
+    </table>
+    <?php
+}
+add_action('user_new_form', 'kg_add_user_location_field');
+
+
+/**
+ * 4. Save the Location field
+ */
+function kg_save_user_location_field($user_id)
+{
+    if (!current_user_can('edit_user', $user_id)) {
+        return false;
+    }
+    if (isset($_POST['kg_recruiter_location'])) {
+        $allowed = array_keys(kg_get_locations());
+        $location = sanitize_text_field($_POST['kg_recruiter_location']);
+        if (in_array($location, $allowed, true) || $location === '') {
+            update_user_meta($user_id, 'kg_recruiter_location', $location);
+        }
+    }
+}
+add_action('user_register', 'kg_save_user_location_field');
+
+/**
+ * 5. JavaScript to toggle the Location field based on selected Role
+ */
+function kg_user_location_js()
+{
+    global $pagenow;
+    if ($pagenow === 'user-new.php' || $pagenow === 'user-edit.php' || $pagenow === 'profile.php') {
+        ?>
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                var roleSelect = document.getElementById('role');
+                var locationRow = document.getElementById('kg-recruiter-location-row');
+
+                function toggleLocationField() {
+                    if (roleSelect && locationRow) {
+                        if (roleSelect.value === 'recruiter') {
+                            locationRow.style.display = ''; // revert to default display (table-row)
+                        } else {
+                            locationRow.style.display = 'none';
+                        }
+                    }
+                }
+
+                if (roleSelect && locationRow) {
+                    roleSelect.addEventListener('change', toggleLocationField);
+                    toggleLocationField(); // trigger on load
+                } else if (!roleSelect && locationRow) {
+                    locationRow.style.display = 'none';
+                }
+
+                // Hide the Website field
+                var urlField = document.getElementById('url');
+                if (urlField) {
+                    var urlRow = urlField.closest('tr');
+                    if (urlRow) {
+                        urlRow.style.display = 'none';
+                    }
+                }
+            });
+        </script>
+        <?php
+    }
+}
+add_action('admin_footer', 'kg_user_location_js');
 /**
  * Auto-add menu-btn-primary class to "Get a Quote" nav item.
  */
@@ -529,11 +636,13 @@ function kg_get_field($field_name, $fallback = '', $post_id = null)
             if (is_array($value) && isset($value['url'])) {
                 return $value['url'];
             }
-            if (is_numeric($value) && (
-                strpos($field_name, 'bg') !== false ||
-                strpos($field_name, 'img') !== false ||
-                strpos($field_name, 'image') !== false
-            )) {
+            if (
+                is_numeric($value) && (
+                    strpos($field_name, 'bg') !== false ||
+                    strpos($field_name, 'img') !== false ||
+                    strpos($field_name, 'image') !== false
+                )
+            ) {
                 $url = wp_get_attachment_image_url($value, 'full');
                 if ($url) {
                     return $url;
@@ -594,32 +703,32 @@ function kingsgroup_register_jobs_cpt()
         'has_archive' => true,
         'hierarchical' => false,
         'menu_position' => null,
-        'supports' => array('title', 'editor', 'thumbnail', 'excerpt'),
+        'supports' => array('title', 'editor', 'thumbnail', 'excerpt', 'author'),
     );
     register_post_type('jobs', $args);
 
     // Register job_location_tax taxonomy
     register_taxonomy('job_location_tax', 'jobs', array(
         'labels' => array(
-            'name'              => _x('Locations', 'taxonomy general name', 'kingsgroup'),
-            'singular_name'     => _x('Location', 'taxonomy singular name', 'kingsgroup'),
-            'search_items'      => __('Search Locations', 'kingsgroup'),
-            'all_items'         => __('All Locations', 'kingsgroup'),
-            'parent_item'       => __('Parent Location', 'kingsgroup'),
+            'name' => _x('Locations', 'taxonomy general name', 'kingsgroup'),
+            'singular_name' => _x('Location', 'taxonomy singular name', 'kingsgroup'),
+            'search_items' => __('Search Locations', 'kingsgroup'),
+            'all_items' => __('All Locations', 'kingsgroup'),
+            'parent_item' => __('Parent Location', 'kingsgroup'),
             'parent_item_colon' => __('Parent Location:', 'kingsgroup'),
-            'edit_item'         => __('Edit Location', 'kingsgroup'),
-            'update_item'       => __('Update Location', 'kingsgroup'),
-            'add_new_item'      => __('Add New Location', 'kingsgroup'),
-            'new_item_name'     => __('New Location Name', 'kingsgroup'),
-            'menu_name'         => __('Locations', 'kingsgroup'),
+            'edit_item' => __('Edit Location', 'kingsgroup'),
+            'update_item' => __('Update Location', 'kingsgroup'),
+            'add_new_item' => __('Add New Location', 'kingsgroup'),
+            'new_item_name' => __('New Location Name', 'kingsgroup'),
+            'menu_name' => __('Locations', 'kingsgroup'),
         ),
-        'hierarchical'      => true,
-        'show_ui'           => true,
+        'hierarchical' => true,
+        'show_ui' => true,
         'show_admin_column' => true,
-        'query_var'         => true,
-        'rewrite'           => array('slug' => 'job-location'),
-        'show_in_rest'      => true,
-        'meta_box_cb'       => false,
+        'query_var' => true,
+        'rewrite' => array('slug' => 'job-location'),
+        'show_in_rest' => true,
+        'meta_box_cb' => false,
     ));
 }
 add_action('init', 'kingsgroup_register_jobs_cpt');
@@ -807,9 +916,9 @@ function kg_get_default_job_content($title, $dept, $location)
 {
     $dept_lower = strtolower($dept);
     $title_lower = strtolower($title);
-    
+
     $overview = "We are seeking a dedicated and energetic <strong>" . esc_html($title) . "</strong> to join our team in <strong>" . esc_html($location) . "</strong>. In this role, you will represent Kings Group Cooperative with professionalism and commitment, delivering outstanding results for our partners while contributing to our cooperative community.";
-    
+
     $responsibilities = array(
         "Perform daily operational duties associated with the role of " . esc_html($title) . " with high efficiency and attention to quality.",
         "Collaborate effectively with team members and supervisors to meet daily targets and maintain operational excellence.",
@@ -817,7 +926,7 @@ function kg_get_default_job_content($title, $dept, $location)
         "Maintain a clean, organized, and professional work environment at all times.",
         "Participate in regular team meetings, performance evaluations, and cooperative upskilling opportunities."
     );
-    
+
     $requirements = array(
         "Proven experience or strong interest in a " . esc_html($dept) . " or related role.",
         "Excellent communication, interpersonal, and team collaboration skills.",
@@ -905,21 +1014,21 @@ function kg_get_default_job_content($title, $dept, $location)
 
     $html = "<h3>Job Overview</h3>";
     $html .= "<p>" . $overview . "</p>";
-    
+
     $html .= "<h3>Key Responsibilities</h3>";
     $html .= "<ul>";
     foreach ($responsibilities as $resp) {
         $html .= "<li>" . esc_html($resp) . "</li>";
     }
     $html .= "</ul>";
-    
+
     $html .= "<h3>Requirements & Qualifications</h3>";
     $html .= "<ul>";
     foreach ($requirements as $req) {
         $html .= "<li>" . esc_html($req) . "</li>";
     }
     $html .= "</ul>";
-    
+
     $html .= "<h3>Working Conditions</h3>";
     $html .= "<ul>";
     $html .= "<li><strong>Location:</strong> " . esc_html($location) . "</li>";
@@ -966,11 +1075,11 @@ function kg_seed_jobs()
 
     $row_idx = 0;
     $columns = array(
-        1  => array('dept' => 'Food Service',           'pos_idx' => 1,  'loc_idx' => 2),
-        4  => array('dept' => 'Sales',                  'pos_idx' => 4,  'loc_idx' => 5),
-        7  => array('dept' => 'Warehouse & Logistics',  'pos_idx' => 7,  'loc_idx' => 8),
-        10 => array('dept' => 'Merchandising',          'pos_idx' => 10, 'loc_idx' => 11),
-        13 => array('dept' => 'Production',             'pos_idx' => 13, 'loc_idx' => 14),
+        1 => array('dept' => 'Food Service', 'pos_idx' => 1, 'loc_idx' => 2),
+        4 => array('dept' => 'Sales', 'pos_idx' => 4, 'loc_idx' => 5),
+        7 => array('dept' => 'Warehouse & Logistics', 'pos_idx' => 7, 'loc_idx' => 8),
+        10 => array('dept' => 'Merchandising', 'pos_idx' => 10, 'loc_idx' => 11),
+        13 => array('dept' => 'Production', 'pos_idx' => 13, 'loc_idx' => 14),
     );
 
     // Track inserted combinations to avoid duplicates
@@ -1043,8 +1152,8 @@ function kg_seed_news_posts()
 
     // Post 1: Commitment, Culture, and Community in Action (October 2025)
     $check_1 = get_posts(array(
-        'post_type'   => 'post',
-        'title'       => 'Commitment, Culture, and Community in Action (October 2025)',
+        'post_type' => 'post',
+        'title' => 'Commitment, Culture, and Community in Action (October 2025)',
         'post_status' => 'any',
         'numberposts' => 1
     ));
@@ -1083,11 +1192,11 @@ function kg_seed_news_posts()
 <h2>Painting Workshop</h2>
 ';
         $post_id_1 = wp_insert_post(array(
-            'post_title'   => 'Commitment, Culture, and Community in Action (October 2025)',
+            'post_title' => 'Commitment, Culture, and Community in Action (October 2025)',
             'post_content' => $post_content_1,
-            'post_status'  => 'publish',
-            'post_date'    => '2025-10-30 09:00:00',
-            'post_type'    => 'post',
+            'post_status' => 'publish',
+            'post_date' => '2025-10-30 09:00:00',
+            'post_type' => 'post',
             'post_excerpt' => 'Kings Lending celebrates 26 years, Cebu earthquake relief, PP Cory Navarro AKS recognition, SCPA upskilling training, and Halloween Scare for a Cause.',
         ));
 
@@ -1108,8 +1217,8 @@ function kg_seed_news_posts()
 
     // Post 2: Dental Mission, Mental Health, KOICA, and Cultural Celebrations (August–September 2025)
     $check_2 = get_posts(array(
-        'post_type'   => 'post',
-        'title'       => 'Dental Mission, Mental Health, KOICA, and Cultural Celebrations (August–September 2025)',
+        'post_type' => 'post',
+        'title' => 'Dental Mission, Mental Health, KOICA, and Cultural Celebrations (August–September 2025)',
         'post_status' => 'any',
         'numberposts' => 1
     ));
@@ -1142,11 +1251,11 @@ function kg_seed_news_posts()
 <p>Truly, it was a workshop that left hearts (and hands!) full.</p>
 ';
         $post_id_2 = wp_insert_post(array(
-            'post_title'   => 'Dental Mission, Mental Health, KOICA, and Cultural Celebrations (August–September 2025)',
+            'post_title' => 'Dental Mission, Mental Health, KOICA, and Cultural Celebrations (August–September 2025)',
             'post_content' => $post_content_2,
-            'post_status'  => 'publish',
-            'post_date'    => '2025-09-30 09:00:00',
-            'post_type'    => 'post',
+            'post_status' => 'publish',
+            'post_date' => '2025-09-30 09:00:00',
+            'post_type' => 'post',
             'post_excerpt' => 'Ngiting Kings x Mencius Smile Dental Wellness Mission, Kalma sa Gitna ng Pangangamba, KOICA Volunteers cooking, Buwan ng Wikang Pambansa, Creative Junk Journaling, and Pottery workshops.',
         ));
 
@@ -1161,8 +1270,8 @@ function kg_seed_news_posts()
 
     // Post 3: Leadership, Community, and Creative Growth (June–July 2025)
     $check_3 = get_posts(array(
-        'post_type'   => 'post',
-        'title'       => 'Leadership, Community, and Creative Growth (June–July 2025)',
+        'post_type' => 'post',
+        'title' => 'Leadership, Community, and Creative Growth (June–July 2025)',
         'post_status' => 'any',
         'numberposts' => 1
     ));
@@ -1184,11 +1293,11 @@ function kg_seed_news_posts()
 <p>Special thanks to Be Club for hosting with heart and to Kings & Élan for capturing the weekend’s best moments. As we return to our roles and routines, may we carry the momentum of Kings Camp with us — the kind that reminds us that we are not alone in this journey. Together, we move stronger, bolder, and more united than ever. This is what it means to be Kings Scout.</p>
 ';
         $post_id_3 = wp_insert_post(array(
-            'post_title'   => 'Leadership, Community, and Creative Growth (June–July 2025)',
+            'post_title' => 'Leadership, Community, and Creative Growth (June–July 2025)',
             'post_content' => $post_content_3,
-            'post_status'  => 'publish',
-            'post_date'    => '2025-07-11 09:00:00',
-            'post_type'    => 'post',
+            'post_status' => 'publish',
+            'post_date' => '2025-07-11 09:00:00',
+            'post_type' => 'post',
             'post_excerpt' => 'Sir Neil’s birthday celebration, welcoming Kings & Élan Media Group, and the team building highlights from Kings Camp 2025 in Zambales.',
         ));
 
@@ -1203,8 +1312,8 @@ function kg_seed_news_posts()
 
     // Post 4: Wellness Wins, Workshops, and Mother’s Day (May 2025)
     $check_4 = get_posts(array(
-        'post_type'   => 'post',
-        'title'       => 'Wellness Wins, Workshops, and Mother’s Day (May 2025)',
+        'post_type' => 'post',
+        'title' => 'Wellness Wins, Workshops, and Mother’s Day (May 2025)',
         'post_status' => 'any',
         'numberposts' => 1
     ));
@@ -1225,11 +1334,11 @@ function kg_seed_news_posts()
 <p>To say thank you, we’ve created a Mother’s Day Care Kit just for you. Inside, you’ll find a pamper voucher to remind you to take a moment for yourself, a special gift chosen with so much love, and a fresh rose to brighten your day. Because you deserve to be celebrated, cherished, and gently reminded how deeply you are appreciated — today and every day.</p>
 ';
         $post_id_4 = wp_insert_post(array(
-            'post_title'   => 'Wellness Wins, Workshops, and Mother’s Day (May 2025)',
+            'post_title' => 'Wellness Wins, Workshops, and Mother’s Day (May 2025)',
             'post_content' => $post_content_4,
-            'post_status'  => 'publish',
-            'post_date'    => '2025-05-11 09:00:00',
-            'post_type'    => 'post',
+            'post_status' => 'publish',
+            'post_date' => '2025-05-11 09:00:00',
+            'post_type' => 'post',
             'post_excerpt' => 'The Biggest Loser Kings Edition check, crochet workshop highlights, and Mother\'s Day Care Kit celebration at Kings City.',
         ));
 
@@ -1244,8 +1353,8 @@ function kg_seed_news_posts()
 
     // Post 5: Celebrating Effort, Energy, and Empowerment (April 2025)
     $check_5 = get_posts(array(
-        'post_type'   => 'post',
-        'title'       => 'Celebrating Effort, Energy, and Empowerment (April 2025)',
+        'post_type' => 'post',
+        'title' => 'Celebrating Effort, Energy, and Empowerment (April 2025)',
         'post_status' => 'any',
         'numberposts' => 1
     ));
@@ -1260,11 +1369,11 @@ function kg_seed_news_posts()
 <p>Our expert instructors walked them through step-by-step techniques, offering tips and tricks to enhance their natural beauty. By the end of the session, everyone left with newfound skills and confidence to take their makeup game to the next level!</p>
 ';
         $post_id_5 = wp_insert_post(array(
-            'post_title'   => 'Celebrating Effort, Energy, and Empowerment (April 2025)',
+            'post_title' => 'Celebrating Effort, Energy, and Empowerment (April 2025)',
             'post_content' => $post_content_5,
-            'post_status'  => 'publish',
-            'post_date'    => '2025-04-03 09:00:00',
-            'post_type'    => 'post',
+            'post_status' => 'publish',
+            'post_date' => '2025-04-03 09:00:00',
+            'post_type' => 'post',
             'post_excerpt' => 'Weekly check-in on the Biggest Loser challengers and highlights from our Basic Makeup Workshop.',
         ));
 
@@ -1279,8 +1388,8 @@ function kg_seed_news_posts()
 
     // Post 6: Honoring Women and Welcoming New Leaders (March 2025)
     $check_6 = get_posts(array(
-        'post_type'   => 'post',
-        'title'       => 'Honoring Women and Welcoming New Leaders (March 2025)',
+        'post_type' => 'post',
+        'title' => 'Honoring Women and Welcoming New Leaders (March 2025)',
         'post_status' => 'any',
         'numberposts' => 1
     ));
@@ -1311,11 +1420,11 @@ function kg_seed_news_posts()
 <p>Your passion for connecting with people and your dedication to the team have earned you this well-deserved recognition. We’re excited to see all the great things you’ll accomplish!</p>
 ';
         $post_id_6 = wp_insert_post(array(
-            'post_title'   => 'Honoring Women and Welcoming New Leaders (March 2025)',
+            'post_title' => 'Honoring Women and Welcoming New Leaders (March 2025)',
             'post_content' => $post_content_6,
-            'post_status'  => 'publish',
-            'post_date'    => '2025-03-24 09:00:00',
-            'post_type'    => 'post',
+            'post_status' => 'publish',
+            'post_date' => '2025-03-24 09:00:00',
+            'post_type' => 'post',
             'post_excerpt' => 'Women’s Month celebration, Bento Cake Workshop, Biggest Loser kickoff, Herstory Trivia, and welcoming our new Shared Services GM.',
         ));
 
@@ -1330,8 +1439,8 @@ function kg_seed_news_posts()
 
     // Post 7: Unity Through Games and Celebration (February 2025)
     $check_7 = get_posts(array(
-        'post_type'   => 'post',
-        'title'       => 'Unity Through Games and Celebration (February 2025)',
+        'post_type' => 'post',
+        'title' => 'Unity Through Games and Celebration (February 2025)',
         'post_status' => 'any',
         'numberposts' => 1
     ));
@@ -1349,11 +1458,11 @@ function kg_seed_news_posts()
 <p>Thank you to everyone who participated, you made this event a memorable one. Stay tuned for more fun challenges, and until then, keep the Valentine’s spirit alive with your creative creations!</p>
 ';
         $post_id_7 = wp_insert_post(array(
-            'post_title'   => 'Unity Through Games and Celebration (February 2025)',
+            'post_title' => 'Unity Through Games and Celebration (February 2025)',
             'post_content' => $post_content_7,
-            'post_status'  => 'publish',
-            'post_date'    => '2025-02-28 09:00:00',
-            'post_type'    => 'post',
+            'post_status' => 'publish',
+            'post_date' => '2025-02-28 09:00:00',
+            'post_type' => 'post',
             'post_excerpt' => 'Kings Game 3-in-1 Anniversary event and Sugar Cookie Decorating Challenge for Valentine\'s Day.',
         ));
 
@@ -1372,11 +1481,13 @@ add_action('init', 'kg_seed_news_posts', 40);
  * Geo-Routing and Consent Gate Helper Functions
  */
 
-function kg_has_accepted_consent() {
+function kg_has_accepted_consent()
+{
     return isset($_COOKIE['kg_consent_accepted']) && $_COOKIE['kg_consent_accepted'] === 'true';
 }
 
-function kg_get_user_geo() {
+function kg_get_user_geo()
+{
     // 1. Query parameter override (testing & reset)
     if (isset($_GET['geo'])) {
         $geo = strtoupper(preg_replace('/[^a-zA-Z]/', '', $_GET['geo']));
@@ -1440,7 +1551,7 @@ function kg_get_user_geo() {
             'header' => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)\r\n"
         ]
     ]);
-    
+
     // We try to query ipapi.co to get the country code
     $api_url = "https://ipapi.co/{$ip}/country_code/";
     $response = @file_get_contents($api_url, false, $context);
@@ -1473,7 +1584,8 @@ function kg_get_user_geo() {
     return $geo;
 }
 
-function kg_handle_geo_routing_redirect() {
+function kg_handle_geo_routing_redirect()
+{
     // Handle ?reset=1 query parameter to reset consent/cookie
     if (isset($_GET['reset'])) {
         $secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
@@ -1493,7 +1605,7 @@ function kg_handle_geo_routing_redirect() {
         ]);
         unset($_COOKIE['kg_consent_accepted']);
         unset($_COOKIE['kg_user_geo']);
-        
+
         // Redirect to clean URL without ?reset=1 parameter
         $clean_url = strtok($_SERVER['REQUEST_URI'], '?');
         if (function_exists('wp_redirect')) {
@@ -1520,17 +1632,17 @@ if (function_exists('add_action')) {
 
 // One-time database update for Zamboanga HQ & Manila Office address fields
 if (function_exists('add_action')) {
-    add_action('init', function() {
+    add_action('init', function () {
         if (!get_option('kg_updated_contact_addresses_v2')) {
             if (function_exists('kg_get_page_by_template')) {
                 $contact_page_id = kg_get_page_by_template('contact.php');
                 if ($contact_page_id) {
                     update_post_meta($contact_page_id, 'contact_address', 'DVN Building, Melaño Calixto St, Zamboanga City, Zamboanga del Sur');
                     update_post_meta($contact_page_id, '_contact_address', 'field_contact_address');
-                    
+
                     update_post_meta($contact_page_id, 'contact_address_2', '100 Doña Soledad Avenue, Better Living, Paranaque City, Metro Manila, Philippines, 1711');
                     update_post_meta($contact_page_id, '_contact_address_2', 'field_contact_address_2');
-                    
+
                     update_option('kg_updated_contact_addresses_v2', true);
                 }
             }
@@ -1545,19 +1657,20 @@ if (function_exists('add_action')) {
     add_action('init', 'kg_register_recruiter_role');
 }
 
-function kg_register_recruiter_role() {
+function kg_register_recruiter_role()
+{
     // add_role() is a no-op if the role already exists, so we must also
     // explicitly add each cap to handle sites where the role was previously
     // registered with an incomplete set of capabilities.
     $caps = array(
-        'read'                   => true,
-        'edit_posts'             => true,
-        'edit_others_posts'      => true,  // needed to edit kg_application posts (any author)
-        'publish_posts'          => true,
-        'edit_published_posts'   => true,
-        'delete_posts'           => true,
+        'read' => true,
+        'edit_posts' => true,
+        'edit_others_posts' => true,  // needed to edit kg_application posts (any author)
+        'publish_posts' => true,
+        'edit_published_posts' => true,
+        'delete_posts' => true,
         'delete_published_posts' => true,
-        'upload_files'           => true,
+        'upload_files' => true,
     );
 
     // Register for fresh installs
@@ -1576,7 +1689,8 @@ function kg_register_recruiter_role() {
     }
 }
 
-function kg_is_current_user_recruiter() {
+function kg_is_current_user_recruiter()
+{
     if (!function_exists('wp_get_current_user')) {
         return false;
     }
@@ -1594,7 +1708,8 @@ if (function_exists('add_action')) {
     add_action('init', 'kg_create_sample_recruiter_account');
 }
 
-function kg_create_sample_recruiter_account() {
+function kg_create_sample_recruiter_account()
+{
     if (function_exists('username_exists') && function_exists('wp_create_user')) {
         if (!username_exists('samplerecruiter') && !email_exists('recruiter@kingsgroup.com')) {
             $user_id = wp_create_user('samplerecruiter', 'recruiter123', 'recruiter@kingsgroup.com');
@@ -1609,15 +1724,16 @@ function kg_create_sample_recruiter_account() {
 /**
  * Define the dynamic locations/branches based on the job_location_tax taxonomy
  */
-function kg_get_locations() {
+function kg_get_locations()
+{
     $locations = array();
-    $terms = get_terms( array(
-        'taxonomy'   => 'job_location_tax',
+    $terms = get_terms(array(
+        'taxonomy' => 'job_location_tax',
         'hide_empty' => false,
-    ) );
-    if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
-        foreach ( $terms as $term ) {
-            $locations[ $term->slug ] = $term->name;
+    ));
+    if (!is_wp_error($terms) && !empty($terms)) {
+        foreach ($terms as $term) {
+            $locations[$term->slug] = $term->name;
         }
     }
     return $locations;
@@ -1626,39 +1742,40 @@ function kg_get_locations() {
 /**
  * Migrate existing job_location meta values to the new job_location_tax taxonomy
  */
-function kg_migrate_existing_job_locations() {
-    if ( get_option( 'kg_job_locations_migrated_v3' ) ) {
+function kg_migrate_existing_job_locations()
+{
+    if (get_option('kg_job_locations_migrated_v3')) {
         return;
     }
-    
-    $jobs = get_posts( array(
-        'post_type'   => 'jobs',
+
+    $jobs = get_posts(array(
+        'post_type' => 'jobs',
         'post_status' => 'any',
         'numberposts' => -1,
-    ) );
-    
-    if ( ! empty( $jobs ) ) {
-        foreach ( $jobs as $job ) {
-            $loc = get_post_meta( $job->ID, 'job_location', true );
-            if ( $loc ) {
-                $clean = trim( $loc );
-                if ( $clean !== '' ) {
-                    $term = term_exists( $clean, 'job_location_tax' );
-                    if ( ! $term ) {
-                        $term = wp_insert_term( $clean, 'job_location_tax' );
+    ));
+
+    if (!empty($jobs)) {
+        foreach ($jobs as $job) {
+            $loc = get_post_meta($job->ID, 'job_location', true);
+            if ($loc) {
+                $clean = trim($loc);
+                if ($clean !== '') {
+                    $term = term_exists($clean, 'job_location_tax');
+                    if (!$term) {
+                        $term = wp_insert_term($clean, 'job_location_tax');
                     }
-                    if ( ! is_wp_error( $term ) && isset( $term['term_id'] ) ) {
-                        wp_set_post_terms( $job->ID, array( (int) $term['term_id'] ), 'job_location_tax' );
+                    if (!is_wp_error($term) && isset($term['term_id'])) {
+                        wp_set_post_terms($job->ID, array((int) $term['term_id']), 'job_location_tax');
                     }
                 }
             }
         }
     }
-    
-    update_option( 'kg_job_locations_migrated_v3', true );
+
+    update_option('kg_job_locations_migrated_v3', true);
 }
-if ( function_exists( 'add_action' ) ) {
-    add_action( 'init', 'kg_migrate_existing_job_locations', 20 );
+if (function_exists('add_action')) {
+    add_action('init', 'kg_migrate_existing_job_locations', 20);
 }
 
 // ============================================================
@@ -1669,28 +1786,48 @@ if ( function_exists( 'add_action' ) ) {
  * Map a location term name to the correct Philippine region
  * using the same keyword logic as the ATS dashboard breakdown.
  */
-function kg_derive_region_from_location_name( $name ) {
-    $loc = mb_strtoupper( trim( $name ), 'UTF-8' );
+function kg_derive_region_from_location_name($name)
+{
+    $loc = mb_strtoupper(trim($name), 'UTF-8');
 
-    if ( preg_match( '/REMOTE|WFH|WORK FROM HOME/u', $loc ) )                                                   return 'Remote / WFH';
-    if ( preg_match( '/NATIONWIDE|PHILIPPINES|ALL REGIONS/u', $loc ) )                                          return 'Nationwide';
-    if ( preg_match( '/METRO MANILA|MANILA|TAGUIG|MAKATI|PASAY|QC|QUEZON CITY|GALLERIA|ALABANG|MOA|PARAÑAQUE|PARANAQUE|CALOOCAN|LAS PIÑAS|LAS PINAS|MANDALUYONG|MARIKINA|MUNTINLUPA|NAVOTAS|PASIG|SAN JUAN|VALENZUELA|PATEROS|EASTWOOD/u', $loc ) ) return 'NCR';
-    if ( preg_match( '/PANGASINAN|DAGUPAN|LAOAG|ILOCOS|LA UNION|VIGAN|ILOCOS NORTE|ILOCOS SUR/u', $loc ) )     return 'Ilocos Region (I)';
-    if ( preg_match( '/TUGUEGARAO|SOLANO|NUEVA VIZCAYA|CAUAYAN|BATANES|CAGAYAN|QUIRINO|SANTIAGO CITY|CITISTORE SOLANO|SACI CABANATUAN/u', $loc ) ) return 'Cagayan Valley (II)';
-    if ( preg_match( '/BULACAN|MALOLOS|PAMPANGA|TARLAC|BAMBAN|CABANATUAN|OLONGAPO|MARILAO|MABALACAT|SUBIC|AURORA|BATAAN|NUEVA ECIJA|ZAMBALES|ANGELES|SACI OLONGAPO|SSM MARILAO/u', $loc ) ) return 'Central Luzon (III)';
-    if ( preg_match( '/IMUS|LIMA|BATANGAS|LAGUNA|BACOOR|TANZA|VERMOSA|RIZAL|CAVITE|ANTIPOLO|LIPA|BALIWAG|TANAUAN|SACI BACOOR|SACI TANZA|ABENSON BATANGAS|ABENSON SAN PASCUAL|QUEZON PROVINCE|LUCENA/u', $loc ) ) return 'CALABARZON (IV-A)';
-    if ( preg_match( '/MOGPOG|MARINDUQUE|MIMAROPA|MINDORO|PALAWAN|ROMBLON|PUERTO PRINCESA|CALAPAN/u', $loc ) )  return 'MIMAROPA (IV-B)';
-    if ( preg_match( '/BICOL|CAMARINES|IRIGA|TABACO|DARAGA|ALBAY|NAGA|LEGAZPI|CATANDUANES|MASBATE|SORSOGON|LCC TABACO|LCC DARAGA|LCC NAGA|SACI LEGAZPI/u', $loc ) ) return 'Bicol (V)';
-    if ( preg_match( '/BACOLOD|KABANKALAN|ILOILO|AKLAN|ANTIQUE|CAPIZ|GUIMARAS|NEGROS OCCIDENTAL|SACI BACOLOD|RA KABANKALAN|SACI ILOILO/u', $loc ) ) return 'Western Visayas (VI)';
-    if ( preg_match( '/CEBU|BOHOL|NEGROS ORIENTAL|SIQUIJOR|MANDAUE|LAPU-LAPU|DUMAGUETE|TAGBILARAN/u', $loc ) )  return 'Central Visayas (VII)';
-    if ( preg_match( '/BILIRAN|LEYTE|SAMAR|TACLOBAN|ORMOC/u', $loc ) )                                          return 'Eastern Visayas (VIII)';
-    if ( preg_match( '/ZAMBOANGA|PAGADIAN|DIPOLOG|DAPITAN|SIBUGAY|ZAMBOANGA DEL SUR|ZAMBOANGA DEL NORTE|ZAMBOANGA SIBUGAY/u', $loc ) ) return 'Zamboanga Peninsula (IX)';
-    if ( preg_match( '/BUKIDNON|CAMIGUIN|LANAO DEL NORTE|MISAMIS|CAGAYAN DE ORO|CDO|ILIGAN/u', $loc ) )        return 'Northern Mindanao (X)';
-    if ( preg_match( '/TAGUM|DAVAO/u', $loc ) )                                                                 return 'Davao Region (XI)';
-    if ( preg_match( '/MIDSAYAP|COTABATO|SARANGANI|GENERAL SANTOS|GENSAN|KORONADAL|SULTAN KUDARAT|CITISTORE MIDSAYAP|ABENSON COTABATO/u', $loc ) ) return 'SOCCSKSARGEN (XII)';
-    if ( preg_match( '/AGUSAN|DINAGAT|SURIGAO|BUTUAN/u', $loc ) )                                              return 'Caraga (XIII)';
-    if ( preg_match( '/SULU|TAWI-TAWI|BASILAN|LANAO DEL SUR|MAGUINDANAO|BANGSAMORO|COTABATO CITY/u', $loc ) ) return 'BARMM';
-    if ( preg_match( '/BAGUIO|BENGUET|ABRA|APAYAO|IFUGAO|KALINGA|MOUNTAIN PROVINCE|HARRISON/u', $loc ) )      return 'CAR';
+    if (preg_match('/REMOTE|WFH|WORK FROM HOME/u', $loc))
+        return 'Remote / WFH';
+    if (preg_match('/NATIONWIDE|PHILIPPINES|ALL REGIONS/u', $loc))
+        return 'Nationwide';
+    if (preg_match('/METRO MANILA|MANILA|TAGUIG|MAKATI|PASAY|QC|QUEZON CITY|GALLERIA|ALABANG|MOA|PARAÑAQUE|PARANAQUE|CALOOCAN|LAS PIÑAS|LAS PINAS|MANDALUYONG|MARIKINA|MUNTINLUPA|NAVOTAS|PASIG|SAN JUAN|VALENZUELA|PATEROS|EASTWOOD/u', $loc))
+        return 'NCR';
+    if (preg_match('/PANGASINAN|DAGUPAN|LAOAG|ILOCOS|LA UNION|VIGAN|ILOCOS NORTE|ILOCOS SUR/u', $loc))
+        return 'Ilocos Region (I)';
+    if (preg_match('/TUGUEGARAO|SOLANO|NUEVA VIZCAYA|CAUAYAN|BATANES|CAGAYAN|QUIRINO|SANTIAGO CITY|CITISTORE SOLANO|SACI CABANATUAN/u', $loc))
+        return 'Cagayan Valley (II)';
+    if (preg_match('/BULACAN|MALOLOS|PAMPANGA|TARLAC|BAMBAN|CABANATUAN|OLONGAPO|MARILAO|MABALACAT|SUBIC|AURORA|BATAAN|NUEVA ECIJA|ZAMBALES|ANGELES|SACI OLONGAPO|SSM MARILAO/u', $loc))
+        return 'Central Luzon (III)';
+    if (preg_match('/IMUS|LIMA|BATANGAS|LAGUNA|BACOOR|TANZA|VERMOSA|RIZAL|CAVITE|ANTIPOLO|LIPA|BALIWAG|TANAUAN|SACI BACOOR|SACI TANZA|ABENSON BATANGAS|ABENSON SAN PASCUAL|QUEZON PROVINCE|LUCENA/u', $loc))
+        return 'CALABARZON (IV-A)';
+    if (preg_match('/MOGPOG|MARINDUQUE|MIMAROPA|MINDORO|PALAWAN|ROMBLON|PUERTO PRINCESA|CALAPAN/u', $loc))
+        return 'MIMAROPA (IV-B)';
+    if (preg_match('/BICOL|CAMARINES|IRIGA|TABACO|DARAGA|ALBAY|NAGA|LEGAZPI|CATANDUANES|MASBATE|SORSOGON|LCC TABACO|LCC DARAGA|LCC NAGA|SACI LEGAZPI/u', $loc))
+        return 'Bicol (V)';
+    if (preg_match('/BACOLOD|KABANKALAN|ILOILO|AKLAN|ANTIQUE|CAPIZ|GUIMARAS|NEGROS OCCIDENTAL|SACI BACOLOD|RA KABANKALAN|SACI ILOILO/u', $loc))
+        return 'Western Visayas (VI)';
+    if (preg_match('/CEBU|BOHOL|NEGROS ORIENTAL|SIQUIJOR|MANDAUE|LAPU-LAPU|DUMAGUETE|TAGBILARAN/u', $loc))
+        return 'Central Visayas (VII)';
+    if (preg_match('/BILIRAN|LEYTE|SAMAR|TACLOBAN|ORMOC/u', $loc))
+        return 'Eastern Visayas (VIII)';
+    if (preg_match('/ZAMBOANGA|PAGADIAN|DIPOLOG|DAPITAN|SIBUGAY|ZAMBOANGA DEL SUR|ZAMBOANGA DEL NORTE|ZAMBOANGA SIBUGAY/u', $loc))
+        return 'Zamboanga Peninsula (IX)';
+    if (preg_match('/BUKIDNON|CAMIGUIN|LANAO DEL NORTE|MISAMIS|CAGAYAN DE ORO|CDO|ILIGAN/u', $loc))
+        return 'Northern Mindanao (X)';
+    if (preg_match('/TAGUM|DAVAO/u', $loc))
+        return 'Davao Region (XI)';
+    if (preg_match('/MIDSAYAP|COTABATO|SARANGANI|GENERAL SANTOS|GENSAN|KORONADAL|SULTAN KUDARAT|CITISTORE MIDSAYAP|ABENSON COTABATO/u', $loc))
+        return 'SOCCSKSARGEN (XII)';
+    if (preg_match('/AGUSAN|DINAGAT|SURIGAO|BUTUAN/u', $loc))
+        return 'Caraga (XIII)';
+    if (preg_match('/SULU|TAWI-TAWI|BASILAN|LANAO DEL SUR|MAGUINDANAO|BANGSAMORO|COTABATO CITY/u', $loc))
+        return 'BARMM';
+    if (preg_match('/BAGUIO|BENGUET|ABRA|APAYAO|IFUGAO|KALINGA|MOUNTAIN PROVINCE|HARRISON/u', $loc))
+        return 'CAR';
 
     return ''; // Unrecognised — leave blank so it doesn't mis-assign
 }
@@ -1700,28 +1837,29 @@ function kg_derive_region_from_location_name( $name ) {
  * from the selected job_location_tax term and override the
  * manually-chosen (and often incorrect) job_region field value.
  */
-add_action( 'acf/save_post', 'kg_auto_set_job_region_on_save', 1 );
-function kg_auto_set_job_region_on_save( $post_id ) {
-    if ( get_post_type( $post_id ) !== 'jobs' ) {
+add_action('acf/save_post', 'kg_auto_set_job_region_on_save', 1);
+function kg_auto_set_job_region_on_save($post_id)
+{
+    if (get_post_type($post_id) !== 'jobs') {
         return;
     }
 
     // ACF taxonomy field stores the term ID in $_POST['acf']
-    $term_id = isset( $_POST['acf']['field_job_location_tax'] )
+    $term_id = isset($_POST['acf']['field_job_location_tax'])
         ? (int) $_POST['acf']['field_job_location_tax']
         : 0;
 
-    if ( ! $term_id ) {
+    if (!$term_id) {
         return;
     }
 
-    $term = get_term( $term_id, 'job_location_tax' );
-    if ( is_wp_error( $term ) || empty( $term ) ) {
+    $term = get_term($term_id, 'job_location_tax');
+    if (is_wp_error($term) || empty($term)) {
         return;
     }
 
-    $region = kg_derive_region_from_location_name( $term->name );
-    if ( ! empty( $region ) ) {
+    $region = kg_derive_region_from_location_name($term->name);
+    if (!empty($region)) {
         // Override whatever the user selected — ACF reads from $_POST at priority 10
         $_POST['acf']['field_job_region'] = $region;
     }
@@ -1732,50 +1870,52 @@ function kg_auto_set_job_region_on_save( $post_id ) {
  * incorrectly saved (e.g. defaulted to NCR).
  * Runs once on init, then marks itself done.
  */
-function kg_fix_job_regions_migration() {
-    if ( get_option( 'kg_job_regions_fixed_v1' ) ) {
+function kg_fix_job_regions_migration()
+{
+    if (get_option('kg_job_regions_fixed_v1')) {
         return;
     }
 
-    $jobs = get_posts( array(
-        'post_type'      => 'jobs',
-        'post_status'    => 'any',
+    $jobs = get_posts(array(
+        'post_type' => 'jobs',
+        'post_status' => 'any',
         'posts_per_page' => -1,
-        'fields'         => 'ids',
-    ) );
+        'fields' => 'ids',
+    ));
 
-    foreach ( $jobs as $job_id ) {
-        $terms = get_the_terms( $job_id, 'job_location_tax' );
-        if ( empty( $terms ) || is_wp_error( $terms ) ) {
+    foreach ($jobs as $job_id) {
+        $terms = get_the_terms($job_id, 'job_location_tax');
+        if (empty($terms) || is_wp_error($terms)) {
             continue;
         }
-        $term   = reset( $terms );
-        $region = kg_derive_region_from_location_name( $term->name );
-        if ( ! empty( $region ) ) {
-            update_post_meta( $job_id, 'job_region', $region );
+        $term = reset($terms);
+        $region = kg_derive_region_from_location_name($term->name);
+        if (!empty($region)) {
+            update_post_meta($job_id, 'job_region', $region);
         }
     }
 
-    update_option( 'kg_job_regions_fixed_v1', true );
+    update_option('kg_job_regions_fixed_v1', true);
 }
-add_action( 'init', 'kg_fix_job_regions_migration', 30 );
+add_action('init', 'kg_fix_job_regions_migration', 30);
 
 
 /**
  * Add Location field to Recruiter user profile in wp-admin
  */
-function kg_add_recruiter_profile_location_field( $user ) {
+function kg_add_recruiter_profile_location_field($user)
+{
     // Only allow admins to assign/view this field, and only for recruiter roles
-    if ( ! current_user_can( 'manage_options' ) ) {
-        return;
-    }
-    
-    $user_roles = isset( $user->roles ) ? (array) $user->roles : array();
-    if ( ! in_array( 'recruiter', $user_roles, true ) && ! in_array( 'administrator', $user_roles, true ) ) {
+    if (!current_user_can('manage_options')) {
         return;
     }
 
-    $current_location = get_user_meta( $user->ID, 'kg_recruiter_location', true );
+    $user_roles = isset($user->roles) ? (array) $user->roles : array();
+    if (!in_array('recruiter', $user_roles, true)) {
+        return;
+    }
+
+    $current_location = get_user_meta($user->ID, 'kg_recruiter_location', true);
     ?>
     <h3>Recruiter Settings</h3>
     <table class="form-table">
@@ -1784,59 +1924,69 @@ function kg_add_recruiter_profile_location_field( $user ) {
             <td>
                 <select name="kg_recruiter_location" id="kg_recruiter_location">
                     <option value="">— Unassigned (All Locations) —</option>
-                    <?php foreach ( kg_get_locations() as $key => $label ) : ?>
-                        <option value="<?php echo esc_attr( $key ); ?>" <?php selected( $current_location, $key ); ?>><?php echo esc_html( $label ); ?></option>
+                    <?php foreach (kg_get_locations() as $key => $label): ?>
+                        <option value="<?php echo esc_attr($key); ?>" <?php selected($current_location, $key); ?>>
+                            <?php echo esc_html($label); ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
-                <p class="description">Recruiters will only be allowed to view and manage job posts and applicants matching this branch location.</p>
+                <p class="description">Recruiters will only be allowed to view and manage job posts and applicants matching
+                    this branch location.</p>
             </td>
         </tr>
     </table>
     <?php
 }
-add_action( 'show_user_profile', 'kg_add_recruiter_profile_location_field' );
-add_action( 'edit_user_profile', 'kg_add_recruiter_profile_location_field' );
+add_action('show_user_profile', 'kg_add_recruiter_profile_location_field');
+add_action('edit_user_profile', 'kg_add_recruiter_profile_location_field');
 
-function kg_save_recruiter_profile_location_field( $user_id ) {
-    if ( ! current_user_can( 'manage_options' ) ) {
+function kg_save_recruiter_profile_location_field($user_id)
+{
+    if (!current_user_can('manage_options')) {
         return;
     }
 
-    if ( isset( $_POST['kg_recruiter_location'] ) ) {
-        $allowed = array_keys( kg_get_locations() );
-        $location = sanitize_text_field( $_POST['kg_recruiter_location'] );
-        if ( in_array( $location, $allowed, true ) || $location === '' ) {
-            update_user_meta( $user_id, 'kg_recruiter_location', $location );
+    if (isset($_POST['kg_recruiter_location'])) {
+        $allowed = array_keys(kg_get_locations());
+        $location = sanitize_text_field($_POST['kg_recruiter_location']);
+        if (in_array($location, $allowed, true) || $location === '') {
+            update_user_meta($user_id, 'kg_recruiter_location', $location);
         }
     }
 }
-add_action( 'personal_options_update', 'kg_save_recruiter_profile_location_field' );
-add_action( 'edit_user_profile_update', 'kg_save_recruiter_profile_location_field' );
+add_action('personal_options_update', 'kg_save_recruiter_profile_location_field');
+add_action('edit_user_profile_update', 'kg_save_recruiter_profile_location_field');
 
 
 /**
  * Automated QR Code generation on Job publishes
  */
-function kg_generate_job_qr_code( $post_id, $post, $update ) {
-    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
-    if ( $post->post_type !== 'jobs' ) return;
-    if ( $post->post_status !== 'publish' ) return;
+function kg_generate_job_qr_code($post_id, $post, $update)
+{
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+        return;
+    if ($post->post_type !== 'jobs')
+        return;
+    if ($post->post_status !== 'publish')
+        return;
 
-    $permalink = get_permalink( $post_id );
-    if ( ! $permalink ) return;
+    $permalink = get_permalink($post_id);
+    if (!$permalink)
+        return;
 
     // Use api.qrserver.com public QR code API
-    $qr_api_url = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode( $permalink );
-    
+    $qr_api_url = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode($permalink);
+
     // Cache the QR code URL on the Job post
-    update_post_meta( $post_id, 'kg_job_qr_code_url', esc_url_raw( $qr_api_url ) );
+    update_post_meta($post_id, 'kg_job_qr_code_url', esc_url_raw($qr_api_url));
 }
-add_action( 'save_post_jobs', 'kg_generate_job_qr_code', 20, 3 );
+add_action('save_post_jobs', 'kg_generate_job_qr_code', 20, 3);
 
 /**
  * Register Job QR Code Metabox in wp-admin
  */
-function kg_add_job_qr_code_metabox() {
+function kg_add_job_qr_code_metabox()
+{
     add_meta_box(
         'kg_job_qr_code_box',
         'Job Posting QR Code',
@@ -1846,73 +1996,86 @@ function kg_add_job_qr_code_metabox() {
         'default'
     );
 }
-add_action( 'add_meta_boxes_jobs', 'kg_add_job_qr_code_metabox' );
+add_action('add_meta_boxes_jobs', 'kg_add_job_qr_code_metabox');
 
-function kg_render_job_qr_code_metabox( $post ) {
-    $qr_url = get_post_meta( $post->ID, 'kg_job_qr_code_url', true );
-    if ( ! $qr_url && $post->post_status === 'publish' ) {
+function kg_render_job_qr_code_metabox($post)
+{
+    $qr_url = get_post_meta($post->ID, 'kg_job_qr_code_url', true);
+    if (!$qr_url && $post->post_status === 'publish') {
         // Fallback: build QR code URL inline if not cached yet
-        $permalink = get_permalink( $post->ID );
-        $qr_url = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode( $permalink );
+        $permalink = get_permalink($post->ID);
+        $qr_url = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode($permalink);
     }
 
-    if ( $qr_url ) : ?>
+    if ($qr_url): ?>
         <div style="text-align:center; padding:10px 0;">
-             <img src="<?php echo esc_url( $qr_url ); ?>" style="max-width:100%; height:auto; border:1px solid #ddd; border-radius:4px; padding:4px;" alt="Job QR Code" />
+            <img src="<?php echo esc_url($qr_url); ?>"
+                style="max-width:100%; height:auto; border:1px solid #ddd; border-radius:4px; padding:4px;" alt="Job QR Code" />
             <p style="font-size:12px; color:#666; margin:8px 0 0 0;">Scan to view or apply to this job on a mobile device.</p>
-            <p style="margin:8px 0 0 0;"><a href="<?php echo esc_url( $qr_url ); ?>&download=1" download="job-qr-code-<?php echo esc_attr( $post->post_name ); ?>.png" class="button" target="_blank">⬇ Download QR Code</a></p>
+            <p style="margin:8px 0 0 0;"><a href="<?php echo esc_url($qr_url); ?>&download=1"
+                    download="job-qr-code-<?php echo esc_attr($post->post_name); ?>.png" class="button" target="_blank">⬇
+                    Download QR Code</a></p>
         </div>
-    <?php else : ?>
-        <p style="font-size:12px; color:#777; margin:0; padding:10px 0;">Publish this job listing to generate its unique scan-to-apply QR code automatically.</p>
+    <?php else: ?>
+        <p style="font-size:12px; color:#777; margin:0; padding:10px 0;">Publish this job listing to generate its unique
+            scan-to-apply QR code automatically.</p>
     <?php endif;
 }
 
 /**
  * Phase 5: Schedule Daily Event for Job Post Expiry and Headcount Auto-Close
  */
-if ( ! wp_next_scheduled( 'kg_daily_job_expiry_check' ) ) {
-    wp_schedule_event( time(), 'daily', 'kg_daily_job_expiry_check' );
+if (!wp_next_scheduled('kg_daily_job_expiry_check')) {
+    wp_schedule_event(time(), 'daily', 'kg_daily_job_expiry_check');
 }
 
-function kg_run_daily_job_expiry_check() {
-    $jobs = get_posts( array(
-        'post_type'      => 'jobs',
-        'post_status'    => 'publish',
+function kg_run_daily_job_expiry_check()
+{
+    $jobs = get_posts(array(
+        'post_type' => 'jobs',
+        'post_status' => 'publish',
         'posts_per_page' => -1,
-    ) );
+    ));
 
-    $today = current_time( 'Ymd' ); // ACF date field defaults to Ymd format
+    $today = current_time('Ymd'); // ACF date field defaults to Ymd format
 
-    foreach ( $jobs as $job ) {
+    foreach ($jobs as $job) {
         $job_id = $job->ID;
         $should_close = false;
 
         // Check 1: Target Headcount Filled
-        $target = (int) get_post_meta( $job_id, 'job_target_headcount', true );
-        $filled = (int) get_post_meta( $job_id, 'job_filled_headcount', true );
+        $target = (int) get_post_meta($job_id, 'job_target_headcount', true);
+        $filled = (int) get_post_meta($job_id, 'job_filled_headcount', true);
 
-        if ( $target > 0 && $filled >= $target ) {
+        if ($target > 0 && $filled >= $target) {
             $should_close = true;
         }
 
         // Check 2: Expiry Date Reached
-        $expiry_date = get_post_meta( $job_id, 'job_expiry_date', true ); // Ymd string e.g. 20260625
-        if ( ! empty( $expiry_date ) && $today >= $expiry_date ) {
+        $expiry_date = get_post_meta($job_id, 'job_expiry_date', true); // Ymd string e.g. 20260625
+        if (!empty($expiry_date) && $today >= $expiry_date) {
             $should_close = true;
         }
 
-        if ( $should_close ) {
+        if ($should_close) {
             // Set job_closed meta flag to 1
-            update_post_meta( $job_id, 'job_closed', '1' );
+            update_post_meta($job_id, 'job_closed', '1');
+            
+            // Auto draft the job as it is closed or filled
+            wp_update_post( array(
+                'ID'          => $job_id,
+                'post_status' => 'draft'
+            ) );
         }
     }
 }
-add_action( 'kg_daily_job_expiry_check', 'kg_run_daily_job_expiry_check' );
+add_action('kg_daily_job_expiry_check', 'kg_run_daily_job_expiry_check');
 
 /**
  * Phase 8: Register Job Posting Analytics Metabox
  */
-function kg_add_job_analytics_metabox() {
+function kg_add_job_analytics_metabox()
+{
     add_meta_box(
         'kg_job_analytics_box',
         'Job Posting Analytics',
@@ -1922,58 +2085,65 @@ function kg_add_job_analytics_metabox() {
         'default'
     );
 }
-add_action( 'add_meta_boxes_jobs', 'kg_add_job_analytics_metabox' );
+add_action('add_meta_boxes_jobs', 'kg_add_job_analytics_metabox');
 
-function kg_render_job_analytics_metabox( $post ) {
-    $views = (int) get_post_meta( $post->ID, 'job_view_count', true );
+function kg_render_job_analytics_metabox($post)
+{
+    $views = (int) get_post_meta($post->ID, 'job_view_count', true);
 
     // Count all applications received for this job
-    $apps = new WP_Query( array(
-        'post_type'      => 'kg_application',
-        'post_status'    => 'publish',
+    $apps = new WP_Query(array(
+        'post_type' => 'kg_application',
+        'post_status' => 'publish',
         'posts_per_page' => -1,
-        'meta_query'     => array(
+        'meta_query' => array(
             array(
-                'key'   => 'kg_app_role',
+                'key' => 'kg_app_role',
                 'value' => $post->post_title,
             )
         )
-    ) );
+    ));
     $total_apps = $apps->found_posts;
 
     // Count applications this month
-    $current_month_apps = new WP_Query( array(
-        'post_type'      => 'kg_application',
-        'post_status'    => 'publish',
+    $current_month_apps = new WP_Query(array(
+        'post_type' => 'kg_application',
+        'post_status' => 'publish',
         'posts_per_page' => -1,
-        'date_query'     => array(
+        'date_query' => array(
             array(
-                'year'  => date( 'Y' ),
-                'month' => date( 'm' ),
+                'year' => date('Y'),
+                'month' => date('m'),
             )
         ),
-        'meta_query'     => array(
+        'meta_query' => array(
             array(
-                'key'   => 'kg_app_role',
+                'key' => 'kg_app_role',
                 'value' => $post->post_title,
             )
         )
-    ) );
+    ));
     $monthly_apps = $current_month_apps->found_posts;
     ?>
     <div style="padding: 5px 0;">
         <table style="width:100%; border-collapse:collapse; font-size:13px;">
             <tr style="border-bottom:1px solid #eee;">
                 <td style="padding:8px 0; font-weight:600; color:#475569;">Total Page Views</td>
-                <td style="padding:8px 0; text-align:right; font-weight:bold; color:#0f172a;"><?php echo number_format($views); ?></td>
+                <td style="padding:8px 0; text-align:right; font-weight:bold; color:#0f172a;">
+                    <?php echo number_format($views); ?>
+                </td>
             </tr>
             <tr style="border-bottom:1px solid #eee;">
                 <td style="padding:8px 0; font-weight:600; color:#475569;">Total Applications</td>
-                <td style="padding:8px 0; text-align:right; font-weight:bold; color:#0f172a;"><?php echo number_format($total_apps); ?></td>
+                <td style="padding:8px 0; text-align:right; font-weight:bold; color:#0f172a;">
+                    <?php echo number_format($total_apps); ?>
+                </td>
             </tr>
             <tr>
                 <td style="padding:8px 0; font-weight:600; color:#475569;">Applications (This Month)</td>
-                <td style="padding:8px 0; text-align:right; font-weight:bold; color:#0f172a;"><?php echo number_format($monthly_apps); ?></td>
+                <td style="padding:8px 0; text-align:right; font-weight:bold; color:#0f172a;">
+                    <?php echo number_format($monthly_apps); ?>
+                </td>
             </tr>
         </table>
     </div>
@@ -1983,7 +2153,8 @@ function kg_render_job_analytics_metabox( $post ) {
 /**
  * Phase 3: "Share Job to Social Media" Facebook Toolkit
  */
-function kg_add_job_social_toolkit_metabox() {
+function kg_add_job_social_toolkit_metabox()
+{
     add_meta_box(
         'kg_job_social_toolkit_box',
         'Facebook Sharing Toolkit',
@@ -1993,32 +2164,36 @@ function kg_add_job_social_toolkit_metabox() {
         'default'
     );
 }
-add_action( 'add_meta_boxes_jobs', 'kg_add_job_social_toolkit_metabox' );
+add_action('add_meta_boxes_jobs', 'kg_add_job_social_toolkit_metabox');
 
-function kg_render_job_social_toolkit_metabox( $post ) {
-    $title     = get_the_title( $post->ID );
-    $location  = get_post_meta( $post->ID, 'job_location', true ) ?: 'Philippines';
-    $permalink = get_permalink( $post->ID );
-    
+function kg_render_job_social_toolkit_metabox($post)
+{
+    $title = get_the_title($post->ID);
+    $location = get_post_meta($post->ID, 'job_location', true) ?: 'Philippines';
+    $permalink = get_permalink($post->ID);
+
     // Format Facebook Posting Text
     $fb_copy = "📢 WE ARE HIRING! 📢\n\n"
-             . "💼 Role: " . esc_html($title) . "\n"
-             . "📍 Location: " . esc_html($location) . "\n\n"
-             . "Apply instantly here:\n🔗 " . esc_url($permalink) . "\n\n"
-             . "Or scan the QR code to apply on your mobile phone!";
+        . "💼 Role: " . esc_html($title) . "\n"
+        . "📍 Location: " . esc_html($location) . "\n\n"
+        . "Apply instantly here:\n🔗 " . esc_url($permalink) . "\n\n"
+        . "Or scan the QR code to apply on your mobile phone!";
     ?>
     <div style="padding:5px 0;">
-        <textarea id="kg-fb-copy-text" style="width:100%; height:120px; font-size:12px; font-family:monospace; padding:6px; margin-bottom:8px; border-radius:4px; border:1px solid #ccc;" readonly><?php echo esc_textarea($fb_copy); ?></textarea>
-        <button type="button" class="button button-primary" onclick="kgCopyFacebookText()" style="width:100%; text-align:center;">📋 Copy Copywriting for Facebook</button>
-        
+        <textarea id="kg-fb-copy-text"
+            style="width:100%; height:120px; font-size:12px; font-family:monospace; padding:6px; margin-bottom:8px; border-radius:4px; border:1px solid #ccc;"
+            readonly><?php echo esc_textarea($fb_copy); ?></textarea>
+        <button type="button" class="button button-primary" onclick="kgCopyFacebookText()"
+            style="width:100%; text-align:center;">📋 Copy Copywriting for Facebook</button>
+
         <script type="text/javascript">
             function kgCopyFacebookText() {
                 var copyText = document.getElementById("kg-fb-copy-text");
                 copyText.select();
                 copyText.setSelectionRange(0, 99999); // For mobile devices
-                navigator.clipboard.writeText(copyText.value).then(function() {
+                navigator.clipboard.writeText(copyText.value).then(function () {
                     alert("Facebook recruitment text copied to clipboard!");
-                }, function() {
+                }, function () {
                     // Fallback
                     document.execCommand("copy");
                     alert("Facebook recruitment text copied to clipboard!");
@@ -2041,3 +2216,110 @@ if (function_exists('add_action')) {
         }
     });
 }
+
+/**
+ * Register Customizer settings for the Footer
+ */
+function kg_customize_register( $wp_customize ) {
+    $wp_customize->add_section( 'kg_footer_section', array(
+        'title'       => __( 'Footer Settings', 'kingsgroup' ),
+        'priority'    => 130,
+        'description' => 'Edit the text and copyright for the footer here.',
+    ) );
+
+    // Footer Description
+    $wp_customize->add_setting( 'footer_description', array(
+        'default'   => 'Empowering global teams with ethical Philippine talent through a worker-owned cooperative model.',
+        'transport' => 'refresh',
+    ) );
+    $wp_customize->add_control( 'footer_description', array(
+        'label'   => 'Footer Description',
+        'section' => 'kg_footer_section',
+        'type'    => 'textarea',
+    ) );
+
+    // Footer Copyright
+    $wp_customize->add_setting( 'footer_copyright', array(
+        'default'   => '&copy; 2026 Kings Group Cooperative. All rights reserved. Designed by <a href="https://www.itmonsterszc.com/">ITMonsters</a>',
+        'transport' => 'refresh',
+    ) );
+    $wp_customize->add_control( 'footer_copyright', array(
+        'label'   => 'Copyright Text',
+        'section' => 'kg_footer_section',
+        'type'    => 'text',
+    ) );
+
+    // Column Titles
+    $wp_customize->add_setting( 'footer_col1_title', array(
+        'default'   => 'Company',
+        'transport' => 'refresh',
+    ) );
+    $wp_customize->add_control( 'footer_col1_title', array(
+        'label'   => 'Column 1 Title (Links managed in Appearance > Menus)',
+        'section' => 'kg_footer_section',
+        'type'    => 'text',
+    ) );
+
+    $wp_customize->add_setting( 'footer_col2_title', array(
+        'default'   => 'Members',
+        'transport' => 'refresh',
+    ) );
+    $wp_customize->add_control( 'footer_col2_title', array(
+        'label'   => 'Column 2 Title (Links managed in Appearance > Menus)',
+        'section' => 'kg_footer_section',
+        'type'    => 'text',
+    ) );
+
+    // Facebook URL
+    $wp_customize->add_setting( 'footer_facebook_url', array(
+        'default'   => 'https://www.facebook.com/KingsCooperative',
+        'transport' => 'refresh',
+    ) );
+    $wp_customize->add_control( 'footer_facebook_url', array(
+        'label'   => 'Facebook Link URL',
+        'section' => 'kg_footer_section',
+        'type'    => 'url',
+    ) );
+}
+add_action( 'customize_register', 'kg_customize_register' );
+
+/**
+ * Allow ACF new_lines => br to pass through esc_html()
+ * And automatically convert raw new lines to <br> tags.
+ * This allows all text fields to render line breaks properly on the frontend.
+ */
+add_filter('esc_html', function($safe_text, $text) {
+    // Convert raw newlines (\n) to <br />
+    $safe_text = nl2br($safe_text);
+    // Unescape any <br> tags that ACF or users added directly
+    return str_replace(array('&lt;br /&gt;', '&lt;br&gt;', '&lt;br/&gt;'), '<br />', $safe_text);
+}, 10, 2);
+
+/**
+ * Auto-draft job if filled headcount reaches target headcount.
+ */
+function kg_auto_draft_if_headcount_reached( $job_id ) {
+    if ( get_post_type( $job_id ) !== 'jobs' ) return;
+    if ( get_post_status( $job_id ) !== 'publish' ) return;
+
+    $target = (int) get_post_meta( $job_id, 'job_target_headcount', true );
+    $filled = (int) get_post_meta( $job_id, 'job_filled_headcount', true );
+
+    if ( $target > 0 && $filled >= $target ) {
+        // Unhook to prevent loop if calling from save_post
+        remove_action( 'save_post_jobs', 'kg_auto_draft_on_job_save', 99 );
+        wp_update_post( array(
+            'ID'          => $job_id,
+            'post_status' => 'draft'
+        ) );
+        add_action( 'save_post_jobs', 'kg_auto_draft_on_job_save', 99 );
+    }
+}
+
+function kg_auto_draft_on_job_save( $post_id ) {
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+    kg_auto_draft_if_headcount_reached( $post_id );
+}
+add_action( 'save_post_jobs', 'kg_auto_draft_on_job_save', 99 );
+add_action( 'acf/save_post', 'kg_auto_draft_on_job_save', 99 );
+

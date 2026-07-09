@@ -380,26 +380,7 @@ function kingsgroup_populate_all_pages()
             delete_post_meta($page_id, 'story_companies_intro');
             delete_post_meta($page_id, '_story_companies_intro');
 
-            $companies = array(
-                array('Kings Cooperative', 'assets/KingsCooperative.webp'),
-                array('Kings Asia Pacific', 'assets/KingsAsiaPacific.webp'),
-                array('Kings Lending', 'assets/KingsLending.webp'),
-                array('Makenter', 'assets/Makenter.webp'),
-                array('Home Culinary', 'assets/HomeCulinary.webp'),
-                array('Marian Palazz', 'assets/MarianPalazz.webp'),
-                array('Navishi Shell', 'assets/NavishiShell.webp'),
-                array('Pacific Water', 'assets/PacificWater.webp'),
-                array('Print Artist', 'assets/PrintArtist.webp'),
-                array('RN Foundation', 'assets/RNFoundation.webp'),
-                array('RPS Migration', 'assets/RPSMigration.webp'),
-            );
-            foreach ($companies as $i => $co) {
-                $n = $i + 1;
-                update_post_meta($page_id, 'story_co' . $n . '_name', $co[0]);
-                update_post_meta($page_id, '_story_co' . $n . '_name', 'field_story_co' . $n . '_name');
-                update_post_meta($page_id, 'story_co' . $n . '_img', kg_asset($co[1]));
-                update_post_meta($page_id, '_story_co' . $n . '_img', 'field_story_co' . $n . '_img');
-            }
+
         }
 
         // ─────────────────────────────────────────

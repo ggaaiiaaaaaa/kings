@@ -856,6 +856,10 @@ function kg_sync_job_headcount_on_status_change( $post_id ) {
     ) );
 
     update_post_meta( $job_id, 'job_filled_headcount', $filled->found_posts );
+    
+    if ( function_exists( 'kg_auto_draft_if_headcount_reached' ) ) {
+        kg_auto_draft_if_headcount_reached( $job_id );
+    }
 }
 add_action( 'save_post_kg_application', 'kg_sync_job_headcount_on_status_change', 20 );
 

@@ -38,11 +38,11 @@ get_header();
     <?php
     $hero_id = get_the_ID();
     $is_ph = (kg_get_user_geo() === 'PH');
-    
+
     // PH Fields
     $headline_ph = kg_get_field('hero_headline', 'Your Trusted Local <span style="color:#ffd166;">Manpower Provider</span> <span style="color:#ffffff;">in the Philippines.</span>');
     $description_ph = kg_get_field('hero_description', 'Helping businesses find qualified, reliable, and job-ready manpower across a wide range of industries. Kings Group has been connecting employers with skilled Filipino talent since 1999.');
-    
+
     // INTL Fields
     $headline_intl = kg_get_field('hero_headline_intl', 'Elite Talent.<br>Ethical Staffing. <span>Exceptional Results.</span>');
     $description_intl = kg_get_field('hero_description_intl', 'Scale your operations with dedicated offshore professionals from the Philippines.');
@@ -83,14 +83,52 @@ get_header();
             <?php echo kg_img($slide_url, 'Hero background slide ' . ($index + 1), $active_class, '', $loading, $fetchpriority); ?>
         <?php endforeach; ?>
     </div>
-    
+
     <!-- PH Hero Content -->
     <div class="hero-content ph-only">
         <h1><?php echo wp_kses_post($headline_ph); ?></h1>
         <p><?php echo esc_html($description_ph); ?></p>
+        <style>
+            .hero-hover-swap {
+                overflow: hidden;
+            }
+
+            .hero-hover-swap .text-default,
+            .hero-hover-swap .text-hover {
+                transition: transform 0.10s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .hero-hover-swap .text-default {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            .hero-hover-swap .text-hover {
+                transform: translateY(15px);
+                opacity: 0;
+            }
+
+            .hero-hover-swap:hover .text-default {
+                transform: translateY(-15px);
+                opacity: 0;
+            }
+
+            .hero-hover-swap:hover .text-hover {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        </style>
         <div class="hero-buttons">
-            <a href="<?php echo esc_url(home_url('/contact/')); ?>" class="btn btn-gold" style="background-color: #ffd166; color: #0a2540;">
-                <?php echo esc_html(kg_get_field('hero_btn_ph', 'Request Manpower')); ?>
+            <a href="<?php echo esc_url(home_url('/contact/')); ?>" class="btn btn-gold hero-hover-swap"
+                style="background-color: #ffd166; color: #0a2540;">
+                <span style="display: inline-grid; place-items: center; align-items: center;">
+                    <span class="text-default" style="grid-area: 1/1;">
+                        <?php echo esc_html(kg_get_field('hero_btn_ph', 'Request Manpower')); ?>
+                    </span>
+                    <span class="text-hover" style="grid-area: 1/1;">
+                        <?php echo esc_html(kg_get_field('hero_btn_hover_ph', 'Inquire Now')); ?>
+                    </span>
+                </span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                     <circle cx="9" cy="7" r="4" />
@@ -112,7 +150,8 @@ get_header();
         <h1><?php echo wp_kses_post($headline_intl); ?></h1>
         <p><?php echo esc_html($description_intl); ?></p>
         <div class="hero-buttons">
-            <a href="<?php echo esc_url(home_url('/contact/')); ?>" class="btn btn-gold" style="background-color: #ffd166; color: #0a2540;">
+            <a href="<?php echo esc_url(home_url('/quote/')); ?>" class="btn btn-gold"
+                style="background-color: #ffd166; color: #0a2540;">
                 <?php echo esc_html(kg_get_field('hero_btn_intl', 'Build Your Team')); ?>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
@@ -441,161 +480,165 @@ $wwa_img = kg_get_field('wwa_img', kg_asset('img/front-page/homepage.png'));
                 <?php
                 // PH features (f1 already defined above as $app_f1_title/$app_f1_desc)
                 $app_f2_title = kg_get_field('app_f2_title', 'Skill Assessment & Training');
-                $app_f2_desc  = kg_get_field('app_f2_desc',  'Enhance your career readiness with personalized skill assessments and guidance to make your profile stand out.');
+                $app_f2_desc = kg_get_field('app_f2_desc', 'Enhance your career readiness with personalized skill assessments and guidance to make your profile stand out.');
                 $app_f3_title = kg_get_field('app_f3_title', 'Direct Employer Matching');
-                $app_f3_desc  = kg_get_field('app_f3_desc',  'Skip the middleman and get introduced directly to top local employers looking for your exact skillset.');
+                $app_f3_desc = kg_get_field('app_f3_desc', 'Skip the middleman and get introduced directly to top local employers looking for your exact skillset.');
 
                 // INTL features
                 $app_intl_f1_title = kg_get_field('app_intl_f1_title', 'Global Hiring Alignment');
-                $app_intl_f1_desc  = kg_get_field('app_intl_f1_desc',  'We prepare candidates to work with top-tier international businesses, ensuring seamless cultural and workflow integration.');
+                $app_intl_f1_desc = kg_get_field('app_intl_f1_desc', 'We prepare candidates to work with top-tier international businesses, ensuring seamless cultural and workflow integration.');
                 $app_intl_f2_title = kg_get_field('app_intl_f2_title', 'Modern Office Workspaces');
-                $app_intl_f2_desc  = kg_get_field('app_intl_f2_desc',  'Candidates work in our highly secure, modern workspaces equipped with high-speed internet and premium facilities.');
+                $app_intl_f2_desc = kg_get_field('app_intl_f2_desc', 'Candidates work in our highly secure, modern workspaces equipped with high-speed internet and premium facilities.');
                 $app_intl_f3_title = kg_get_field('app_intl_f3_title', 'Premium Benefits Support');
-                $app_intl_f3_desc  = kg_get_field('app_intl_f3_desc',  'Cooperative security and full statutory compliance support, offering unparalleled stability compared to traditional freelancing.');
+                $app_intl_f3_desc = kg_get_field('app_intl_f3_desc', 'Cooperative security and full statutory compliance support, offering unparalleled stability compared to traditional freelancing.');
                 ?>
                 <div class="feature-folders">
                     <?php if ($is_ph): ?>
-                    <!-- Local features for PH Visitors -->
-                    <div class="folder-item talent">
-                        <div class="folder-header">
-                            <div class="folder-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                                </svg>
+                        <!-- Local features for PH Visitors -->
+                        <div class="folder-item talent">
+                            <div class="folder-header">
+                                <div class="folder-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                    </svg>
+                                </div>
+                                <h3 class="folder-title"><?php echo esc_html($app_f1_title); ?></h3>
                             </div>
-                            <h3 class="folder-title"><?php echo esc_html($app_f1_title); ?></h3>
-                        </div>
-                        <div class="folder-body">
-                            <div class="folder-content-inner">
-                                <p><?php echo esc_html($app_f1_desc); ?></p>
+                            <div class="folder-body">
+                                <div class="folder-content-inner">
+                                    <p><?php echo esc_html($app_f1_desc); ?></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="folder-item talent">
-                        <div class="folder-header">
-                            <div class="folder-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                                </svg>
+                        <div class="folder-item talent">
+                            <div class="folder-header">
+                                <div class="folder-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                                    </svg>
+                                </div>
+                                <h3 class="folder-title"><?php echo esc_html($app_f2_title); ?></h3>
                             </div>
-                            <h3 class="folder-title"><?php echo esc_html($app_f2_title); ?></h3>
-                        </div>
-                        <div class="folder-body">
-                            <div class="folder-content-inner">
-                                <p><?php echo esc_html($app_f2_desc); ?></p>
+                            <div class="folder-body">
+                                <div class="folder-content-inner">
+                                    <p><?php echo esc_html($app_f2_desc); ?></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="folder-item talent">
-                        <div class="folder-header">
-                            <div class="folder-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="9" cy="7" r="4"></circle>
-                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                </svg>
+                        <div class="folder-item talent">
+                            <div class="folder-header">
+                                <div class="folder-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="folder-title"><?php echo esc_html($app_f3_title); ?></h3>
                             </div>
-                            <h3 class="folder-title"><?php echo esc_html($app_f3_title); ?></h3>
-                        </div>
-                        <div class="folder-body">
-                            <div class="folder-content-inner">
-                                <p><?php echo esc_html($app_f3_desc); ?></p>
+                            <div class="folder-body">
+                                <div class="folder-content-inner">
+                                    <p><?php echo esc_html($app_f3_desc); ?></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     <?php else: ?>
-                    <!-- International features for non-PH Visitors -->
-                    <div class="folder-item talent">
-                        <div class="folder-header">
-                            <div class="folder-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                                </svg>
+                        <!-- International features for non-PH Visitors -->
+                        <div class="folder-item talent">
+                            <div class="folder-header">
+                                <div class="folder-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path
+                                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <h3 class="folder-title"><?php echo esc_html($app_intl_f1_title); ?></h3>
                             </div>
-                            <h3 class="folder-title"><?php echo esc_html($app_intl_f1_title); ?></h3>
-                        </div>
-                        <div class="folder-body">
-                            <div class="folder-content-inner">
-                                <p><?php echo esc_html($app_intl_f1_desc); ?></p>
+                            <div class="folder-body">
+                                <div class="folder-content-inner">
+                                    <p><?php echo esc_html($app_intl_f1_desc); ?></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="folder-item talent">
-                        <div class="folder-header">
-                            <div class="folder-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                                    <line x1="8" y1="21" x2="16" y2="21"></line>
-                                    <line x1="12" y1="17" x2="12" y2="21"></line>
-                                </svg>
+                        <div class="folder-item talent">
+                            <div class="folder-header">
+                                <div class="folder-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                                    </svg>
+                                </div>
+                                <h3 class="folder-title"><?php echo esc_html($app_intl_f2_title); ?></h3>
                             </div>
-                            <h3 class="folder-title"><?php echo esc_html($app_intl_f2_title); ?></h3>
-                        </div>
-                        <div class="folder-body">
-                            <div class="folder-content-inner">
-                                <p><?php echo esc_html($app_intl_f2_desc); ?></p>
+                            <div class="folder-body">
+                                <div class="folder-content-inner">
+                                    <p><?php echo esc_html($app_intl_f2_desc); ?></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="folder-item talent">
-                        <div class="folder-header">
-                            <div class="folder-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                                </svg>
+                        <div class="folder-item talent">
+                            <div class="folder-header">
+                                <div class="folder-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                    </svg>
+                                </div>
+                                <h3 class="folder-title"><?php echo esc_html($app_intl_f3_title); ?></h3>
                             </div>
-                            <h3 class="folder-title"><?php echo esc_html($app_intl_f3_title); ?></h3>
-                        </div>
-                        <div class="folder-body">
-                            <div class="folder-content-inner">
-                                <p><?php echo esc_html($app_intl_f3_desc); ?></p>
+                            <div class="folder-body">
+                                <div class="folder-content-inner">
+                                    <p><?php echo esc_html($app_intl_f3_desc); ?></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     <?php endif; ?>
                 </div>
 
                 <div>
                     <?php if ($is_ph): ?>
-                    <?php $app_cta_ph = kg_get_field('app_cta_ph', 'Drop your CV Today'); ?>
-                    <?php $app_cta_ph_url = kg_get_field('app_cta_ph_url', home_url('/careers/')); ?>
-                    <a href="<?php echo esc_url($app_cta_ph_url); ?>" class="btn btn-outline"
-                        style="border-color: var(--sec-accent-green); color: var(--text-dark); padding: 0.85rem 2rem; font-size: 1rem;">
-                        <?php echo esc_html($app_cta_ph); ?>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" style="margin-left: 0.5rem;">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
-                        </svg>
-                    </a>
+                        <?php $app_cta_ph = kg_get_field('app_cta_ph', 'Drop your CV Today'); ?>
+                        <?php $app_cta_ph_url = kg_get_field('app_cta_ph_url', home_url('/careers/')); ?>
+                        <a href="<?php echo esc_url($app_cta_ph_url); ?>" class="btn btn-outline"
+                            style="border-color: var(--sec-accent-green); color: var(--text-dark); padding: 0.85rem 2rem; font-size: 1rem;">
+                            <?php echo esc_html($app_cta_ph); ?>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" style="margin-left: 0.5rem;">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                            </svg>
+                        </a>
                     <?php else: ?>
-                    <?php
-                    $app_cta_intl = kg_get_field('app_cta_intl', 'Find Offshore Talent');
-                    $app_cta_intl_url = kg_get_field('app_cta_intl_url', home_url('/contact/'));
-                    ?>
-                    <a href="<?php echo esc_url($app_cta_intl_url); ?>" class="btn btn-outline"
-                        style="border-color: var(--sec-accent-green); color: var(--text-dark); padding: 0.85rem 2rem; font-size: 1rem;">
-                        <?php echo esc_html($app_cta_intl); ?>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" style="margin-left: 0.5rem;">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="2" y1="12" x2="22" y2="12"></line>
-                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                        </svg>
-                    </a>
+                        <?php
+                        $app_cta_intl = kg_get_field('app_cta_intl', 'Find Offshore Talent');
+                        $app_cta_intl_url = kg_get_field('app_cta_intl_url', home_url('/contact/'));
+                        ?>
+                        <a href="<?php echo esc_url($app_cta_intl_url); ?>" class="btn btn-outline"
+                            style="border-color: var(--sec-accent-green); color: var(--text-dark); padding: 0.85rem 2rem; font-size: 1rem;">
+                            <?php echo esc_html($app_cta_intl); ?>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" style="margin-left: 0.5rem;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path
+                                    d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                                </path>
+                            </svg>
+                        </a>
                     <?php endif; ?>
                 </div>
             </div>

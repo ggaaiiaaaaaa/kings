@@ -48,23 +48,31 @@ Text Domain: kingsgroup
 
     /* Specific Editorial Typography requested */
     --font-headline-family: 'Lexend Deca', sans-serif;
-    --font-headline-weight: 800; /* Bold */
+    --font-headline-weight: 800;
+    /* Bold */
     --font-headline-size: 80px;
-    --font-headline-lh: 1.15; /* Optimized from 1.5: Large display headings look clumsy with giant line gaps if they wrap */
-    --font-headline-ls: 2.5px; /* Figma tracking -5% (-50 in Figma panel) */
+    --font-headline-lh: 1.15;
+    /* Optimized from 1.5: Large display headings look clumsy with giant line gaps if they wrap */
+    --font-headline-ls: 2.5px;
+    /* Figma tracking -5% (-50 in Figma panel) */
 
     ---font-subhead-family: 'Garet', sans-serif;
-    --font-subhead-weight: 700; /* Bold */
+    --font-subhead-weight: 700;
+    /* Bold */
     --font-subhead-size: 30px;
     --font-subhead-lh: 1.4;
-    --font-subhead-ls: 0.05em; /* Figma tracking 5% (50 in Figma panel) */
+    --font-subhead-ls: 0.05em;
+    /* Figma tracking 5% (50 in Figma panel) */
 
-  /* Custom Body / Banner Description text */
+    /* Custom Body / Banner Description text */
     --font-body-custom-family: 'Garet', sans-serif;
-    --font-body-custom-weight: 400; /* Fixed: Removed 'px' and adjusted to 400 (Regular) to mimic the description text in image_fe7a2a.jpg */
-    --font-body-custom-size: 16px; /* Slightly bumped from 15px for premium readability in banner regions */
-    --font-body-custom-lh: 1.5; 
-    --font-body-custom-ls: 0.015em; /* Figma tracking 1.5% (15 in Figma panel) */
+    --font-body-custom-weight: 400;
+    /* Fixed: Removed 'px' and adjusted to 400 (Regular) to mimic the description text in image_fe7a2a.jpg */
+    --font-body-custom-size: 16px;
+    /* Slightly bumped from 15px for premium readability in banner regions */
+    --font-body-custom-lh: 1.5;
+    --font-body-custom-ls: 0.015em;
+    /* Figma tracking 1.5% (15 in Figma panel) */
 
     /* Transitions */
     --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -7831,6 +7839,7 @@ input:checked+.slider:before {
     header {
         z-index: 10000 !important;
     }
+
     .mobile-toggle {
         display: flex !important;
         flex-direction: column;
@@ -9735,12 +9744,19 @@ input:checked+.slider:before {
    MOBILE RESPONSIVENESS OVERRIDES (NEWS, COMMUNITY, NETWORK, CAREERS)
    ========================================================================== */
 @media (max-width: 768px) {
+
     /* Global Section Spacing */
-    .section, section {
+    .section,
+    section {
         padding: 4rem 0 !important;
     }
+
     .page-hero {
         padding: 5rem 1rem 4rem 1rem !important;
+    }
+
+    .page-hero h1 {
+        font-size: clamp(2rem, 6vw, 3.5rem) !important;
     }
 
     /* News Page Responsiveness */
@@ -9748,53 +9764,67 @@ input:checked+.slider:before {
         flex-direction: column !important;
         display: flex;
     }
-    .news-featured-showcase .featured-image-col, 
+
+    .news-featured-showcase .featured-image-col,
     .news-featured-showcase .featured-details-col {
         width: 100% !important;
         flex: none !important;
     }
+
     .news-featured-showcase .featured-details-col {
         padding: 2rem 1.5rem !important;
     }
+
     .news-featured-showcase .featured-title {
         font-size: 1.8rem !important;
         line-height: 1.25 !important;
     }
+
     .news-cards-grid {
         grid-template-columns: 1fr !important;
         gap: 1.5rem !important;
     }
+
     .news-list-item .news-item-link {
         flex-direction: column !important;
         display: flex;
     }
+
     .news-list-item .news-item-img-wrapper {
         width: 100% !important;
         height: 200px !important;
     }
+
     .news-list-item .news-item-content {
         padding: 1.25rem !important;
     }
 
     /* Community Page Responsiveness */
-    .queens-banner, .culinary-banner {
+    .queens-banner,
+    .culinary-banner {
         grid-template-columns: 1fr !important;
         gap: 2rem !important;
         text-align: center !important;
         padding: 2.5rem 1.5rem !important;
     }
+
     .culinary-grid {
         grid-template-columns: 1fr !important;
         gap: 1.5rem !important;
     }
-    .community-grid, .history-grid, .partners-grid {
+
+    .community-grid,
+    .history-grid,
+    .partners-grid {
         grid-template-columns: 1fr !important;
         gap: 1.5rem !important;
     }
+
     .impact-intro-grid {
         grid-template-columns: 1fr !important;
         gap: 2.5rem !important;
     }
+
     .impact-stats {
         justify-content: center !important;
     }
@@ -9804,26 +9834,35 @@ input:checked+.slider:before {
         grid-template-columns: 1fr !important;
         gap: 1.5rem !important;
     }
-    .network-grid, .map-grid, .stats-grid {
+
+    .network-grid,
+    .map-grid,
+    .stats-grid {
         grid-template-columns: 1fr !important;
         gap: 1.5rem !important;
     }
+
     .network-map-section {
         padding: 2rem 1rem !important;
     }
 
     /* Careers Page Responsiveness */
-    .careers-form-row, .demographics-row, .name-row {
+    .careers-form-row,
+    .demographics-row,
+    .name-row {
         grid-template-columns: 1fr !important;
         gap: 1rem !important;
     }
+
     .career-checkbox-grid {
         grid-template-columns: 1fr !important;
     }
+
     #career-progress {
         flex-wrap: wrap !important;
         gap: 0.5rem !important;
     }
+
     .cprog-line {
         display: none !important;
     }
@@ -9843,7 +9882,7 @@ input:checked+.slider:before {
     position: absolute;
     inset: 0;
     background: radial-gradient(circle at 50% 20%, rgba(255, 209, 102, 0.06) 0%, transparent 70%),
-                radial-gradient(circle at 80% 80%, rgba(0, 208, 156, 0.04) 0%, transparent 60%);
+        radial-gradient(circle at 80% 80%, rgba(0, 208, 156, 0.04) 0%, transparent 60%);
     pointer-events: none;
 }
 
@@ -9911,13 +9950,29 @@ input:checked+.slider:before {
 }
 
 /* Explicit CSS Grid Placement for Snake Serpentine Layout */
-.snake-node-row-1 { grid-row: 1; }
-.snake-node-row-2 { grid-row: 2; }
-.snake-node-row-3 { grid-row: 3; }
+.snake-node-row-1 {
+    grid-row: 1;
+}
 
-.snake-node-col-1 { grid-column: 1; }
-.snake-node-col-2 { grid-column: 2; }
-.snake-node-col-3 { grid-column: 3; }
+.snake-node-row-2 {
+    grid-row: 2;
+}
+
+.snake-node-row-3 {
+    grid-row: 3;
+}
+
+.snake-node-col-1 {
+    grid-column: 1;
+}
+
+.snake-node-col-2 {
+    grid-column: 2;
+}
+
+.snake-node-col-3 {
+    grid-column: 3;
+}
 
 /* Trim connecting line at grid boundaries */
 .snake-node-col-1 .snake-node-header::before {
@@ -10014,6 +10069,7 @@ input:checked+.slider:before {
         grid-template-columns: repeat(2, 1fr);
         gap: 3.5rem 2rem;
     }
+
     .snake-node-header::before,
     .snake-node-header::after {
         display: none;
@@ -10025,6 +10081,7 @@ input:checked+.slider:before {
         grid-template-columns: 1fr;
         gap: 3rem;
     }
+
     .roots-timeline-section__header .timeline-section-title {
         font-size: 2.1rem;
     }

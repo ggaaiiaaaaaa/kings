@@ -44,7 +44,7 @@ get_header();
     ?>
     <section class="page-hero" style="<?php echo $careers_bg_style; ?>">
         <div class="container text-center">
-            <h1 style="font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem;"><?php echo wp_kses_post($careers_headline); ?></h1>
+            <h1 style="font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem;"><?php echo wp_kses_post($careers_headline); ?></h1>
             <p style="font-size: 1.25rem; line-height: 1.6; max-width: 700px; margin: 0 auto; color: rgba(255, 255, 255, 0.85);"><?php echo esc_html($careers_desc); ?></p>
             <div style="margin-top:2rem;animation:fadeUp 1s ease-out 0.5s both;"></div>
         </div>
@@ -58,7 +58,7 @@ get_header();
     <section id="apply" style="padding:5rem 0;background:var(--bg-white);">
         <div class="container" style="max-width:720px;">
             <div style="text-align:center;margin-bottom:2.5rem;">
-                <h2 class="section-title" style="margin-bottom:0.75rem; white-space: nowrap;"><?php echo esc_html($careers_form_title); ?></h2>
+                <h2 class="section-title" style="margin-bottom:0.75rem;"><?php echo esc_html($careers_form_title); ?></h2>
                 <p style="color:var(--text-muted);font-size:1.1rem;"><?php echo wp_kses_post($careers_form_desc); ?></p>
             </div>
 

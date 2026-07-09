@@ -12,8 +12,8 @@ function kg_email_wrap( $subject, $body_html, $recipient_name = '', $recipient_a
     // Fallbacks
     $logo_url = !empty($branding['logo_url']) ? $branding['logo_url'] : (
         function_exists('get_template_directory_uri')
-            ? get_template_directory_uri() . '/img/[LOGO] Footer.webp'
-            : 'https://kingsgroup.com.ph/wp-content/themes/kingsgroup/img/[LOGO] Footer.webp'
+            ? get_template_directory_uri() . '/img/[LOGO]%20Kings%20Manpower%20with%20COOP%20-%20Black.png'
+            : 'https://kingsgroup.com.ph/wp-content/themes/kingsgroup/img/[LOGO]%20Kings%20Manpower%20with%20COOP%20-%20Black.png'
     );
     $body_bg = '#F7F9FC';
     $card_bg = '#ffffff';
@@ -50,7 +50,7 @@ body, table, td, p, h1, h2, h3, a {font-family: Arial, Helvetica, sans-serif !im
       <!-- Letterhead Header -->
       <tr>
         <td align="center" style="padding:40px 0 25px;">
-          <img src="' . esc_url($logo_url) . '" alt="Kings Group" width="160" style="display:block;margin:0 auto;">
+          <img src="' . esc_url($logo_url) . '" alt="Kings Group" width="160" style="display:block; margin:0 auto; width:160px; max-width:100%; height:auto; border:none;">
         </td>
       </tr>
 

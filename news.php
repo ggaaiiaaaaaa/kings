@@ -28,7 +28,7 @@ get_header();
 <!-- Hero Section -->
 <section class="page-hero" style="background-image: linear-gradient(rgba(10, 37, 64, 0.72), rgba(10, 37, 64, 0.72)), url('<?php echo esc_url($page_hero_bg); ?>'); min-height: unset; padding: 5rem 2rem 4rem;">
     <div class="container text-center">
-        <h1 class="animate-on-scroll" style="font-size: clamp(2.75rem, 7vw, 6rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1.05; color: #fff; margin-bottom: 1.25rem;"><?php echo esc_html($hero_title); ?></h1>
+        <h1 class="animate-on-scroll" style="font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1.05; color: #fff; margin-bottom: 1.25rem;"><?php echo esc_html($hero_title); ?></h1>
         <p class="animate-on-scroll" style="max-width: 600px; margin: 0 auto; font-weight: 400; font-size: 1.5rem; color: rgba(255,255,255,0.82); line-height: 1.7;"><?php echo esc_html($hero_subtitle); ?></p>
     </div>
 </section>
