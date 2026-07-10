@@ -31,6 +31,7 @@ function kg_register_application_cpt() {
         'rewrite'       => false,
         'menu_icon'     => 'dashicons-id-alt',
         'menu_position' => 5,
+        'capability_type' => 'application',
         'capabilities'  => array(
             'create_posts' => 'do_not_allow', // no manual creation from admin
         ),

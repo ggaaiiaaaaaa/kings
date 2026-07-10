@@ -29,6 +29,7 @@ function kg_register_inquiry_cpt() {
         'rewrite'       => false,
         'menu_icon'     => 'dashicons-email-alt',
         'menu_position' => 6,
+        'capability_type' => 'inquiry',
         'capabilities'  => array( 'create_posts' => 'do_not_allow' ),
         'map_meta_cap'  => true,
     ) );
@@ -304,6 +305,7 @@ function kg_register_quote_lead_cpt() {
         'rewrite'       => false,
         'menu_icon'     => 'dashicons-chart-bar',
         'menu_position' => 7,
+        'capability_type' => 'quote_lead',
         'capabilities'  => array( 'create_posts' => 'do_not_allow' ),
         'map_meta_cap'  => true,
     ) );

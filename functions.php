@@ -407,7 +407,7 @@ add_action('init', 'kg_create_default_menus');
  */
 function kg_filter_editable_roles($all_roles)
 {
-    $allowed_roles = array('administrator', 'editor', 'recruiter');
+    $allowed_roles = array('administrator', 'editor', 'recruiter', 'hr');
     foreach ($all_roles as $key => $role) {
         if (!in_array($key, $allowed_roles)) {
             unset($all_roles[$key]);
@@ -699,7 +699,8 @@ function kingsgroup_register_jobs_cpt()
         'show_in_menu' => true,
         'query_var' => true,
         'rewrite' => array('slug' => 'jobs'),
-        'capability_type' => 'post',
+        'capability_type' => 'job',
+        'map_meta_cap' => true,
         'has_archive' => true,
         'hierarchical' => false,
         'menu_position' => null,
@@ -1654,18 +1655,15 @@ if (function_exists('add_action')) {
  * Register recruiter role and capabilities
  */
 if (function_exists('add_action')) {
-    add_action('init', 'kg_register_recruiter_role');
+    add_action('init', 'kg_register_roles');
 }
 
-function kg_register_recruiter_role()
+function kg_register_roles()
 {
-    // add_role() is a no-op if the role already exists, so we must also
-    // explicitly add each cap to handle sites where the role was previously
-    // registered with an incomplete set of capabilities.
-    $caps = array(
+    $base_caps = array(
         'read' => true,
         'edit_posts' => true,
-        'edit_others_posts' => true,  // needed to edit kg_application posts (any author)
+        'edit_others_posts' => true,
         'publish_posts' => true,
         'edit_published_posts' => true,
         'delete_posts' => true,
@@ -1673,17 +1671,81 @@ function kg_register_recruiter_role()
         'upload_files' => true,
     );
 
-    // Register for fresh installs
+    $job_caps = array(
+        'edit_jobs' => true,
+        'edit_others_jobs' => true,
+        'publish_jobs' => true,
+        'read_private_jobs' => true,
+        'edit_published_jobs' => true,
+        'delete_jobs' => true,
+        'delete_private_jobs' => true,
+        'delete_published_jobs' => true,
+        'delete_others_jobs' => true,
+        'edit_private_jobs' => true,
+    );
+
+    $application_caps = array(
+        'edit_applications' => true,
+        'edit_others_applications' => true,
+        'publish_applications' => true,
+        'read_private_applications' => true,
+        'edit_published_applications' => true,
+        'delete_applications' => true,
+        'delete_private_applications' => true,
+        'delete_published_applications' => true,
+        'delete_others_applications' => true,
+        'edit_private_applications' => true,
+    );
+
+    $inquiry_caps = array(
+        'edit_inquiries' => true,
+        'edit_others_inquiries' => true,
+        'publish_inquiries' => true,
+        'read_private_inquiries' => true,
+        'edit_published_inquiries' => true,
+        'delete_inquiries' => true,
+        'delete_private_inquiries' => true,
+        'delete_published_inquiries' => true,
+        'delete_others_inquiries' => true,
+        'edit_private_inquiries' => true,
+    );
+
+    $quote_caps = array(
+        'edit_quote_leads' => true,
+        'edit_others_quote_leads' => true,
+        'publish_quote_leads' => true,
+        'read_private_quote_leads' => true,
+        'edit_published_quote_leads' => true,
+        'delete_quote_leads' => true,
+        'delete_private_quote_leads' => true,
+        'delete_published_quote_leads' => true,
+        'delete_others_quote_leads' => true,
+        'edit_private_quote_leads' => true,
+    );
+
+    $recruiter_caps = array_merge($base_caps, $job_caps, $application_caps);
+    // HR role only gets custom post type caps + upload_files and read, but NO edit_posts (for regular blog posts)
+    $hr_caps = array_merge(array('read' => true, 'upload_files' => true), $job_caps, $application_caps, $inquiry_caps, $quote_caps);
+    $admin_caps = array_merge($job_caps, $application_caps, $inquiry_caps, $quote_caps);
+
     if (function_exists('add_role')) {
-        add_role('recruiter', 'Recruiter', $caps);
+        add_role('recruiter', 'Recruiter', $recruiter_caps);
+        add_role('hr', 'HR', $hr_caps);
     }
 
-    // Sync caps for existing installs (get_role returns null if role absent, safe to skip)
     if (function_exists('get_role')) {
-        $role = get_role('recruiter');
-        if ($role) {
-            foreach ($caps as $cap => $grant) {
-                $role->add_cap($cap, $grant);
+        $roles = array(
+            'recruiter' => $recruiter_caps,
+            'hr' => $hr_caps,
+            'administrator' => $admin_caps
+        );
+
+        foreach ($roles as $role_name => $caps) {
+            $role_obj = get_role($role_name);
+            if ($role_obj) {
+                foreach ($caps as $cap => $grant) {
+                    $role_obj->add_cap($cap, $grant);
+                }
             }
         }
     }
