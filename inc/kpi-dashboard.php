@@ -1165,16 +1165,27 @@ function kg_render_kpi_dashboard_page()
 
             // 2. Workforce Doughnut Chart
             const workforceCtx = document.getElementById('kgWorkforceChart').getContext('2d');
+            
+            let depCount = <?php echo (int)$deployed_count; ?>;
+            let poolCount = <?php echo (int)$pooling_count; ?>;
+            
+            let wfLabels = ['Deployed', 'Pooling'];
+            let wfData = [depCount, poolCount];
+            let wfBg = ['#00d09c', '#ffd166'];
+            
+            if (depCount === 0 && poolCount === 0) {
+                wfLabels = ['No Data Yet'];
+                wfData = [1]; // Dummy value to render a full circle
+                wfBg = ['#e2e8f0']; // Grey color for empty state
+            }
+            
             new Chart(workforceCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Deployed', 'Pooling'],
+                    labels: wfLabels,
                     datasets: [{
-                        data: [<?php echo $deployed_count; ?>, <?php echo $pooling_count; ?>],
-                        backgroundColor: [
-                            '#00d09c',
-                            '#ffd166'
-                        ],
+                        data: wfData,
+                        backgroundColor: wfBg,
                         borderWidth: 2,
                         borderColor: '#ffffff'
                     }]

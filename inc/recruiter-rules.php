@@ -107,3 +107,27 @@ function kg_hide_inquiries_quotes_for_recruiters() {
     remove_menu_page( 'edit.php?post_type=kg_quote_lead' );
 }
 add_action( 'admin_menu', 'kg_hide_inquiries_quotes_for_recruiters', 999 );
+
+/**
+ * 5. Auto-bump job post date when transitioning from draft to publish.
+ */
+function kg_auto_bump_job_publish_date( $new_status, $old_status, $post ) {
+    if ( $post->post_type === 'jobs' && $old_status === 'draft' && $new_status === 'publish' ) {
+        // Temporarily unhook to prevent infinite loop
+        remove_action( 'transition_post_status', 'kg_auto_bump_job_publish_date', 10 );
+        
+        $current_time = current_time('mysql');
+        $current_time_gmt = current_time('mysql', 1);
+        
+        $update_args = array(
+            'ID' => $post->ID,
+            'post_date' => $current_time,
+            'post_date_gmt' => $current_time_gmt
+        );
+        
+        wp_update_post( $update_args );
+        
+        add_action( 'transition_post_status', 'kg_auto_bump_job_publish_date', 10, 3 );
+    }
+}
+add_action( 'transition_post_status', 'kg_auto_bump_job_publish_date', 10, 3 );
