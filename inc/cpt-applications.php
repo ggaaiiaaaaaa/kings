@@ -113,6 +113,7 @@ function kg_ats_statuses() {
     return array(
         'pooling'      => 'Pooling',
         'screening'    => 'Screening',
+        'processing'   => 'Processing',
         'interviewing' => 'Interviewing',
         'hired'        => 'Hired',
         'deployed'     => 'Deployed',
@@ -186,6 +187,7 @@ function kg_application_column_content( $column, $post_id ) {
             $status_styles = array(
                 'pooling'      => 'background:#fef3c7;color:#92400e;',
                 'screening'    => 'background:#dbeafe;color:#1e40af;',
+                'processing'   => 'background:#e0f2fe;color:#0369a1;',
                 'interviewing' => 'background:#ede9fe;color:#6d28d9;',
                 'hired'        => 'background:#d1fae5;color:#065f46;',
                 'deployed'     => 'background:#dcfce7;color:#15803d;',
@@ -357,7 +359,7 @@ function kg_application_details_box( $post ) {
                 $applied_roles = array_unique( array_filter( array_merge( (array) $role, (array) $preferred_roles ) ) );
                 $current_status_for_dropdown = get_post_meta( $post->ID, 'kg_app_status', true ) ?: 'pooling';
                 
-                $all_jobs = get_posts( array(
+                $all_jobs_posts = get_posts( array(
                     'post_type'      => 'jobs',
                     'post_status'    => 'publish',
                     'posts_per_page' => -1,
@@ -365,14 +367,19 @@ function kg_application_details_box( $post ) {
                     'order'          => 'ASC',
                 ) );
 
+                $unique_job_titles = array();
+                foreach($all_jobs_posts as $job) {
+                    $unique_job_titles[$job->post_title] = $job->post_title;
+                }
+
                 // For pooling applicants: show all jobs. For others: restrict to applied roles only.
                 if ( $current_status_for_dropdown !== 'pooling' ) {
-                    if ( ! empty( $all_jobs ) && ! empty( $applied_roles ) ) {
-                        $all_jobs = array_filter( $all_jobs, function( $j ) use ( $applied_roles ) {
-                            return in_array( $j->post_title, $applied_roles, true );
+                    if ( ! empty( $unique_job_titles ) && ! empty( $applied_roles ) ) {
+                        $unique_job_titles = array_filter( $unique_job_titles, function( $title ) use ( $applied_roles ) {
+                            return in_array( $title, $applied_roles, true );
                         } );
                     } else {
-                        $all_jobs = array();
+                        $unique_job_titles = array();
                     }
                 }
                 ?>
@@ -380,9 +387,8 @@ function kg_application_details_box( $post ) {
                     <option value="">— Choose a Suitable Job —</option>
                     <?php 
                     $found_current = false;
-                    if ( ! empty( $all_jobs ) ) {
-                        foreach ( $all_jobs as $job ) {
-                            $job_title = $job->post_title;
+                    if ( ! empty( $unique_job_titles ) ) {
+                        foreach ( $unique_job_titles as $job_title ) {
                             $selected = selected( $role, $job_title, false );
                             if ( $selected ) {
                                     $found_current = true;
@@ -409,10 +415,8 @@ function kg_application_details_box( $post ) {
                     echo '<select name="kg_app_recruiter_id" style="width:100%; max-width:400px; padding:6px 10px; font-size:14px; border: 1px solid #ccc; border-radius: 4px;">';
                     echo '<option value="">— Unassigned —</option>';
                     foreach ( $recruiters as $rec ) {
-                        $loc = get_user_meta( $rec->ID, 'kg_recruiter_location', true );
-                        $loc_label = $loc && isset( kg_get_locations()[$loc] ) ? ' (' . kg_get_locations()[$loc] . ')' : '';
                         $selected = selected( $rec_id, $rec->ID, false );
-                        echo '<option value="' . esc_attr( $rec->ID ) . '" ' . $selected . '>' . esc_html( $rec->display_name . $loc_label ) . '</option>';
+                        echo '<option value="' . esc_attr( $rec->ID ) . '" ' . $selected . '>' . esc_html( $rec->display_name ) . '</option>';
                     }
                     echo '</select>';
                 } else {
@@ -542,7 +546,7 @@ function kg_application_status_box( $post ) {
     
     <div id="kg-status-validation-warning" style="display:none; background:#fee2e2; border:1px solid #fca5a5; color:#991b1b; padding:10px; border-radius:6px; font-size:12px; margin-bottom:12px; font-weight:600;"></div>
 
-    <div style="margin-top:16px; border-top:1px solid #eee; padding-top:12px; display: <?php echo in_array( $status, array( 'screening', 'interviewing' ), true ) ? 'block' : 'none'; ?>;" id="kg-scheduler-section">
+    <div style="margin-top:16px; border-top:1px solid #eee; padding-top:12px; display: <?php echo ( $status === 'interviewing' ) ? 'block' : 'none'; ?>;" id="kg-scheduler-section">
         <h4 style="margin:0 0 8px 0; font-size:13px;">Schedule Interview</h4>
         
         <div style="margin-bottom:8px;">
@@ -580,6 +584,18 @@ function kg_application_status_box( $post ) {
         </div>
     </div>
 
+    <div style="margin-top:16px; border-top:1px solid #eee; padding-top:12px; display: <?php echo ( $status === 'processing' ) ? 'block' : 'none'; ?>;" id="kg-processing-section">
+        <h4 style="margin:0 0 8px 0; font-size:13px;">Processing Details</h4>
+        <div style="margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;display:block;margin-bottom:2px;">Deadline of Submission of Requirements</label>
+            <input type="date" name="kg_app_submission_date" value="<?php echo esc_attr( get_post_meta( $post->ID, 'kg_app_submission_date', true ) ); ?>" style="width:100%; padding:4px;" />
+        </div>
+        <div style="margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;display:block;margin-bottom:2px;">Target Date of Deployment</label>
+            <input type="date" name="kg_app_target_deploy_date" value="<?php echo esc_attr( get_post_meta( $post->ID, 'kg_app_target_deploy_date', true ) ); ?>" style="width:100%; padding:4px;" />
+        </div>
+    </div>
+
     <div style="margin-top:16px; border-top:1px solid #eee; padding-top:12px; display: <?php echo ( $status === 'deployed' ) ? 'block' : 'none'; ?>;" id="kg-deploy-date-section">
         <h4 style="margin:0 0 8px 0; font-size:13px;">Deployment Details</h4>
         <div style="margin-bottom:8px;">
@@ -603,14 +619,18 @@ function kg_application_status_box( $post ) {
         var $detailsInp = $('textarea[name="kg_interview_details"]');
         var $interviewerSelect = $('select[name="kg_interviewer_id"]');
         var $deployDateInp = $('input[name="kg_app_deploy_date"]');
+        
+        var $targetDeployDateInp = $('input[name="kg_app_target_deploy_date"]');
+        var $submissionDateInp = $('input[name="kg_app_submission_date"]');
 
         var originalStatus = $statusSelect.data('original-status');
         var statusOrder = {
             'pooling': 0,
             'screening': 1,
-            'interviewing': 2,
-            'hired': 3,
-            'deployed': 4
+            'processing': 2,
+            'interviewing': 3,
+            'hired': 4,
+            'deployed': 5
         };
 
         function doValidate() {
@@ -622,10 +642,16 @@ function kg_application_status_box( $post ) {
             $('.kg-validation-error-field').removeClass('kg-validation-error-field').css('border', '');
 
             // Show/Hide sections dynamically
-            if (status === 'screening' || status === 'interviewing') {
+            if (status === 'interviewing') {
                 $('#kg-scheduler-section').show();
             } else {
                 $('#kg-scheduler-section').hide();
+            }
+
+            if (status === 'processing') {
+                $('#kg-processing-section').show();
+            } else {
+                $('#kg-processing-section').hide();
             }
 
             if (status === 'deployed') {
@@ -635,7 +661,7 @@ function kg_application_status_box( $post ) {
             }
 
             // 1. Check progression lock
-            if (['interviewing', 'hired', 'deployed'].indexOf(originalStatus) !== -1 && status !== 'rejected') {
+            if (['interviewing', 'processing', 'hired', 'deployed'].indexOf(originalStatus) !== -1 && status !== 'rejected') {
                 if (statusOrder[status] < statusOrder[originalStatus]) {
                     isValid = false;
                     errorMsg = "Status cannot be reverted backward once it reaches the Interviewing stage.";
@@ -654,6 +680,17 @@ function kg_application_status_box( $post ) {
                 if (missing.length > 0) {
                     isValid = false;
                     errorMsg = "To set status to Interviewing, you must fill out: " + missing.join(', ') + ".";
+                }
+            }
+
+            // 2b. Validate processing fields
+            if (isValid && status === 'processing') {
+                var missingProc = [];
+                if (!$submissionDateInp.val()) { missingProc.push('Deadline of Submission of Requirements'); $submissionDateInp.addClass('kg-validation-error-field').css('border', '1px solid #ef4444'); }
+                if (!$targetDeployDateInp.val()) { missingProc.push('Target Date of Deployment'); $targetDeployDateInp.addClass('kg-validation-error-field').css('border', '1px solid #ef4444'); }
+                if (missingProc.length > 0) {
+                    isValid = false;
+                    errorMsg = "To set status to Processing, you must fill out: " + missingProc.join(', ') + ".";
                 }
             }
 
@@ -684,6 +721,8 @@ function kg_application_status_box( $post ) {
         $detailsInp.on('input change', doValidate);
         $interviewerSelect.on('change', doValidate);
         $deployDateInp.on('input change', doValidate);
+        $targetDeployDateInp.on('input change', doValidate);
+        $submissionDateInp.on('input change', doValidate);
 
         // Run validation initially
         doValidate();
@@ -716,13 +755,14 @@ function kg_save_application_status( $post_id ) {
     $status_order = array(
         'pooling'      => 0,
         'screening'    => 1,
-        'interviewing' => 2,
-        'hired'        => 3,
-        'deployed'     => 4
+        'processing'   => 2,
+        'interviewing' => 3,
+        'hired'        => 4,
+        'deployed'     => 5
     );
 
     // 1. Status progression lock (only from interviewing onwards, unless rejecting)
-    if ( in_array( $old_status, array( 'interviewing', 'hired', 'deployed' ), true ) && $new_status !== 'rejected' ) {
+    if ( in_array( $old_status, array( 'interviewing', 'processing', 'hired', 'deployed' ), true ) && $new_status !== 'rejected' ) {
         if ( isset( $status_order[$old_status] ) && isset( $status_order[$new_status] ) ) {
             if ( $status_order[$new_status] < $status_order[$old_status] ) {
                 $new_status = $old_status;
@@ -736,6 +776,16 @@ function kg_save_application_status( $post_id ) {
         if ( empty( $new_int_date ) || empty( $new_int_time ) || empty( $new_int_format ) || empty( $new_int_details ) || empty( $new_int_er_id ) ) {
             $new_status = ( $old_status !== 'interviewing' ) ? $old_status : 'screening';
             set_transient( 'kg_app_error_' . $post_id, 'To set status to Interviewing, you must fill out the Date, Time, Format, Meeting Link/Address, and Interviewer recruiter first.', 30 );
+        }
+    }
+
+    // 2b. Processing validation
+    $new_target_deploy_date = isset($_POST['kg_app_target_deploy_date']) ? sanitize_text_field($_POST['kg_app_target_deploy_date']) : '';
+    $new_submission_date = isset($_POST['kg_app_submission_date']) ? sanitize_text_field($_POST['kg_app_submission_date']) : '';
+    if ( $new_status === 'processing' ) {
+        if ( empty( $new_target_deploy_date ) || empty( $new_submission_date ) ) {
+            $new_status = ( $old_status !== 'processing' ) ? $old_status : 'interviewing';
+            set_transient( 'kg_app_error_' . $post_id, 'To set status to Processing, you must specify the Target Date of Deployment and Deadline of Submission of Requirements.', 30 );
         }
     }
 
@@ -758,6 +808,14 @@ function kg_save_application_status( $post_id ) {
 
     if ( isset( $_POST['kg_app_deploy_date'] ) ) {
         update_post_meta( $post_id, 'kg_app_deploy_date', sanitize_text_field( $_POST['kg_app_deploy_date'] ) );
+    }
+
+    if ( isset( $_POST['kg_app_target_deploy_date'] ) ) {
+        update_post_meta( $post_id, 'kg_app_target_deploy_date', sanitize_text_field( $_POST['kg_app_target_deploy_date'] ) );
+    }
+
+    if ( isset( $_POST['kg_app_submission_date'] ) ) {
+        update_post_meta( $post_id, 'kg_app_submission_date', sanitize_text_field( $_POST['kg_app_submission_date'] ) );
     }
 
     if ( current_user_can( 'manage_options' ) && isset( $_POST['kg_app_recruiter_id'] ) ) {
@@ -786,6 +844,13 @@ function kg_save_application_status( $post_id ) {
         // Trigger scheduler email notifier helper
         if ( function_exists( 'kg_send_interview_invitation_email' ) ) {
             kg_send_interview_invitation_email( $post_id );
+        }
+    }
+
+    // Trigger processing email if status changed to processing
+    if ( $new_status === 'processing' && $old_status !== 'processing' ) {
+        if ( function_exists( 'kg_send_processing_email' ) ) {
+            kg_send_processing_email( $post_id );
         }
     }
 
@@ -1374,7 +1439,8 @@ function kg_filter_applications_for_recruiters($query) {
     if (is_admin() && $query->is_main_query() && $pagenow === 'edit.php' && $query->get('post_type') === 'kg_application') {
         if (kg_is_current_user_recruiter()) {
             $rec_id = get_current_user_id();
-            $rec_location = get_user_meta($rec_id, 'kg_recruiter_location', true);
+            $rec_locations = (array) get_user_meta($rec_id, 'kg_recruiter_location', true);
+            $rec_locations = array_filter($rec_locations); // Remove empty values
 
             $meta_query = (array) $query->get('meta_query');
             
@@ -1390,10 +1456,11 @@ function kg_filter_applications_for_recruiters($query) {
                 ),
             );
 
-            if ( ! empty( $rec_location ) ) {
+            if ( ! empty( $rec_locations ) ) {
                 $scope_query[] = array(
-                    'key'   => 'kg_app_location',
-                    'value' => $rec_location,
+                    'key'     => 'kg_app_location',
+                    'value'   => $rec_locations,
+                    'compare' => 'IN',
                 );
             }
 
@@ -1425,7 +1492,8 @@ function kg_filter_jobs_for_recruiters($query) {
     if (is_admin() && $query->is_main_query() && $pagenow === 'edit.php' && $query->get('post_type') === 'jobs') {
         if (kg_is_current_user_recruiter()) {
             $rec_id = get_current_user_id();
-            $rec_location = get_user_meta($rec_id, 'kg_recruiter_location', true);
+            $rec_locations = (array) get_user_meta($rec_id, 'kg_recruiter_location', true);
+            $rec_locations = array_filter($rec_locations);
 
             // Recruiters see jobs they authored, OR jobs matching their location, OR jobs with no location (fallback)
             $meta_query = (array) $query->get('meta_query');
@@ -1435,10 +1503,11 @@ function kg_filter_jobs_for_recruiters($query) {
 
             // Job author check (can be checked via post_author or standard queries)
             // But since WP doesn't support OR between author and meta_query easily, we use meta or filter by location
-            if ( ! empty( $rec_location ) ) {
+            if ( ! empty( $rec_locations ) ) {
                 $scope_query[] = array(
-                    'key' => 'job_location',
-                    'value' => $rec_location,
+                    'key'     => 'job_location',
+                    'value'   => $rec_locations,
+                    'compare' => 'IN',
                 );
             }
 
@@ -1523,11 +1592,8 @@ function kg_bulk_assign_admin_notices() {
                     <input type="hidden" name="post_ids" value="<?php echo esc_attr( $ids ); ?>" />
                     <select name="kg_bulk_recruiter_id" style="vertical-align:middle; margin-right:10px;">
                         <option value="">— Unassign —</option>
-                        <?php foreach ( $recruiters as $rec ) : 
-                            $loc = get_user_meta( $rec->ID, 'kg_recruiter_location', true );
-                            $loc_label = $loc && isset( kg_get_locations()[$loc] ) ? ' (' . kg_get_locations()[$loc] . ')' : '';
-                        ?>
-                            <option value="<?php echo esc_attr( $rec->ID ); ?>"><?php echo esc_html( $rec->display_name . $loc_label ); ?></option>
+                        <?php foreach ( $recruiters as $rec ) : ?>
+                            <option value="<?php echo esc_attr( $rec->ID ); ?>"><?php echo esc_html( $rec->display_name ); ?></option>
                         <?php endforeach; ?>
                     </select>
                     <input type="submit" class="button button-primary" value="Confirm Assignment" />
@@ -1630,6 +1696,16 @@ function kg_email_templates_settings_render() {
             'fallback_btn_text' => 'Visit Kings Manpower',
             'fallback_btn_link' => '{site_url}',
             'tokens' => array( '{fname}', '{fullname}', '{roles}', '{site_url}' )
+        ),
+        'processing' => array(
+            'label' => 'Processing Status Email (Applicant)',
+            'desc'  => 'Sent to the applicant when their application is put into Processing.',
+            'fallback_subj' => 'Application Processing: Action Required — Kings Manpower',
+            'fallback_body' => "Dear {fname},\n\nCongratulations! Your application for <strong>{role}</strong> is now being processed.\n\nPlease note the following important dates and ensure all your requirements are submitted on or before the deadline below.\n\n{processing_details}",
+            'fallback_banner' => 'Submit all requirements on or before the deadline to avoid delays in your deployment.',
+            'fallback_btn_text' => 'Visit Kings Manpower',
+            'fallback_btn_link' => '{site_url}',
+            'tokens' => array( '{fname}', '{fullname}', '{role}', '{processing_details}', '{site_url}' )
         ),
         'interviewing_online' => array(
             'label' => 'Online Interview Email (Applicant)',
@@ -1815,6 +1891,7 @@ function kg_email_templates_settings_render() {
     $headings_map = array(
         'pooling'                    => 'You Are in Our Talent Pool!',
         'screening'                  => 'Application Status: Under Review',
+        'processing'                 => 'You\'re moving to Processing!',
         'interviewing_online'        => 'Your Online Interview Schedule',
         'interviewing_face_to_face'  => 'Your Face-to-Face Interview Schedule',
         'hired'                      => 'Application Status: Accepted',
@@ -1869,7 +1946,7 @@ function kg_email_templates_settings_render() {
                     ),
                     'apps' => array(
                         'label' => 'Applications Emails',
-                        'keys'  => array( 'pooling', 'screening', 'interviewing_online', 'interviewing_face_to_face', 'hired', 'deployed', 'rejected', 'recruiter_change', 'admin_submission' )
+                        'keys'  => array( 'pooling', 'screening', 'processing', 'interviewing_online', 'interviewing_face_to_face', 'hired', 'deployed', 'rejected', 'recruiter_change', 'admin_submission' )
                     ),
                     'quotes' => array(
                         'label' => 'Quote Emails',
@@ -2071,6 +2148,13 @@ function kg_get_parsed_email( $template_key, $replacements = array() ) {
             'fallback_subj' => 'Application Status: Screening — Kings Manpower',
             'fallback_body' => "Dear {fname},\n\nWe have received your application for the following position(s): <strong>{roles}</strong>. Your application is currently being screened by our recruiting team.\n\nOur team is carefully reviewing your credentials and experience. We will be in touch with you soon regarding the next steps in our hiring process.",
             'fallback_banner' => 'Your applicant profile is actively under review. No further action is required from you at this stage.',
+            'fallback_btn_text' => 'Visit Kings Manpower',
+            'fallback_btn_link' => '{site_url}'
+        ),
+        'processing' => array(
+            'fallback_subj' => 'Application Processing: Action Required — Kings Manpower',
+            'fallback_body' => "Dear {fname},\n\nCongratulations! Your application for <strong>{role}</strong> is now being processed.\n\nPlease note the following important dates and ensure all your requirements are submitted on or before the deadline below.\n\n{processing_details}",
+            'fallback_banner' => 'Submit all requirements on or before the deadline to avoid delays in your deployment.',
             'fallback_btn_text' => 'Visit Kings Manpower',
             'fallback_btn_link' => '{site_url}'
         ),

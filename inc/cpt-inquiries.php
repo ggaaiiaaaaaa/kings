@@ -29,7 +29,7 @@ function kg_register_inquiry_cpt() {
         'rewrite'       => false,
         'menu_icon'     => 'dashicons-email-alt',
         'menu_position' => 6,
-        'capability_type' => 'inquiry',
+        'capability_type' => array( 'inquiry', 'inquiries' ),
         'capabilities'  => array( 'create_posts' => 'do_not_allow' ),
         'map_meta_cap'  => true,
     ) );
@@ -47,6 +47,7 @@ function kg_save_inquiry_post( $data ) {
 
     update_post_meta( $post_id, 'kg_inq_name',    sanitize_text_field( $data['name'] ) );
     update_post_meta( $post_id, 'kg_inq_email',   sanitize_email( $data['email'] ) );
+    update_post_meta( $post_id, 'kg_inq_phone',   sanitize_text_field( $data['phone'] ) );
     update_post_meta( $post_id, 'kg_inq_subject', sanitize_text_field( $data['subject'] ) );
     update_post_meta( $post_id, 'kg_inq_message', sanitize_textarea_field( $data['message'] ) );
     update_post_meta( $post_id, 'kg_inq_status',  'new' );
@@ -104,6 +105,7 @@ add_action( 'add_meta_boxes', function() {
 function kg_inquiry_details_box( $post ) {
     $name    = get_post_meta( $post->ID, 'kg_inq_name',    true );
     $email   = get_post_meta( $post->ID, 'kg_inq_email',   true );
+    $phone   = get_post_meta( $post->ID, 'kg_inq_phone',   true );
     $subject = get_post_meta( $post->ID, 'kg_inq_subject', true );
     $message = get_post_meta( $post->ID, 'kg_inq_message', true );
     $status  = get_post_meta( $post->ID, 'kg_inq_status',  true ) ?: 'new';
@@ -115,6 +117,8 @@ function kg_inquiry_details_box( $post ) {
         <tr><td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Email</td>
             <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
                 <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a></td></tr>
+        <tr><td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Phone</td>
+            <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;"><?php echo esc_html($phone ?: '—'); ?></td></tr>
         <tr><td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Subject</td>
             <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;"><?php echo esc_html($subject); ?></td></tr>
         <tr><td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Message</td>
@@ -323,6 +327,7 @@ function kg_save_quote_lead_post( $data ) {
 
     update_post_meta( $post_id, 'kg_quote_name',   sanitize_text_field( $data['name'] ) );
     update_post_meta( $post_id, 'kg_quote_email',  sanitize_email( $data['email'] ) );
+    update_post_meta( $post_id, 'kg_quote_phone',  sanitize_text_field( $data['phone'] ) );
     update_post_meta( $post_id, 'kg_quote_total',  floatval( $data['total'] ) );
     update_post_meta( $post_id, 'kg_quote_roles',  wp_json_encode( $data['roles'] ) );
     update_post_meta( $post_id, 'kg_quote_status', 'pending' );
@@ -389,6 +394,7 @@ add_action( 'add_meta_boxes', function() {
 function kg_quote_lead_details_box( $post ) {
     $name   = get_post_meta( $post->ID, 'kg_quote_name',  true );
     $email  = get_post_meta( $post->ID, 'kg_quote_email', true );
+    $phone  = get_post_meta( $post->ID, 'kg_quote_phone', true );
     $total  = get_post_meta( $post->ID, 'kg_quote_total', true );
     $roles  = json_decode( get_post_meta($post->ID,'kg_quote_roles',true), true ) ?: array();
     ?>
@@ -398,6 +404,8 @@ function kg_quote_lead_details_box( $post ) {
         <tr><td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Email</td>
             <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
                 <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a></td></tr>
+        <tr><td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Phone</td>
+            <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;"><?php echo esc_html($phone ?: '—'); ?></td></tr>
         <tr><td style="padding:10px 8px;font-weight:600;">Est. Monthly Total</td>
             <td style="padding:10px 8px;font-size:18px;font-weight:700;color:#0A2540;">
                 $<?php echo number_format($total,0); ?>/mo</td></tr>

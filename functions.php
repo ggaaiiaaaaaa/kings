@@ -407,7 +407,7 @@ add_action('init', 'kg_create_default_menus');
  */
 function kg_filter_editable_roles($all_roles)
 {
-    $allowed_roles = array('administrator', 'editor', 'recruiter', 'hr');
+    $allowed_roles = array('administrator', 'editor', 'recruiter', 'hr', 'monitoring');
     foreach ($all_roles as $key => $role) {
         if (!in_array($key, $allowed_roles)) {
             unset($all_roles[$key]);
@@ -425,17 +425,17 @@ function kg_add_user_location_field($user)
     ?>
     <table class="form-table" id="kg-recruiter-location-row" style="display:none;">
         <tr>
-            <th><label for="kg_recruiter_location">Assigned Branch / Location</label></th>
+            <th><label>Assigned Branch / Location</label></th>
             <td>
-                <select name="kg_recruiter_location" id="kg_recruiter_location">
-                    <option value="">— Unassigned (All Locations) —</option>
+                <div style="height: 150px; overflow-y: auto; border: 1px solid #8c8f94; border-radius: 4px; padding: 10px; min-width: 300px; max-width: 400px; background: #fff;">
                     <?php foreach (kg_get_locations() as $key => $label): ?>
-                        <option value="<?php echo esc_attr($key); ?>">
+                        <label style="display:block; margin-bottom:5px;">
+                            <input type="checkbox" name="kg_recruiter_location[]" value="<?php echo esc_attr($key); ?>">
                             <?php echo esc_html($label); ?>
-                        </option>
+                        </label>
                     <?php endforeach; ?>
-                </select>
-                <p class="description">Recruiters will only be allowed to view and manage job posts and applicants matching this branch location.</p>
+                </div>
+                <p class="description">Check the boxes to assign multiple locations.<br>Recruiters will only be allowed to view and manage job posts and applicants matching these branch locations.</p>
             </td>
         </tr>
     </table>
@@ -452,12 +452,12 @@ function kg_save_user_location_field($user_id)
     if (!current_user_can('edit_user', $user_id)) {
         return false;
     }
-    if (isset($_POST['kg_recruiter_location'])) {
+    if (isset($_POST['kg_recruiter_location']) && is_array($_POST['kg_recruiter_location'])) {
         $allowed = array_keys(kg_get_locations());
-        $location = sanitize_text_field($_POST['kg_recruiter_location']);
-        if (in_array($location, $allowed, true) || $location === '') {
-            update_user_meta($user_id, 'kg_recruiter_location', $location);
-        }
+        $locations = array_intersect(array_map('sanitize_text_field', wp_unslash($_POST['kg_recruiter_location'])), $allowed);
+        update_user_meta($user_id, 'kg_recruiter_location', $locations);
+    } else {
+        update_user_meta($user_id, 'kg_recruiter_location', array());
     }
 }
 add_action('user_register', 'kg_save_user_location_field');
@@ -1731,13 +1731,15 @@ function kg_register_roles()
     if (function_exists('add_role')) {
         add_role('recruiter', 'Recruiter', $recruiter_caps);
         add_role('hr', 'HR', $hr_caps);
+        add_role('monitoring', 'Monitoring', array('read' => true));
     }
 
     if (function_exists('get_role')) {
         $roles = array(
             'recruiter' => $recruiter_caps,
             'hr' => $hr_caps,
-            'administrator' => $admin_caps
+            'administrator' => $admin_caps,
+            'monitoring' => array('read' => true)
         );
 
         foreach ($roles as $role_name => $caps) {
@@ -1749,6 +1751,35 @@ function kg_register_roles()
             }
         }
     }
+}
+
+function kg_restrict_monitoring_user() {
+    if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+        return;
+    }
+    $user = wp_get_current_user();
+    if ( in_array( 'monitoring', (array) $user->roles ) && count( $user->roles ) === 1 ) {
+        if ( isset( $_GET['page'] ) && $_GET['page'] === 'kg-kpi-dashboard' ) {
+            return;
+        }
+        wp_safe_redirect( admin_url( 'admin.php?page=kg-kpi-dashboard' ) );
+        exit;
+    }
+}
+if (function_exists('add_action')) {
+    add_action( 'admin_init', 'kg_restrict_monitoring_user' );
+}
+
+function kg_remove_menus_for_monitoring() {
+    $user = wp_get_current_user();
+    if ( in_array( 'monitoring', (array) $user->roles ) && count( $user->roles ) === 1 ) {
+        global $menu, $submenu;
+        $menu = array();
+        $submenu = array();
+    }
+}
+if (function_exists('add_action')) {
+    add_action( 'admin_menu', 'kg_remove_menus_for_monitoring', 999 );
 }
 
 function kg_is_current_user_recruiter()
@@ -1977,23 +2008,22 @@ function kg_add_recruiter_profile_location_field($user)
         return;
     }
 
-    $current_location = get_user_meta($user->ID, 'kg_recruiter_location', true);
+    $current_locations = (array) get_user_meta($user->ID, 'kg_recruiter_location', true);
     ?>
     <h3>Recruiter Settings</h3>
     <table class="form-table">
         <tr>
-            <th><label for="kg_recruiter_location">Assigned Branch / Location</label></th>
+            <th><label>Assigned Branch / Location</label></th>
             <td>
-                <select name="kg_recruiter_location" id="kg_recruiter_location">
-                    <option value="">— Unassigned (All Locations) —</option>
+                <div style="height: 150px; overflow-y: auto; border: 1px solid #8c8f94; border-radius: 4px; padding: 10px; min-width: 300px; max-width: 400px; background: #fff;">
                     <?php foreach (kg_get_locations() as $key => $label): ?>
-                        <option value="<?php echo esc_attr($key); ?>" <?php selected($current_location, $key); ?>>
+                        <label style="display:block; margin-bottom:5px;">
+                            <input type="checkbox" name="kg_recruiter_location[]" value="<?php echo esc_attr($key); ?>" <?php checked(in_array($key, $current_locations, true)); ?>>
                             <?php echo esc_html($label); ?>
-                        </option>
+                        </label>
                     <?php endforeach; ?>
-                </select>
-                <p class="description">Recruiters will only be allowed to view and manage job posts and applicants matching
-                    this branch location.</p>
+                </div>
+                <p class="description">Check the boxes to assign multiple locations.<br>Recruiters will only be allowed to view and manage job posts and applicants matching these branch locations.</p>
             </td>
         </tr>
     </table>
@@ -2008,12 +2038,12 @@ function kg_save_recruiter_profile_location_field($user_id)
         return;
     }
 
-    if (isset($_POST['kg_recruiter_location'])) {
+    if (isset($_POST['kg_recruiter_location']) && is_array($_POST['kg_recruiter_location'])) {
         $allowed = array_keys(kg_get_locations());
-        $location = sanitize_text_field($_POST['kg_recruiter_location']);
-        if (in_array($location, $allowed, true) || $location === '') {
-            update_user_meta($user_id, 'kg_recruiter_location', $location);
-        }
+        $locations = array_intersect(array_map('sanitize_text_field', wp_unslash($_POST['kg_recruiter_location'])), $allowed);
+        update_user_meta($user_id, 'kg_recruiter_location', $locations);
+    } else {
+        update_user_meta($user_id, 'kg_recruiter_location', array());
     }
 }
 add_action('personal_options_update', 'kg_save_recruiter_profile_location_field');

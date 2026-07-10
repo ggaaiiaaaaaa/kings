@@ -38,21 +38,27 @@ function kg_auto_assign_recruiter_location_to_job( $post_id, $post, $update ) {
         return;
     }
 
-    // Get the recruiter's location (slug)
+    // Get the recruiter's locations
     $rec_id = get_current_user_id();
-    $rec_location_slug = get_user_meta( $rec_id, 'kg_recruiter_location', true );
+    $rec_location_slugs = (array) get_user_meta( $rec_id, 'kg_recruiter_location', true );
 
-    if ( ! empty( $rec_location_slug ) ) {
-        $term = get_term_by( 'slug', $rec_location_slug, 'job_location_tax' );
+    $term_ids = array();
+    foreach ( $rec_location_slugs as $slug ) {
+        $term = get_term_by( 'slug', $slug, 'job_location_tax' );
         if ( $term && ! is_wp_error( $term ) ) {
-            // Temporarily unhook to avoid infinite loop
-            remove_action( 'save_post_jobs', 'kg_auto_assign_recruiter_location_to_job', 10 );
-            
-            wp_set_post_terms( $post_id, array( (int) $term->term_id ), 'job_location_tax' );
-            update_post_meta( $post_id, 'job_location', $term->name );
-            
-            add_action( 'save_post_jobs', 'kg_auto_assign_recruiter_location_to_job', 10, 3 );
+            $term_ids[] = (int) $term->term_id;
         }
+    }
+
+    if ( ! empty( $term_ids ) ) {
+        // Temporarily unhook to avoid infinite loop
+        remove_action( 'save_post_jobs', 'kg_auto_assign_recruiter_location_to_job', 10 );
+        
+        wp_set_post_terms( $post_id, $term_ids, 'job_location_tax' );
+        $first_term = get_term( $term_ids[0] );
+        update_post_meta( $post_id, 'job_location', $first_term->name );
+        
+        add_action( 'save_post_jobs', 'kg_auto_assign_recruiter_location_to_job', 10, 3 );
     }
 }
 add_action( 'save_post_jobs', 'kg_auto_assign_recruiter_location_to_job', 10, 3 );

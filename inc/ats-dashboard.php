@@ -43,12 +43,14 @@ function kg_ats_dashboard_widget_render()
     /* ── 1. Headcount Metrics ─────────────────────────── */
     $is_recruiter = kg_is_current_user_recruiter();
     
-    // Determine active location to filter by
-    $active_location = '';
+    // Determine active locations to filter by
+    $active_locations = array();
     if ($is_recruiter) {
-        $active_location = get_user_meta(get_current_user_id(), 'kg_recruiter_location', true);
+        $active_locations = (array) get_user_meta(get_current_user_id(), 'kg_recruiter_location', true);
+        $active_locations = array_filter($active_locations);
     } else {
-        $active_location = isset($_GET['kg_ats_loc']) ? sanitize_text_field($_GET['kg_ats_loc']) : '';
+        $loc = isset($_GET['kg_ats_loc']) ? sanitize_text_field($_GET['kg_ats_loc']) : '';
+        if ($loc) $active_locations[] = $loc;
     }
 
     $jobs_args = array(
@@ -58,12 +60,12 @@ function kg_ats_dashboard_widget_render()
         'fields' => 'ids',
     );
     
-    if ( ! empty($active_location) ) {
+    if ( ! empty($active_locations) ) {
         $jobs_args['tax_query'] = array(
             array(
                 'taxonomy' => 'job_location_tax',
                 'field'    => 'slug',
-                'terms'    => $active_location,
+                'terms'    => $active_locations,
             )
         );
     } elseif ($is_recruiter) {
@@ -113,7 +115,7 @@ function kg_ats_dashboard_widget_render()
                     array('key' => 'kg_app_status', 'value' => $stage)
                 ),
             );
-            if ($is_recruiter || ! empty($active_location)) {
+            if ($is_recruiter || ! empty($active_locations)) {
                 $q_args['meta_query'][] = array(
                     'key' => 'kg_app_role',
                     'value' => $location_job_titles,
@@ -349,7 +351,7 @@ function kg_ats_dashboard_widget_render()
             <select id="kg_dashboard_loc_filter" onchange="location.href = addOrUpdateUrlParam('kg_ats_loc', this.value);" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #cbd5e1; min-width: 150px;">
                 <option value="">— All Locations —</option>
                 <?php foreach ( $all_branches as $slug => $name ) : ?>
-                    <option value="<?php echo esc_attr($slug); ?>" <?php selected($active_location, $slug); ?>><?php echo esc_html($name); ?></option>
+                    <option value="<?php echo esc_attr($slug); ?>" <?php selected(in_array($slug, $active_locations), true); ?>><?php echo esc_html($name); ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

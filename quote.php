@@ -197,6 +197,17 @@ $quote_bg = kg_get_field('quote_bg', kg_asset('img/quote/hero-quote.JPG'));
                     <form onsubmit="event.preventDefault(); submitQuote();">
                         <input type="text" id="quoteName" placeholder="Your Full Name" required>
                         <input type="email" id="quoteEmail" placeholder="Your Work Email" required>
+                        <div style="display:flex; gap:0.5rem; margin-bottom: 1rem;">
+                            <select id="quoteCountryCode" style="width:110px; padding:0.8rem 0.5rem; border:1px solid var(--border-color); border-radius:8px; font-family:inherit; font-size:0.95rem; box-sizing:border-box; background:#fff; cursor:pointer; outline:none;">
+                                <option value="+63" selected>PH (+63)</option>
+                                <option value="+61">AU (+61)</option>
+                                <option value="+1">US (+1)</option>
+                                <option value="+44">UK (+44)</option>
+                                <option value="+971">AE (+971)</option>
+                                <option value="">Other</option>
+                            </select>
+                            <input type="tel" id="quotePhone" placeholder="912 345 6789" style="flex:1; padding:0.8rem 1rem; border:1px solid var(--border-color); border-radius:8px; font-family:inherit; font-size:0.95rem; box-sizing:border-box; outline:none;" required>
+                        </div>
                         <!-- honeypot -->
                         <input type="text" name="kg_hp_field" id="kg_hp_quote" style="display:none;" tabindex="-1"
                             autocomplete="off">
@@ -560,11 +571,14 @@ $quote_bg = kg_get_field('quote_bg', kg_asset('img/quote/hero-quote.JPG'));
     function submitQuote() {
         const name = document.getElementById('quoteName').value.trim();
         const email = document.getElementById('quoteEmail').value.trim();
+        const phoneCode = document.getElementById('quoteCountryCode').value;
+        const phoneNum = document.getElementById('quotePhone').value.trim();
+        const phone = (phoneCode + ' ' + phoneNum).trim();
         const errorBox = document.getElementById('quote-error');
         errorBox.style.display = 'none';
 
-        if (!name || !email) {
-            showQuoteError('Please fill in your name and email before submitting.');
+        if (!name || !email || !phoneNum) {
+            showQuoteError('Please fill in your name, email, and phone before submitting.');
             return;
         }
         if (cartData.length === 0) {
@@ -600,9 +614,10 @@ $quote_bg = kg_get_field('quote_bg', kg_asset('img/quote/hero-quote.JPG'));
 
         const body = new FormData();
         body.append('action', 'kg_submit_quote');
-        body.append('kg_nonce', KG_AJAX.quote_nonce);
+        body.append('kg_nonce', '<?php echo wp_create_nonce("kg_quote_nonce"); ?>');
         body.append('quote_name', name);
         body.append('quote_email', email);
+        body.append('quote_phone', phone);
         body.append('quote_roles', JSON.stringify(roles));
         body.append('quote_currency', currentCurrency);
         body.append('quote_discount_percent', '0');

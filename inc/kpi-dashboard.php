@@ -37,8 +37,15 @@ function kg_handle_kpi_csv_export() {
 
     foreach ($recruiters as $rec) {
         $rec_id = $rec->ID;
-        $loc_code = get_user_meta($rec_id, 'kg_recruiter_location', true);
-        $loc_label = $loc_code && isset(kg_get_locations()[$loc_code]) ? kg_get_locations()[$loc_code] : 'Unassigned';
+        $loc_codes = (array) get_user_meta($rec_id, 'kg_recruiter_location', true);
+        $loc_codes = array_filter($loc_codes);
+        $loc_labels = array();
+        foreach ($loc_codes as $code) {
+            if (isset(kg_get_locations()[$code])) {
+                $loc_labels[] = kg_get_locations()[$code];
+            }
+        }
+        $loc_label = !empty($loc_labels) ? implode(', ', $loc_labels) : 'Unassigned';
 
         // 1. Applications Received
         $apps_args = [
@@ -54,8 +61,8 @@ function kg_handle_kpi_csv_export() {
             'relation' => 'OR',
             ['key' => 'kg_app_recruiter_id', 'value' => $rec_id]
         ];
-        if (!empty($loc_code)) {
-            $meta_sub_query[] = ['key' => 'kg_app_location', 'value' => $loc_code];
+        if (!empty($loc_codes)) {
+            $meta_sub_query[] = ['key' => 'kg_app_location', 'value' => $loc_codes, 'compare' => 'IN'];
         } else {
             $meta_sub_query[] = ['key' => 'kg_app_location', 'value' => '', 'compare' => 'NOT EXISTS'];
             $meta_sub_query[] = ['key' => 'kg_app_location', 'value' => '', 'compare' => '='];
@@ -82,8 +89,8 @@ function kg_handle_kpi_csv_export() {
             'relation' => 'OR',
             ['key' => 'kg_app_recruiter_id', 'value' => $rec_id]
         ];
-        if (!empty($loc_code)) {
-            $hired_meta_sub[] = ['key' => 'kg_app_location', 'value' => $loc_code];
+        if (!empty($loc_codes)) {
+            $hired_meta_sub[] = ['key' => 'kg_app_location', 'value' => $loc_codes, 'compare' => 'IN'];
         } else {
             $hired_meta_sub[] = ['key' => 'kg_app_location', 'value' => '', 'compare' => 'NOT EXISTS'];
             $hired_meta_sub[] = ['key' => 'kg_app_location', 'value' => '', 'compare' => '='];
@@ -114,8 +121,8 @@ function kg_handle_kpi_csv_export() {
             'relation' => 'OR',
             ['key' => 'kg_app_recruiter_id', 'value' => $rec_id]
         ];
-        if (!empty($loc_code)) {
-            $dep_meta_sub[] = ['key' => 'kg_app_location', 'value' => $loc_code];
+        if (!empty($loc_codes)) {
+            $dep_meta_sub[] = ['key' => 'kg_app_location', 'value' => $loc_codes, 'compare' => 'IN'];
         } else {
             $dep_meta_sub[] = ['key' => 'kg_app_location', 'value' => '', 'compare' => 'NOT EXISTS'];
             $dep_meta_sub[] = ['key' => 'kg_app_location', 'value' => '', 'compare' => '='];
@@ -148,6 +155,178 @@ function kg_handle_kpi_csv_export() {
 }
 add_action('admin_init', 'kg_handle_kpi_csv_export');
 
+function kg_handle_apps_csv_export() {
+    if ( ! isset( $_GET['kg_export_apps_csv'] ) ) {
+        return;
+    }
+    $user = wp_get_current_user();
+    $is_monitoring = in_array('monitoring', (array) $user->roles);
+    if ( ! current_user_can('manage_options') && !kg_is_current_user_recruiter() && !$is_monitoring ) {
+        wp_die(__('You do not have sufficient permissions to perform this action.', 'kingsgroup'));
+    }
+
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="kings-applications-' . date('Y-m-d') . '.csv"');
+
+    $output = fopen('php://output', 'w');
+    fputcsv($output, array('Applicant Name', 'Email', 'Role', 'Status', 'Recruiter', 'Submission Date'));
+
+    $app_search = isset($_GET['app_search']) ? sanitize_text_field($_GET['app_search']) : '';
+    $app_role = isset($_GET['app_role']) ? sanitize_text_field($_GET['app_role']) : '';
+    $app_status = isset($_GET['app_status']) ? sanitize_text_field($_GET['app_status']) : '';
+    $app_recruiter = isset($_GET['app_recruiter']) ? intval($_GET['app_recruiter']) : '';
+
+    $apps_args = array(
+        'post_type' => 'kg_application',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'meta_query' => array('relation' => 'AND')
+    );
+
+    if ($app_search) {
+        $apps_args['s'] = $app_search;
+    }
+    if ($app_role) {
+        $apps_args['meta_query'][] = array(
+            'key' => 'kg_app_role',
+            'value' => $app_role,
+            'compare' => 'LIKE'
+        );
+    }
+    if ($app_status) {
+        $apps_args['meta_query'][] = array(
+            'key' => 'kg_app_status',
+            'value' => $app_status,
+            'compare' => '='
+        );
+    }
+    if ($app_recruiter) {
+        $apps_args['meta_query'][] = array(
+            'key' => 'kg_app_recruiter_id',
+            'value' => $app_recruiter,
+            'compare' => '='
+        );
+    }
+    $apps_query = new WP_Query($apps_args);
+    
+    if ($apps_query->have_posts()) {
+        while ($apps_query->have_posts()) {
+            $apps_query->the_post();
+            $app_id = get_the_ID();
+            $email = get_post_meta($app_id, 'kg_app_email', true);
+            $role = get_post_meta($app_id, 'kg_app_role', true);
+            $status_code = get_post_meta($app_id, 'kg_app_status', true);
+            $statuses = kg_ats_statuses();
+            $status_name = isset($statuses[$status_code]) ? $statuses[$status_code] : ucfirst($status_code);
+            
+            $recruiter_id = get_post_meta($app_id, 'kg_app_recruiter_id', true);
+            $recruiter_name = 'Unassigned';
+            if ($recruiter_id) {
+                $rec_user = get_userdata($recruiter_id);
+                if ($rec_user) $recruiter_name = $rec_user->display_name;
+            }
+            
+            fputcsv($output, array(get_the_title(), $email, $role, $status_name, $recruiter_name, get_the_date('M j, Y')));
+        }
+    }
+    wp_reset_postdata();
+    fclose($output);
+    exit;
+}
+add_action('admin_init', 'kg_handle_apps_csv_export');
+
+function kg_handle_inq_csv_export() {
+    if ( ! isset( $_GET['kg_export_inq_csv'] ) ) {
+        return;
+    }
+    $user = wp_get_current_user();
+    $is_monitoring = in_array('monitoring', (array) $user->roles);
+    if ( ! current_user_can('manage_options') && !kg_is_current_user_recruiter() && !$is_monitoring ) {
+        wp_die(__('You do not have sufficient permissions to perform this action.', 'kingsgroup'));
+    }
+
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="kings-inquiries-' . date('Y-m-d') . '.csv"');
+
+    $output = fopen('php://output', 'w');
+    fputcsv($output, array('Name', 'Email', 'Phone', 'Status', 'Submission Date'));
+
+    $inq_args = array(
+        'post_type' => 'kg_inquiry',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'orderby' => 'date',
+        'order' => 'DESC'
+    );
+    $inq_query = new WP_Query($inq_args);
+    
+    if ($inq_query->have_posts()) {
+        while ($inq_query->have_posts()) {
+            $inq_query->the_post();
+            $inq_id = get_the_ID();
+            $email = get_post_meta($inq_id, 'kg_inq_email', true);
+            $status_code = get_post_meta($inq_id, 'kg_inq_status', true);
+            $status_name = ucfirst(str_replace('_', ' ', $status_code));
+            if (!$status_name) $status_name = 'New';
+            
+            $phone = get_post_meta($inq_id, 'kg_inq_phone', true) ?: '—';
+            
+            fputcsv($output, array(get_the_title(), $email, $phone, $status_name, get_the_date('M j, Y')));
+        }
+    }
+    wp_reset_postdata();
+    fclose($output);
+    exit;
+}
+add_action('admin_init', 'kg_handle_inq_csv_export');
+
+function kg_handle_quote_csv_export() {
+    if ( ! isset( $_GET['kg_export_quote_csv'] ) ) {
+        return;
+    }
+    $user = wp_get_current_user();
+    $is_monitoring = in_array('monitoring', (array) $user->roles);
+    if ( ! current_user_can('manage_options') && !kg_is_current_user_recruiter() && !$is_monitoring ) {
+        wp_die(__('You do not have sufficient permissions to perform this action.', 'kingsgroup'));
+    }
+
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="kings-quote-requests-' . date('Y-m-d') . '.csv"');
+
+    $output = fopen('php://output', 'w');
+    fputcsv($output, array('Client', 'Email', 'Phone', 'Status', 'Submission Date'));
+
+    $quote_args = array(
+        'post_type' => 'kg_quote_lead',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'orderby' => 'date',
+        'order' => 'DESC'
+    );
+    $quote_query = new WP_Query($quote_args);
+    
+    if ($quote_query->have_posts()) {
+        while ($quote_query->have_posts()) {
+            $quote_query->the_post();
+            $quote_id = get_the_ID();
+            $email = get_post_meta($quote_id, 'kg_quote_email', true);
+            $status_code = get_post_meta($quote_id, 'kg_quote_status', true);
+            $status_name = ucfirst(str_replace('_', ' ', $status_code));
+            if (!$status_name) $status_name = 'New';
+            
+            $phone = get_post_meta($quote_id, 'kg_quote_phone', true) ?: '—';
+            
+            fputcsv($output, array(get_the_title(), $email, $phone, $status_name, get_the_date('M j, Y')));
+        }
+    }
+    wp_reset_postdata();
+    fclose($output);
+    exit;
+}
+add_action('admin_init', 'kg_handle_quote_csv_export');
+
 add_action('admin_menu', 'kg_register_kpi_dashboard_page');
 
 function kg_register_kpi_dashboard_page()
@@ -155,7 +334,7 @@ function kg_register_kpi_dashboard_page()
     add_menu_page(
         'KPI Dashboard',
         'KPI Dashboard',
-        'edit_posts',
+        'read',
         'kg-kpi-dashboard',
         'kg_render_kpi_dashboard_page',
         'dashicons-chart-bar',
@@ -165,7 +344,9 @@ function kg_register_kpi_dashboard_page()
 
 function kg_render_kpi_dashboard_page()
 {
-    if (!current_user_can('manage_options') && !kg_is_current_user_recruiter()) {
+    $user = wp_get_current_user();
+    $is_monitoring = in_array('monitoring', (array) $user->roles);
+    if (!current_user_can('manage_options') && !kg_is_current_user_recruiter() && !$is_monitoring) {
         wp_die(__('You do not have sufficient permissions to access this page.', 'kingsgroup'));
     }
 
@@ -195,9 +376,10 @@ function kg_render_kpi_dashboard_page()
     $is_filtered = ($is_recruiter || $filter_recruiter_id > 0);
 
     // Retrieve the target recruiter's location
-    $recruiter_location = '';
+    $recruiter_locations = array();
     if ($is_filtered) {
-        $recruiter_location = get_user_meta($filter_recruiter_id, 'kg_recruiter_location', true);
+        $recruiter_locations = (array) get_user_meta($filter_recruiter_id, 'kg_recruiter_location', true);
+        $recruiter_locations = array_filter($recruiter_locations);
     }
 
     /* ── 1. RECRUITMENT METRICS ── */
@@ -221,10 +403,11 @@ function kg_render_kpi_dashboard_page()
                 'value' => $filter_recruiter_id,
             ]
         ];
-        if (!empty($recruiter_location)) {
+        if (!empty($recruiter_locations)) {
             $meta_sub_query[] = [
                 'key' => 'kg_app_location',
-                'value' => $recruiter_location,
+                'value' => $recruiter_locations,
+                'compare' => 'IN'
             ];
         } else {
             // Recruiter has no assigned location: fallback to unassigned
@@ -272,10 +455,11 @@ function kg_render_kpi_dashboard_page()
                 'value' => $filter_recruiter_id,
             ]
         ];
-        if (!empty($recruiter_location)) {
+        if (!empty($recruiter_locations)) {
             $meta_sub_query[] = [
                 'key' => 'kg_app_location',
-                'value' => $recruiter_location,
+                'value' => $recruiter_locations,
+                'compare' => 'IN'
             ];
         } else {
             $meta_sub_query[] = [
@@ -328,10 +512,11 @@ function kg_render_kpi_dashboard_page()
                 'value' => $filter_recruiter_id,
             ]
         ];
-        if (!empty($recruiter_location)) {
+        if (!empty($recruiter_locations)) {
             $meta_sub_query[] = [
                 'key' => 'kg_app_location',
-                'value' => $recruiter_location,
+                'value' => $recruiter_locations,
+                'compare' => 'IN'
             ];
         } else {
             $meta_sub_query[] = [
@@ -373,13 +558,15 @@ function kg_render_kpi_dashboard_page()
     ];
     if ($is_filtered) {
         $jobs_args['meta_query'] = [
-            'relation' => 'OR',
-            [
-                'key' => 'job_location',
-                'value' => $recruiter_location,
-            ]
+            'relation' => 'OR'
         ];
-        if (empty($recruiter_location)) {
+        if (!empty($recruiter_locations)) {
+            $jobs_args['meta_query'][] = [
+                'key' => 'job_location',
+                'value' => $recruiter_locations,
+                'compare' => 'IN'
+            ];
+        } else {
             $jobs_args['meta_query'][] = [
                 'key' => 'job_location',
                 'value' => '',
@@ -418,10 +605,11 @@ function kg_render_kpi_dashboard_page()
                 'value' => $filter_recruiter_id,
             ]
         ];
-        if (!empty($recruiter_location)) {
+        if (!empty($recruiter_locations)) {
             $meta_sub_query[] = [
                 'key' => 'kg_app_location',
-                'value' => $recruiter_location,
+                'value' => $recruiter_locations,
+                'compare' => 'IN'
             ];
         } else {
             $meta_sub_query[] = [
@@ -496,15 +684,12 @@ function kg_render_kpi_dashboard_page()
                 
                 <?php if ($is_admin): ?>
                     <?php $recruiters = get_users(array('role' => 'recruiter')); ?>
-                    <label for="kpi_recruiter">Recruiter:</label>
+                    <label for="kpi_recruiter" id="kpi_recruiter_label">Recruiter:</label>
                     <select name="kpi_recruiter" id="kpi_recruiter" onchange="this.form.submit()">
                         <option value="0">All Recruiters</option>
-                        <?php foreach ($recruiters as $rec): 
-                            $loc = get_user_meta($rec->ID, 'kg_recruiter_location', true);
-                            $loc_label = $loc && isset(kg_get_locations()[$loc]) ? ' (' . kg_get_locations()[$loc] . ')' : '';
-                        ?>
+                        <?php foreach ($recruiters as $rec): ?>
                             <option value="<?php echo esc_attr($rec->ID); ?>" <?php selected($selected_recruiter_id, $rec->ID); ?>>
-                                <?php echo esc_html($rec->display_name . $loc_label); ?>
+                                <?php echo esc_html($rec->display_name); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -712,9 +897,66 @@ function kg_render_kpi_dashboard_page()
                 border-radius: 4px;
                 transition: width 0.6s ease-out;
             }
+
+            /* Tabs */
+            .kg-kpi-tabs {
+                display: flex;
+                border-bottom: 2px solid #e2e8f0;
+                margin-bottom: 24px;
+                gap: 24px;
+            }
+            .kg-kpi-tab {
+                padding: 12px 16px;
+                font-weight: 600;
+                font-size: 15px;
+                color: #64748b;
+                cursor: pointer;
+                border-bottom: 3px solid transparent;
+                margin-bottom: -2px;
+                transition: all 0.2s;
+            }
+            .kg-kpi-tab:hover {
+                color: #0a2540;
+            }
+            .kg-kpi-tab.active {
+                color: #0a2540;
+                border-bottom-color: #ffd166;
+            }
+            .kg-kpi-tab-content {
+                display: none;
+            }
+            .kg-kpi-tab-content.active {
+                display: block;
+            }
+            
+            /* Table Styles */
+            .kg-kpi-table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.05); margin-bottom:24px; }
+            .kg-kpi-table th { background:#f8fafc; padding:12px 16px; text-align:left; font-size:13px; font-weight:600; color:#475569; border-bottom:1px solid #e2e8f0; }
+            .kg-kpi-table td { padding:12px 16px; font-size:14px; color:#1e293b; border-bottom:1px solid #f1f5f9; vertical-align:middle; }
+            .kg-kpi-table tr:last-child td { border-bottom:none; }
+            .kg-kpi-table-pagination { padding:16px; background:#fff; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; }
+            
+            /* Modal Styles */
+            .kg-modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); z-index:99999; justify-content:center; align-items:center; }
+            .kg-modal { background:#fff; border-radius:12px; width:90%; max-width:600px; max-height:90vh; overflow-y:auto; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
+            .kg-modal-header { padding:20px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc; position:sticky; top:0; }
+            .kg-modal-title { margin:0; font-size:18px; font-weight:700; color:#0f172a; }
+            .kg-modal-close { background:none; border:none; font-size:24px; cursor:pointer; color:#64748b; line-height:1; padding:0; }
+            .kg-modal-body { padding:20px; }
+            .kg-modal-field { margin-bottom:16px; }
+            .kg-modal-field label { display:block; font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; margin-bottom:4px; }
+            .kg-modal-field div { font-size:15px; color:#0f172a; background:#f8fafc; padding:12px; border-radius:6px; border:1px solid #e2e8f0; word-break:break-word; }
         </style>
 
-        <div class="kg-kpi-grid">
+        <div class="kg-kpi-tabs">
+            <div class="kg-kpi-tab active" data-tab="tab-overview">Overview</div>
+            <div class="kg-kpi-tab" data-tab="tab-applications">Applications</div>
+            <div class="kg-kpi-tab" data-tab="tab-inquiries">Inquiries</div>
+            <div class="kg-kpi-tab" data-tab="tab-quotes">Quote Requests</div>
+        </div>
+
+        <div id="tab-overview" class="kg-kpi-tab-content active">
+            <div class="kg-kpi-grid">
             <!-- Recruitment & Hiring -->
             <div class="kg-kpi-section-card">
                 <h3 class="kg-kpi-section-title">
@@ -966,8 +1208,63 @@ function kg_render_kpi_dashboard_page()
                     cutout: '65%'
                 }
             });
+            
+            // Tab Switching Logic
+            const tabs = document.querySelectorAll('.kg-kpi-tab');
+            const contents = document.querySelectorAll('.kg-kpi-tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    contents.forEach(c => c.classList.remove('active'));
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    window.location.hash = tabId;
+
+                    // Hide Recruiter filter if not on Overview
+                    const recLabel = document.getElementById('kpi_recruiter_label');
+                    const recSelect = document.getElementById('kpi_recruiter');
+                    if (recLabel && recSelect) {
+                        if (tabId === 'tab-overview') {
+                            recLabel.style.display = '';
+                            recSelect.style.display = '';
+                        } else {
+                            recLabel.style.display = 'none';
+                            recSelect.style.display = 'none';
+                        }
+                    }
+                });
+            });
+            
+            // Check hash on load
+            if(window.location.hash) {
+                const tabId = window.location.hash.substring(1);
+                const targetTab = document.querySelector('.kg-kpi-tab[data-tab="'+tabId+'"]');
+                if (targetTab) targetTab.click();
+            }
+            
+            // Modal Logic
+            window.kgOpenModal = function(id) {
+                document.getElementById(id).style.display = 'flex';
+            };
+            window.kgCloseModal = function(id) {
+                document.getElementById(id).style.display = 'none';
+            };
         });
         </script>
+        
+        </div> <!-- End tab-overview -->
+        
+        <?php
+        // Load external files for the tables
+        if ( file_exists( plugin_dir_path(__FILE__) . 'kpi-dashboard-tables.php' ) ) {
+            require_once plugin_dir_path(__FILE__) . 'kpi-dashboard-tables.php';
+        }
+        ?>
     </div>
     <?php
 }

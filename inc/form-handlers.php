@@ -110,6 +110,22 @@ function kg_send_mail( $to, $subject, $body, $headers = array(), $attachments = 
     return true;
 }
 
+/**
+ * Returns an array of emails for all users with the 'hr' role.
+ */
+function kg_get_hr_emails() {
+    $hr_emails = array();
+    if ( function_exists( 'get_users' ) ) {
+        $hr_users = get_users( array( 'role' => 'hr' ) );
+        foreach ( $hr_users as $user ) {
+            if ( is_email( $user->user_email ) ) {
+                $hr_emails[] = $user->user_email;
+            }
+        }
+    }
+    return $hr_emails;
+}
+
 /* ─────────────────────────────────────────────
    HANDLER 1: Contact Form
    Action: kg_submit_contact
@@ -122,6 +138,7 @@ function kg_handle_contact() {
 
     $name    = sanitize_text_field(     $_POST['contact_name']    ?? '' );
     $email   = sanitize_email(          $_POST['contact_email']   ?? '' );
+    $phone   = sanitize_text_field(     $_POST['contact_phone']   ?? '' );
     $subject = sanitize_text_field(     $_POST['contact_subject'] ?? 'General Inquiry' );
     $message = sanitize_textarea_field( $_POST['contact_message'] ?? '' );
 
@@ -134,6 +151,7 @@ function kg_handle_contact() {
     $contact_details = '<table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;margin-bottom:24px;">'
         . kg_email_row( 'Name',    $name )
         . kg_email_row( 'Email',   '<a href="mailto:' . esc_attr($email) . '" style="color:#0A2540;">' . esc_html($email) . '</a>' )
+        . kg_email_row( 'Phone',   $phone ?: '—' )
         . kg_email_row( 'Subject', $subject )
         . kg_email_row( 'Message', nl2br( esc_html($message) ) )
         . '</table>';
@@ -163,6 +181,7 @@ function kg_handle_contact() {
         kg_save_inquiry_post( array(
             'name'    => $name,
             'email'   => $email,
+            'phone'   => $phone,
             'subject' => $subject,
             'message' => $message,
         ) );
@@ -171,7 +190,13 @@ function kg_handle_contact() {
     /* — Respond to browser immediately, send emails after — */
     kg_flush_response( array( 'message' => 'Your message has been sent. We\'ll be in touch soon!' ) );
 
-    kg_send_mail( $to_email, $admin_subject, kg_email_wrap( $admin_subject, $admin_body ), $headers );
+    $recipients = array($to_email);
+    if ( function_exists('kg_get_hr_emails') ) {
+        $recipients = array_merge($recipients, kg_get_hr_emails());
+        $recipients = array_unique($recipients);
+    }
+
+    kg_send_mail( $recipients, $admin_subject, kg_email_wrap( $admin_subject, $admin_body ), $headers );
 
     /* — Auto-reply to visitor (Client Acknowledgment) — */
     $parsed_client = kg_get_parsed_email( 'contact_client', array(
@@ -415,6 +440,10 @@ function kg_handle_application() {
     if ( ! empty( $recruiter_email ) && $recruiter_email !== $to_email ) {
         $mail_recipient[] = $recruiter_email;
     }
+    if ( function_exists('kg_get_hr_emails') ) {
+        $mail_recipient = array_merge($mail_recipient, kg_get_hr_emails());
+        $mail_recipient = array_unique($mail_recipient);
+    }
     $edit_url = $app_post_id ? get_edit_post_link( $app_post_id ) : '';
 
     $submission_details = '<div style="border:1px solid #e8ecf0;border-radius:8px;padding:20px;margin-bottom:24px;background:#ffffff;">'
@@ -481,6 +510,7 @@ function kg_handle_quote() {
 
     $name  = sanitize_text_field( $_POST['quote_name']  ?? '' );
     $email = sanitize_email(      $_POST['quote_email'] ?? '' );
+    $phone = sanitize_text_field( $_POST['quote_phone'] ?? '' );
     $roles = json_decode( stripslashes( $_POST['quote_roles'] ?? '[]' ), true );
 
     $currency   = sanitize_text_field( $_POST['quote_currency'] ?? 'USD' );
@@ -568,6 +598,7 @@ function kg_handle_quote() {
     $parsed_admin = kg_get_parsed_email( 'quote_admin', array(
         '{client_name}'  => $name,
         '{client_email}' => $email,
+        '{client_phone}' => $phone ?: '—',
         '{quote_total}'  => $quote_total_display,
         '{quote_details}'=> $roles_table,
     ) );
@@ -591,6 +622,7 @@ function kg_handle_quote() {
         kg_save_quote_lead_post( array(
             'name'  => $name,
             'email' => $email,
+            'phone' => $phone,
             'total' => $final_total_val, // Save final calculated USD base total or converted total
             'roles' => $roles,
         ) );
@@ -602,8 +634,14 @@ function kg_handle_quote() {
         'total'   => $quote_total_display,
     ) );
 
+    $recipients = array($to_email);
+    if ( function_exists('kg_get_hr_emails') ) {
+        $recipients = array_merge($recipients, kg_get_hr_emails());
+        $recipients = array_unique($recipients);
+    }
+
     kg_send_mail(
-        $to_email,
+        $recipients,
         $admin_subject,
         kg_email_wrap( 'Service Proposal Request', $admin_body ),
         $headers
