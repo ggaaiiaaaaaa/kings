@@ -12,6 +12,7 @@ $export_inq_url = add_query_arg(array('kg_export_inq_csv' => '1', 'kpi_month' =>
 $export_quote_url = add_query_arg(array('kg_export_quote_csv' => '1', 'kpi_month' => $selected_year_month), admin_url('admin.php?page=kg-kpi-dashboard'));
 
 // --- APPLICATIONS TAB FILTERS ---
+if ( ! kg_is_current_user_recruiter() ) :
 $app_search = isset($_GET['app_search']) ? sanitize_text_field($_GET['app_search']) : '';
 $app_role = isset($_GET['app_role']) ? sanitize_text_field($_GET['app_role']) : '';
 $app_status = isset($_GET['app_status']) ? sanitize_text_field($_GET['app_status']) : '';
@@ -115,7 +116,7 @@ $apps_query = new WP_Query($apps_args);
             <select name="app_recruiter" style="padding:6px 28px 6px 12px; border:1px solid #cbd5e1; border-radius:4px; min-width:140px; max-width:180px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">
                 <option value="">All Recruiters</option>
                 <?php 
-                $recruiters = get_users(array('role' => 'recruiter'));
+                $recruiters = get_users(array('role__in' => array('recruiter')));
                 foreach($recruiters as $rec): 
                 ?>
                     <option value="<?php echo esc_attr($rec->ID); ?>" <?php selected($app_recruiter, $rec->ID); ?>><?php echo esc_html($rec->display_name); ?></option>
@@ -216,9 +217,12 @@ $apps_query = new WP_Query($apps_args);
     </div>
     <?php endif; wp_reset_postdata(); ?>
 </div>
+<?php endif; ?>
 
 <?php
 // --- INQUIRIES TAB ---
+if ( ! kg_is_current_user_recruiter() ) :
+
 $inq_args = array(
     'post_type' => 'kg_inquiry',
     'post_status' => 'publish',
@@ -302,9 +306,12 @@ $inq_query = new WP_Query($inq_args);
     </div>
     <?php endif; wp_reset_postdata(); ?>
 </div>
+<?php endif; ?>
 
 <?php
 // --- QUOTES TAB ---
+if ( ! kg_is_current_user_recruiter() ) :
+
 $quote_args = array(
     'post_type' => 'kg_quote_lead',
     'post_status' => 'publish',
@@ -399,3 +406,85 @@ $quote_query = new WP_Query($quote_args);
     </div>
     <?php endif; wp_reset_postdata(); ?>
 </div>
+<?php endif; ?>
+
+<?php
+// --- AUDIT LOGS TAB ---
+if ( ! kg_is_current_user_recruiter() ) :
+
+    global $wpdb;
+    $audit_table = $wpdb->prefix . 'kg_audit_logs';
+
+    $audit_paged = isset($_GET['audit_paged']) ? max(1, intval($_GET['audit_paged'])) : 1;
+    $audit_per_page = 20;
+    $audit_offset = ($audit_paged - 1) * $audit_per_page;
+
+    // We can also filter by month if needed, but for now we'll just show all logs ordered by time
+    // Optionally filter by selected month
+    $audit_where = "WHERE timestamp LIKE %s";
+    $audit_month_like = $selected_year_month . '%';
+    
+    // Check if table exists before querying to prevent fatal error on first load before dbDelta fires correctly
+    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$audit_table'") === $audit_table;
+    
+    if ($table_exists) {
+        $total_audits = $wpdb->get_var($wpdb->prepare("SELECT COUNT(id) FROM {$audit_table} " . $audit_where, $audit_month_like));
+        $audit_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$audit_table} " . $audit_where . " ORDER BY timestamp DESC LIMIT %d OFFSET %d", $audit_month_like, $audit_per_page, $audit_offset));
+        $total_audit_pages = ceil($total_audits / $audit_per_page);
+    } else {
+        $audit_results = array();
+        $total_audit_pages = 0;
+    }
+?>
+<div id="tab-audit-logs" class="kg-kpi-tab-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h2 style="margin:0; font-size:20px; font-weight:700;">Global Audit Logs (<?php echo esc_html(date('F Y', strtotime($selected_year_month . '-01'))); ?>)</h2>
+    </div>
+
+    <table class="kg-kpi-table">
+        <thead>
+            <tr>
+                <th>Date & Time</th>
+                <th>Action</th>
+                <th>Applicant</th>
+                <th>Actor (User)</th>
+                <th>Assigned To</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (!empty($audit_results)): foreach ($audit_results as $log): 
+                $app_title = get_the_title($log->post_id) ?: 'Unknown Applicant';
+            ?>
+            <tr>
+                <td style="white-space:nowrap;"><?php echo date('M j, Y g:i A', strtotime($log->timestamp)); ?></td>
+                <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:bold;"><?php echo esc_html($log->action); ?></span></td>
+                <td>
+                    <a href="<?php echo get_edit_post_link($log->post_id); ?>" target="_blank" style="text-decoration:none;font-weight:600;">
+                        <?php echo esc_html($app_title); ?>
+                    </a>
+                </td>
+                <td><?php echo esc_html($log->actor); ?></td>
+                <td><?php echo esc_html($log->assignee); ?></td>
+            </tr>
+            <?php endforeach; else: ?>
+            <tr><td colspan="5" style="text-align:center; padding:24px; color:#64748b;">No routing activity found for this period.</td></tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+    
+    <?php if ($total_audit_pages > 1): ?>
+    <div class="kg-kpi-table-pagination">
+        <div>Page <?php echo $audit_paged; ?> of <?php echo $total_audit_pages; ?></div>
+        <div>
+            <?php if ($audit_paged > 1): ?>
+                <a href="<?php echo esc_url(add_query_arg('audit_paged', $audit_paged - 1)); ?>#tab-audit-logs" class="button">&laquo; Prev</a>
+            <?php endif; ?>
+            <?php if ($audit_paged < $total_audit_pages): ?>
+                <a href="<?php echo esc_url(add_query_arg('audit_paged', $audit_paged + 1)); ?>#tab-audit-logs" class="button">Next &raquo;</a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+</div>
+<?php endif; ?>
+

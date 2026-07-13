@@ -237,6 +237,46 @@ add_filter( 'manage_edit-kg_application_sortable_columns', 'kg_application_sorta
    Meta boxes on edit screen
 ───────────────────────────────────────────── */
 
+function kg_log_application_audit_trail($post_id, $action, $assignee_id = null) {
+    $current_user = wp_get_current_user();
+    $actor_name = $current_user->exists() ? $current_user->display_name : 'System';
+    
+    $assignee_name = '';
+    if ($assignee_id) {
+        $assignee = get_userdata($assignee_id);
+        $assignee_name = $assignee ? $assignee->display_name : 'Unknown';
+    }
+
+    $log_entry = array(
+        'timestamp' => current_time('timestamp'),
+        'action'    => $action,
+        'actor'     => $actor_name,
+        'assignee'  => $assignee_name
+    );
+
+    $audit_trail = get_post_meta($post_id, 'kg_app_audit_trail', true);
+    if (!is_array($audit_trail)) {
+        $audit_trail = array();
+    }
+    
+    array_unshift($audit_trail, $log_entry);
+    update_post_meta($post_id, 'kg_app_audit_trail', $audit_trail);
+
+    // Also write to global DB table
+    global $wpdb;
+    $wpdb->insert(
+        $wpdb->prefix . 'kg_audit_logs',
+        array(
+            'post_id'   => $post_id,
+            'timestamp' => current_time('mysql'),
+            'action'    => $action,
+            'actor'     => $actor_name,
+            'assignee'  => $assignee_name
+        ),
+        array('%d', '%s', '%s', '%s', '%s')
+    );
+}
+
 function kg_application_meta_boxes() {
     add_meta_box(
         'kg_app_details',
@@ -254,8 +294,36 @@ function kg_application_meta_boxes() {
         'side',
         'high'
     );
+    add_meta_box(
+        'kg_app_audit_trail_box',
+        'Applicant Audit Trail',
+        'kg_application_audit_trail_box',
+        'kg_application',
+        'normal',
+        'low'
+    );
 }
 add_action( 'add_meta_boxes', 'kg_application_meta_boxes' );
+
+function kg_application_audit_trail_box($post) {
+    $audit_trail = get_post_meta($post->ID, 'kg_app_audit_trail', true);
+    if (empty($audit_trail) || !is_array($audit_trail)) {
+        echo '<p>No history available.</p>';
+        return;
+    }
+    echo '<table class="wp-list-table widefat fixed striped">';
+    echo '<thead><tr><th>Date/Time</th><th>Action</th><th>Actor</th><th>Assignee</th></tr></thead>';
+    echo '<tbody>';
+    foreach ($audit_trail as $log) {
+        $date = wp_date(get_option('date_format') . ' ' . get_option('time_format'), $log['timestamp']);
+        $action = esc_html($log['action']);
+        $actor = esc_html($log['actor']);
+        $assignee = esc_html($log['assignee']);
+        echo "<tr><td>{$date}</td><td>{$action}</td><td>{$actor}</td><td>{$assignee}</td></tr>";
+    }
+    echo '</tbody></table>';
+}
+
 
 function kg_application_details_box( $post ) {
     $email    = get_post_meta( $post->ID, 'kg_app_email',    true );
@@ -409,9 +477,9 @@ function kg_application_details_box( $post ) {
             <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
                 <?php 
                 $rec_id = get_post_meta( $post->ID, 'kg_app_recruiter_id', true );
-                if ( current_user_can( 'manage_options' ) ) {
+                if ( current_user_can( 'manage_options' ) || kg_is_current_user_recruitment_admin() ) {
                     // Admins get an interactive select dropdown
-                    $recruiters = get_users( array( 'role' => 'recruiter' ) );
+                    $recruiters = get_users( array( 'role__in' => array( 'recruiter' ) ) );
                     echo '<select name="kg_app_recruiter_id" style="width:100%; max-width:400px; padding:6px 10px; font-size:14px; border: 1px solid #ccc; border-radius: 4px;">';
                     echo '<option value="">— Unassigned —</option>';
                     foreach ( $recruiters as $rec ) {
@@ -541,7 +609,7 @@ function kg_application_status_box( $post ) {
     $int_details= get_post_meta( $post->ID, 'kg_interview_details', true );
     $int_er_id  = get_post_meta( $post->ID, 'kg_interviewer_id', true );
     
-    $recruiters = get_users( array( 'role' => 'recruiter' ) );
+    $recruiters = get_users( array( 'role__in' => array( 'recruiter' ) ) );
     ?>
     
     <div id="kg-status-validation-warning" style="display:none; background:#fee2e2; border:1px solid #fca5a5; color:#991b1b; padding:10px; border-radius:6px; font-size:12px; margin-bottom:12px; font-weight:600;"></div>
@@ -818,9 +886,16 @@ function kg_save_application_status( $post_id ) {
         update_post_meta( $post_id, 'kg_app_submission_date', sanitize_text_field( $_POST['kg_app_submission_date'] ) );
     }
 
-    if ( current_user_can( 'manage_options' ) && isset( $_POST['kg_app_recruiter_id'] ) ) {
+    if ( (current_user_can( 'manage_options' ) || kg_is_current_user_recruitment_admin()) && isset( $_POST['kg_app_recruiter_id'] ) ) {
+        $old_rec_user_id = get_post_meta( $post_id, 'kg_app_recruiter_id', true );
         $rec_user_id = sanitize_text_field( $_POST['kg_app_recruiter_id'] );
         update_post_meta( $post_id, 'kg_app_recruiter_id', $rec_user_id );
+        
+        if ($old_rec_user_id != $rec_user_id) {
+            $action = 'Assigned to Recruiter';
+            if (!$rec_user_id) $action = 'Unassigned';
+            kg_log_application_audit_trail($post_id, $action, $rec_user_id);
+        }
     }
 
     // Save interview fields
@@ -1437,7 +1512,7 @@ function kg_filter_applications_for_recruiters($query) {
     global $pagenow;
     
     if (is_admin() && $query->is_main_query() && $pagenow === 'edit.php' && $query->get('post_type') === 'kg_application') {
-        if (kg_is_current_user_recruiter()) {
+        if (kg_is_current_user_recruiter() && !kg_is_current_user_recruitment_admin()) {
             $rec_id = get_current_user_id();
             $rec_locations = (array) get_user_meta($rec_id, 'kg_recruiter_location', true);
             $rec_locations = array_filter($rec_locations); // Remove empty values
@@ -1490,7 +1565,7 @@ function kg_filter_jobs_for_recruiters($query) {
     global $pagenow;
     
     if (is_admin() && $query->is_main_query() && $pagenow === 'edit.php' && $query->get('post_type') === 'jobs') {
-        if (kg_is_current_user_recruiter()) {
+        if (kg_is_current_user_recruiter() && !kg_is_current_user_recruitment_admin()) {
             $rec_id = get_current_user_id();
             $rec_locations = (array) get_user_meta($rec_id, 'kg_recruiter_location', true);
             $rec_locations = array_filter($rec_locations);
@@ -1537,7 +1612,7 @@ add_action('pre_get_posts', 'kg_filter_jobs_for_recruiters');
  * Phase 6: Bulk Recruiter Assignment
  */
 function kg_register_bulk_actions_assign_recruiter( $bulk_actions ) {
-    if ( current_user_can( 'manage_options' ) ) {
+    if ( current_user_can( 'manage_options' ) || kg_is_current_user_recruitment_admin() ) {
         // Only allow admin to bulk-assign recruiters
         $bulk_actions['kg_bulk_assign_recruiter'] = 'Assign Recruiter';
     }
@@ -1553,7 +1628,7 @@ function kg_handle_bulk_actions_assign_recruiter( $redirect_to, $action, $post_i
     // Since we need to let the admin select a recruiter, let's redirect to a intermediate confirm URL,
     // or just let them confirm via a query parameter.
     // For a simple UX, we will check if the user appended recruiter_id to the query.
-    if ( ! current_user_can( 'manage_options' ) ) {
+    if ( ! current_user_can( 'manage_options' ) && ! kg_is_current_user_recruitment_admin() ) {
         return $redirect_to;
     }
 
@@ -1581,7 +1656,7 @@ function kg_bulk_assign_admin_notices() {
     if ( $pagenow === 'edit.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] === 'kg_application' ) {
         if ( isset( $_GET['kg_trigger_bulk_assign'] ) && ! empty( $_GET['ids'] ) ) {
             $ids = sanitize_text_field( $_GET['ids'] );
-            $recruiters = get_users( array( 'role' => 'recruiter' ) );
+            $recruiters = get_users( array( 'role__in' => array( 'recruiter' ) ) );
             ?>
             <div class="notice notice-info is-dismissible" style="padding:15px;">
                 <h4 style="margin:0 0 10px 0;">Bulk Assign Recruiter</h4>
@@ -1615,14 +1690,21 @@ add_action( 'admin_notices', 'kg_bulk_assign_admin_notices' );
 function kg_handle_bulk_assign_form_submit() {
     if ( is_admin() && isset( $_POST['kg_action'] ) && $_POST['kg_action'] === 'execute_bulk_assign' ) {
         check_admin_referer( 'kg_bulk_assign_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) {
+        if ( ! current_user_can( 'manage_options' ) && ! kg_is_current_user_recruitment_admin() ) {
             wp_die( 'Unauthorized' );
         }
         $post_ids = isset( $_POST['post_ids'] ) ? explode( ',', sanitize_text_field( $_POST['post_ids'] ) ) : array();
         $rec_id = isset( $_POST['kg_bulk_recruiter_id'] ) ? (int) $_POST['kg_bulk_recruiter_id'] : 0;
 
         foreach ( $post_ids as $post_id ) {
+            $old_rec_id = get_post_meta( $post_id, 'kg_app_recruiter_id', true );
             update_post_meta( $post_id, 'kg_app_recruiter_id', $rec_id ? $rec_id : '' );
+            
+            if ($old_rec_id != $rec_id) {
+                $action = 'Bulk Assigned to Recruiter';
+                if (!$rec_id) $action = 'Bulk Unassigned';
+                kg_log_application_audit_trail($post_id, $action, $rec_id);
+            }
         }
 
         $redirect = remove_query_arg( array( 'kg_trigger_bulk_assign', 'ids' ) );

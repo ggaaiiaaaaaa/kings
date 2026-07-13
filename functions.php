@@ -407,7 +407,7 @@ add_action('init', 'kg_create_default_menus');
  */
 function kg_filter_editable_roles($all_roles)
 {
-    $allowed_roles = array('administrator', 'editor', 'recruiter', 'hr', 'monitoring');
+    $allowed_roles = array('administrator', 'editor', 'recruitment_admin', 'recruiter', 'hr', 'monitoring');
     foreach ($all_roles as $key => $role) {
         if (!in_array($key, $allowed_roles)) {
             unset($all_roles[$key]);
@@ -1730,6 +1730,7 @@ function kg_register_roles()
 
     if (function_exists('add_role')) {
         add_role('recruiter', 'Recruiter', $recruiter_caps);
+        add_role('recruitment_admin', 'Recruitment Admin', $recruiter_caps);
         add_role('hr', 'HR', $hr_caps);
         add_role('monitoring', 'Monitoring', array('read' => true));
     }
@@ -1737,6 +1738,7 @@ function kg_register_roles()
     if (function_exists('get_role')) {
         $roles = array(
             'recruiter' => $recruiter_caps,
+            'recruitment_admin' => $recruiter_caps,
             'hr' => $hr_caps,
             'administrator' => $admin_caps,
             'monitoring' => array('read' => true)
@@ -1793,6 +1795,19 @@ function kg_is_current_user_recruiter()
     }
     return in_array('recruiter', (array) $user->roles);
 }
+
+function kg_is_current_user_recruitment_admin()
+{
+    if (!function_exists('wp_get_current_user')) {
+        return false;
+    }
+    $user = wp_get_current_user();
+    if (!$user || !isset($user->roles)) {
+        return false;
+    }
+    return in_array('recruitment_admin', (array) $user->roles);
+}
+
 
 /**
  * Programmatically create a sample recruiter account on init if it doesn't exist.
@@ -2415,3 +2430,31 @@ function kg_auto_draft_on_job_save( $post_id ) {
 add_action( 'save_post_jobs', 'kg_auto_draft_on_job_save', 99 );
 add_action( 'acf/save_post', 'kg_auto_draft_on_job_save', 99 );
 
+/**
+ * Create Audit Log Database Table
+ */
+function kg_create_audit_log_table() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'kg_audit_logs';
+    
+    $installed_ver = get_option('kg_audit_db_version');
+    if ($installed_ver != '1.0') {
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE $table_name (
+            id bigint(20) NOT NULL AUTO_INCREMENT,
+            post_id bigint(20) NOT NULL,
+            timestamp datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+            action varchar(255) NOT NULL,
+            actor varchar(255) NOT NULL,
+            assignee varchar(255) NOT NULL,
+            PRIMARY KEY  (id)
+        ) $charset_collate;";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+
+        update_option('kg_audit_db_version', '1.0');
+    }
+}
+add_action('admin_init', 'kg_create_audit_log_table');

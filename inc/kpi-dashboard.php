@@ -13,7 +13,7 @@ function kg_handle_kpi_csv_export() {
     if ( ! isset( $_GET['kg_export_kpi_csv'] ) ) {
         return;
     }
-    if ( ! current_user_can('manage_options') && !kg_is_current_user_recruiter() ) {
+    if ( ! current_user_can('manage_options') && (!kg_is_current_user_recruiter() && !kg_is_current_user_recruitment_admin()) ) {
         wp_die(__('You do not have sufficient permissions to perform this action.', 'kingsgroup'));
     }
 
@@ -32,8 +32,7 @@ function kg_handle_kpi_csv_export() {
     // Column headings
     fputcsv($output, array('Recruiter Name', 'Location', 'Applications Received', 'Hired / Deployed', 'Conversion Rate (%)', 'Avg. Time-to-Deploy (Days)'));
 
-    // Query all recruiters
-    $recruiters = get_users(array('role' => 'recruiter'));
+    $recruiters = get_users(array('role__in' => array('recruiter')));
 
     foreach ($recruiters as $rec) {
         $rec_id = $rec->ID;
@@ -346,7 +345,7 @@ function kg_render_kpi_dashboard_page()
 {
     $user = wp_get_current_user();
     $is_monitoring = in_array('monitoring', (array) $user->roles);
-    if (!current_user_can('manage_options') && !kg_is_current_user_recruiter() && !$is_monitoring) {
+    if (!current_user_can('manage_options') && (!kg_is_current_user_recruiter() && !kg_is_current_user_recruitment_admin()) && !$is_monitoring) {
         wp_die(__('You do not have sufficient permissions to access this page.', 'kingsgroup'));
     }
 
@@ -683,7 +682,7 @@ function kg_render_kpi_dashboard_page()
                 <input type="hidden" name="page" value="kg-kpi-dashboard" />
                 
                 <?php if ($is_admin): ?>
-                    <?php $recruiters = get_users(array('role' => 'recruiter')); ?>
+                    <?php $recruiters = get_users(array('role__in' => array('recruiter'))); ?>
                     <label for="kpi_recruiter" id="kpi_recruiter_label">Recruiter:</label>
                     <select name="kpi_recruiter" id="kpi_recruiter" onchange="this.form.submit()">
                         <option value="0">All Recruiters</option>
@@ -950,9 +949,18 @@ function kg_render_kpi_dashboard_page()
 
         <div class="kg-kpi-tabs">
             <div class="kg-kpi-tab active" data-tab="tab-overview">Overview</div>
-            <div class="kg-kpi-tab" data-tab="tab-applications">Applications</div>
-            <div class="kg-kpi-tab" data-tab="tab-inquiries">Inquiries</div>
-            <div class="kg-kpi-tab" data-tab="tab-quotes">Quote Requests</div>
+            <?php if ( ! kg_is_current_user_recruiter() ) : ?>
+                <div class="kg-kpi-tab" data-tab="tab-applications">Applications</div>
+            <?php endif; ?>
+            <?php if ( ! kg_is_current_user_recruiter() ) : ?>
+                <div class="kg-kpi-tab" data-tab="tab-inquiries">Inquiries</div>
+            <?php endif; ?>
+            <?php if ( ! kg_is_current_user_recruiter() ) : ?>
+                <div class="kg-kpi-tab" data-tab="tab-quotes">Quote Requests</div>
+            <?php endif; ?>
+            <?php if ( ! kg_is_current_user_recruiter() ) : ?>
+                <div class="kg-kpi-tab" data-tab="tab-audit-logs">Audit Logs</div>
+            <?php endif; ?>
         </div>
 
         <div id="tab-overview" class="kg-kpi-tab-content active">
