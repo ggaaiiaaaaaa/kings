@@ -141,19 +141,9 @@ get_header();
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
                             <div>
                                 <label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;"><?php echo esc_html(kg_get_field('contact_phone_label', 'Phone Number')); ?></label>
-                                <div style="display:flex; gap:0.5rem;">
-                                    <select name="contact_country_code" style="width:110px; padding:0.9rem 0.5rem; border:2px solid var(--border-color); font-family:var(--font-body); font-size:0.95rem; outline:none; transition:var(--transition); box-sizing:border-box; background:#fff; cursor:pointer;" onfocus="this.style.borderColor='var(--main-blue)'" onblur="this.style.borderColor='var(--border-color)'">
-                                        <option value="+63" selected>PH (+63)</option>
-                                        <option value="+61">AU (+61)</option>
-                                        <option value="+1">US (+1)</option>
-                                        <option value="+44">UK (+44)</option>
-                                        <option value="+971">AE (+971)</option>
-                                        <option value="">Other</option>
-                                    </select>
-                                    <input type="tel" name="contact_phone" placeholder="912 345 6789" required
-                                        style="flex:1; padding:0.9rem 1.1rem; border:2px solid var(--border-color); font-family:var(--font-body); font-size:0.95rem; outline:none; transition:var(--transition); box-sizing:border-box;"
-                                        onfocus="this.style.borderColor='var(--main-blue)'" onblur="this.style.borderColor='var(--border-color)'">
-                                </div>
+                                <input type="tel" name="contact_phone" id="contact_phone" class="kg-phone-input" required
+                                    style="width:100%; padding:0.9rem 1.1rem; border:2px solid var(--border-color); font-family:var(--font-body); font-size:0.95rem; outline:none; transition:var(--transition); box-sizing:border-box;"
+                                    onfocus="this.style.borderColor='var(--main-blue)'" onblur="this.style.borderColor='var(--border-color)'">
                             </div>
                             <div>
                                 <label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;"><?php echo esc_html(kg_get_field('contact_subject_label', 'Subject')); ?></label>

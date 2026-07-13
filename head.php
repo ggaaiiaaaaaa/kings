@@ -57,6 +57,11 @@
   <link rel="apple-touch-icon" href="<?php echo kg_asset('img/[LOGO] Main Logo White.webp'); ?>">
 
   <!-- Modern Typefaces are loaded in style.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
+  <style>
+    .iti { width: 100%; display: block; } /* Ensure it takes full width of container */
+    .iti input[type="tel"] { padding-left: 52px !important; }
+  </style>
   <?php wp_head(); ?>
 
   <!-- SEO: Sitewide Organization Schema (on every page) -->

@@ -154,6 +154,28 @@
 </footer>
 
 <!-- Interactive Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var phoneInputs = document.querySelectorAll('.kg-phone-input');
+        window.kgPhoneInstances = {};
+        phoneInputs.forEach(function(input, index) {
+            var inputName = input.getAttribute('name');
+            var iti = window.intlTelInput(input, {
+                initialCountry: "ph",
+                preferredCountries: ["ph", "us", "gb", "au", "ae"],
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js",
+                hiddenInput: inputName ? inputName : undefined
+            });
+            // If hiddenInput is used, we need to remove the name from the original input so it doesn't conflict
+            if (inputName) {
+                input.removeAttribute('name');
+            }
+            input.setAttribute('data-iti-id', index);
+            window.kgPhoneInstances[index] = iti;
+        });
+    });
+</script>
 <?php wp_footer(); ?>
 </body>
 
