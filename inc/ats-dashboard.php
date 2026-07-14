@@ -466,7 +466,7 @@ function kg_ats_dashboard_widget_render()
         <a href="<?php echo admin_url('edit.php?post_type=jobs'); ?>" class="button" style="font-size:12px;">Manage Job
             Openings</a>
         <?php if (!$is_recruiter): ?>
-        <a href="<?php echo admin_url('edit.php?post_type=kg_inquiry'); ?>" class="button" style="font-size:12px;">Quote
+        <a href="<?php echo admin_url('edit.php?post_type=kg_quote_lead'); ?>" class="button" style="font-size:12px;">Quote
             Leads</a>
         <?php endif; ?>
     </div>

@@ -159,8 +159,7 @@ function kg_handle_apps_csv_export() {
         return;
     }
     $user = wp_get_current_user();
-    $is_monitoring = in_array('monitoring', (array) $user->roles);
-    if ( ! current_user_can('manage_options') && !kg_is_current_user_recruiter() && !$is_monitoring ) {
+    if ( ! current_user_can('manage_options') && !kg_is_current_user_recruiter() ) {
         wp_die(__('You do not have sufficient permissions to perform this action.', 'kingsgroup'));
     }
 
@@ -241,8 +240,7 @@ function kg_handle_inq_csv_export() {
         return;
     }
     $user = wp_get_current_user();
-    $is_monitoring = in_array('monitoring', (array) $user->roles);
-    if ( ! current_user_can('manage_options') && !kg_is_current_user_recruiter() && !$is_monitoring ) {
+    if ( ! current_user_can('manage_options') && !kg_is_current_user_recruiter() ) {
         wp_die(__('You do not have sufficient permissions to perform this action.', 'kingsgroup'));
     }
 
@@ -286,8 +284,7 @@ function kg_handle_quote_csv_export() {
         return;
     }
     $user = wp_get_current_user();
-    $is_monitoring = in_array('monitoring', (array) $user->roles);
-    if ( ! current_user_can('manage_options') && !kg_is_current_user_recruiter() && !$is_monitoring ) {
+    if ( ! current_user_can('manage_options') && !kg_is_current_user_recruiter() ) {
         wp_die(__('You do not have sufficient permissions to perform this action.', 'kingsgroup'));
     }
 
@@ -344,8 +341,7 @@ function kg_register_kpi_dashboard_page()
 function kg_render_kpi_dashboard_page()
 {
     $user = wp_get_current_user();
-    $is_monitoring = in_array('monitoring', (array) $user->roles);
-    if (!current_user_can('manage_options') && (!kg_is_current_user_recruiter() && !kg_is_current_user_recruitment_admin()) && !$is_monitoring) {
+    if (!current_user_can('manage_options') && (!kg_is_current_user_recruiter() && !kg_is_current_user_recruitment_admin())) {
         wp_die(__('You do not have sufficient permissions to access this page.', 'kingsgroup'));
     }
 

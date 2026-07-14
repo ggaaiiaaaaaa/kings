@@ -407,7 +407,7 @@ add_action('init', 'kg_create_default_menus');
  */
 function kg_filter_editable_roles($all_roles)
 {
-    $allowed_roles = array('administrator', 'editor', 'recruitment_admin', 'recruiter', 'hr', 'monitoring');
+    $allowed_roles = array('administrator', 'editor', 'recruitment_admin', 'recruiter', 'hr');
     foreach ($all_roles as $key => $role) {
         if (!in_array($key, $allowed_roles)) {
             unset($all_roles[$key]);
@@ -1732,7 +1732,7 @@ function kg_register_roles()
         add_role('recruiter', 'Recruiter', $recruiter_caps);
         add_role('recruitment_admin', 'Recruitment Admin', $recruiter_caps);
         add_role('hr', 'HR', $hr_caps);
-        add_role('monitoring', 'Monitoring', array('read' => true));
+        remove_role('monitoring');
     }
 
     if (function_exists('get_role')) {
@@ -1740,8 +1740,7 @@ function kg_register_roles()
             'recruiter' => $recruiter_caps,
             'recruitment_admin' => $recruiter_caps,
             'hr' => $hr_caps,
-            'administrator' => $admin_caps,
-            'monitoring' => array('read' => true)
+            'administrator' => $admin_caps
         );
 
         foreach ($roles as $role_name => $caps) {
@@ -1753,35 +1752,6 @@ function kg_register_roles()
             }
         }
     }
-}
-
-function kg_restrict_monitoring_user() {
-    if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-        return;
-    }
-    $user = wp_get_current_user();
-    if ( in_array( 'monitoring', (array) $user->roles ) && count( $user->roles ) === 1 ) {
-        if ( isset( $_GET['page'] ) && $_GET['page'] === 'kg-kpi-dashboard' ) {
-            return;
-        }
-        wp_safe_redirect( admin_url( 'admin.php?page=kg-kpi-dashboard' ) );
-        exit;
-    }
-}
-if (function_exists('add_action')) {
-    add_action( 'admin_init', 'kg_restrict_monitoring_user' );
-}
-
-function kg_remove_menus_for_monitoring() {
-    $user = wp_get_current_user();
-    if ( in_array( 'monitoring', (array) $user->roles ) && count( $user->roles ) === 1 ) {
-        global $menu, $submenu;
-        $menu = array();
-        $submenu = array();
-    }
-}
-if (function_exists('add_action')) {
-    add_action( 'admin_menu', 'kg_remove_menus_for_monitoring', 999 );
 }
 
 function kg_is_current_user_recruiter()
