@@ -266,6 +266,13 @@ $quote_bg = kg_get_field('quote_bg', kg_asset('img/quote/hero-quote.JPG'));
                     'posts_per_page' => -1,
                     'orderby' => 'title',
                     'order' => 'ASC',
+                    'tax_query' => array(
+                        array(
+                            'taxonomy' => 'job_type_tax',
+                            'field' => 'slug',
+                            'terms' => 'offshoring',
+                        ),
+                    ),
                     'meta_query' => array(
                         array(
                             'key' => 'include_in_team_builder',
@@ -314,45 +321,14 @@ $quote_bg = kg_get_field('quote_bg', kg_asset('img/quote/hero-quote.JPG'));
                         <?php
                     endwhile;
                     wp_reset_postdata();
+                    wp_reset_postdata();
                 else:
-                    // Premium Static Fallbacks
-                    $static_roles = array(
-                        array('Customer Support', 'High-empathy, omnichannel support specialists working 24/7/365.', 900),
-                        array('Virtual Assistant', 'Executive support, schedule management, email handling, and tasks.', 850),
-                        array('Graphic Designer', 'Branding, creative assets, social media graphics, and collateral design.', 1100),
-                        array('Web Developer', 'Front-end and full-stack engineers building modern responsive platforms.', 1400),
-                        array('Accountant / Bookkeeper', 'General ledger management, payroll processing, tax filing, and audits.', 1200),
-                        array('Digital Marketing', 'PPC specialists, content strategists, and SEO managers maximizing ROI.', 1050),
-                        array('Data Entry Specialist', 'Accurate, high-speed data migration, database management, and cleanup.', 800),
-                    );
-                    foreach ($static_roles as $role):
-                        ?>
-                        <div class="builder-role-card">
-                            <div class="builder-role-info">
-                                <div class="builder-role-icon">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <line x1="12" y1="8" x2="12" y2="16"></line>
-                                        <line x1="8" y1="12" x2="16" y2="12"></line>
-                                    </svg>
-                                </div>
-                                <div class="builder-role-text">
-                                    <h4><?php echo esc_html($role[0]); ?></h4>
-                                    <p><?php echo esc_html($role[1]); ?></p>
-                                </div>
-                            </div>
-                            <button class="builder-add-btn"
-                                onclick="addRoleToCart('<?php echo esc_js($role[0]); ?>', <?php echo (int) $role[2]; ?>); closeRoleModal();">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg> Add
-                            </button>
-                        </div>
-                        <?php
-                    endforeach;
+                    ?>
+                    <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        <p>No offshoring roles currently available in the database.</p>
+                        <p>Please add a Job and set its category to "Offshoring" to see it here.</p>
+                    </div>
+                    <?php
                 endif;
                 ?>
 
@@ -386,8 +362,6 @@ $quote_bg = kg_get_field('quote_bg', kg_asset('img/quote/hero-quote.JPG'));
         }
         updateCartUI();
     }
-
-
 
     function openRoleModal() {
         document.getElementById('roleModalOverlay').classList.add('active');

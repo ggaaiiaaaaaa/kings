@@ -1020,21 +1020,30 @@ function kg_notify_recruiter_status_change( $post_id, $old_status, $new_status )
 
     $recipients = array();
 
-    // 1. Notify Admin if status is pooling or screening
-    if ( in_array( $new_status, array( 'pooling', 'screening' ), true ) ) {
-        $admin_email = get_option( 'admin_email' );
-        if ( ! empty( $admin_email ) ) {
-            $recipients[$admin_email] = 'Administrator';
+    // 1. Notify Admin for ALL status changes
+    $admin_email = get_option( 'admin_email' );
+    if ( ! empty( $admin_email ) ) {
+        $recipients[] = array( 'email' => $admin_email, 'name' => 'Administrator' );
+    }
+
+    // 2. Notify ALL HR and Recruitment Admins
+    if ( function_exists( 'get_users' ) ) {
+        $hr_and_admins = get_users( array( 'role__in' => array( 'hr', 'recruitment_admin' ) ) );
+        foreach ( $hr_and_admins as $hr_user ) {
+            if ( is_email( $hr_user->user_email ) ) {
+                $hr_name = $hr_user->display_name ?: $hr_user->user_login;
+                $recipients[] = array( 'email' => $hr_user->user_email, 'name' => $hr_name );
+            }
         }
     }
 
-    // 2. Notify assigned recruiter (for any status change)
+    // 3. Notify assigned recruiter (for any status change)
     $rec_id = get_post_meta( $post_id, 'kg_app_recruiter_id', true );
     if ( $rec_id ) {
         $rec_user = get_userdata( $rec_id );
         if ( $rec_user && ! empty( $rec_user->user_email ) ) {
             $rec_name = $rec_user->display_name ?: $rec_user->user_login;
-            $recipients[$rec_user->user_email] = $rec_name;
+            $recipients[] = array( 'email' => $rec_user->user_email, 'name' => $rec_name );
         }
     }
 
@@ -1042,7 +1051,9 @@ function kg_notify_recruiter_status_change( $post_id, $old_status, $new_status )
         return;
     }
 
-    foreach ( $recipients as $email => $name ) {
+    foreach ( $recipients as $recipient ) {
+        $email = $recipient['email'];
+        $name  = $recipient['name'];
         $status_details_html = '<div style="border:1px solid #e8ecf0;border-radius:8px;padding:20px;margin-bottom:24px;background:#ffffff;">'
             . kg_email_row( 'Applicant Name', $applicant_name )
             . kg_email_row( 'Job Role',       $role )
@@ -1824,10 +1835,10 @@ function kg_email_templates_settings_render() {
         'recruiter_change' => array(
             'label' => 'Status Change Alert (Recruiter & Admin)',
             'desc'  => 'Sent to recruiters and admins when an applicant status changes.',
-            'fallback_subj' => 'Applicant Status Change: {applicant_name} — Kings Manpower',
-            'fallback_body' => "Hi {name},\n\nAn applicant has changed their pipeline status.\n\n{status_change_details}",
-            'fallback_banner' => 'Please check the application details and proceed with the necessary next actions.',
-            'fallback_btn_text' => 'View Application in Admin',
+            'fallback_subj' => 'Applicant Status Update: {applicant_name} — Kings Manpower',
+            'fallback_body' => "Dear {name},\n\nPlease be advised that the status of an applicant in your recruitment pipeline has been updated.\n\n{status_change_details}",
+            'fallback_banner' => 'Please review the updated application details and initiate the appropriate next steps in the recruitment workflow.',
+            'fallback_btn_text' => 'View Application Profile',
             'fallback_btn_link' => '{edit_url}',
             'tokens' => array( '{name}', '{applicant_name}', '{role}', '{old_status}', '{new_status}', '{edit_url}' )
         ),

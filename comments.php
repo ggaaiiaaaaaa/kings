@@ -9,17 +9,21 @@ if ( post_password_required() ) {
 
 <div id="comments" class="kingsgroup-comments-area">
 
-    <?php if ( have_comments() ) : ?>
+    <?php 
+    // Since we forcefully included this file to bypass GoDaddy's blocks, we must manually fetch the comments from the database.
+    $post_comments = get_comments( array(
+        'post_id' => get_the_ID(),
+        'status'  => 'approve' // Only show approved comments
+    ) );
+    
+    if ( ! empty( $post_comments ) ) : ?>
         <h3 class="comments-title">
             <?php
-            $comment_count = get_comments_number();
-            if ( '1' === $comment_count ) {
-                printf( _x( '1 Comment', 'comments title', 'kingsgroup' ) );
+            $comment_count = count( $post_comments );
+            if ( 1 === $comment_count ) {
+                echo '1 Comment';
             } else {
-                printf(
-                    _nx( '%1$s Comment', '%1$s Comments', $comment_count, 'comments title', 'kingsgroup' ),
-                    number_format_i18n( $comment_count )
-                );
+                echo $comment_count . ' Comments';
             }
             ?>
         </h3>
@@ -31,7 +35,7 @@ if ( post_password_required() ) {
                 'short_ping'  => true,
                 'avatar_size' => 50,
                 'type'        => 'comment',
-            ) );
+            ), $post_comments );
             ?>
         </ol>
 

@@ -497,9 +497,36 @@ if (function_exists('acf_add_local_field_group')):
         'title' => 'Job Details',
         'fields' => array(
             array(
+                'key' => 'field_job_type_tax_acf',
+                'label' => 'Job Category (Local / Offshoring)',
+                'name' => 'job_type_tax_acf',
+                'type' => 'radio',
+                'choices' => array(
+                    'Local' => 'Local',
+                    'Offshoring' => 'Offshoring',
+                ),
+                'instructions' => 'Select whether this job is Local or Offshoring. This will automatically show/hide the correct settings below.',
+                'required' => 1,
+            ),
+            array(
                 'key' => 'tab_job_info',
                 'label' => 'Job Details',
                 'type' => 'tab',
+                'conditional_logic' => array(
+                    array(
+                        array(
+                            'field' => 'field_job_type_tax_acf',
+                            'operator' => '==',
+                            'value' => 'Local',
+                        ),
+                    ),
+                    array(
+                        array(
+                            'field' => 'field_job_type_tax_acf',
+                            'operator' => '==empty',
+                        ),
+                    )
+                ),
             ),
             array(
                 'key' => 'field_job_card_image',
@@ -617,6 +644,15 @@ if (function_exists('acf_add_local_field_group')):
                 'key' => 'tab_job_pricing',
                 'label' => 'Quote Builder Settings',
                 'type' => 'tab',
+                'conditional_logic' => array(
+                    array(
+                        array(
+                            'field' => 'field_job_type_tax_acf',
+                            'operator' => '==',
+                            'value' => 'Offshoring',
+                        ),
+                    ),
+                ),
             ),
             array(
                 'key' => 'field_job_base_price',

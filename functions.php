@@ -45,35 +45,42 @@ add_action('init', function() {
     }
 });
 
-// Hide the standard Posts menu for recruiters, recruitment admins, and HR
-add_action('admin_menu', function () {
-    $user = wp_get_current_user();
-    if ($user && isset($user->roles)) {
-        // NEVER restrict Administrators, even if they also have testing roles
-        if (in_array('administrator', (array) $user->roles)) {
-            return;
-        }
-        if (in_array('recruiter', (array) $user->roles) || in_array('recruitment_admin', (array) $user->roles) || in_array('hr', (array) $user->roles)) {
-            remove_menu_page('edit.php'); // Hides the standard Posts menu
-        }
-    }
-}, 999);
 
-// Fix login redirects for GoDaddy: Prevent GoDaddy's custom dashboard from blocking lower-level users
-add_action('admin_init', function() {
-    global $pagenow;
-    $user = wp_get_current_user();
-    
-    // If a user lands on GoDaddy's custom wp-dashboard page
-    if ($pagenow === 'admin.php' && isset($_GET['page']) && $_GET['page'] === 'wp-dashboard') {
-        // If the user is NOT an administrator (e.g. Recruitment Admin, Recruiter, HR)
-        if (!in_array('administrator', (array) $user->roles)) {
-            // Redirect them to the standard WordPress dashboard where they have permission
+
+// Hide the standard Posts menu for recruiters, recruitment admins, and HR
+// Priority 0 ensures this runs BEFORE GoDaddy's restrictive plugins
+add_action('admin_menu', function () {
+    // INTERCEPT GoDaddy Dashboard Clicks for lower-level users
+    // If a user clicks the GoDaddy Quick Links button but doesn't have admin rights, redirect them to safety
+    if (isset($_GET['page']) && $_GET['page'] === 'wp-dashboard') {
+        if (!current_user_can('manage_options')) {
             wp_redirect(admin_url('index.php'));
             exit;
         }
     }
-});
+
+    $user = wp_get_current_user();
+    if ($user && isset($user->roles)) {
+        // NEVER restrict Administrators
+        if (current_user_can('manage_options')) {
+            return;
+        }
+
+        if (in_array('recruiter', (array) $user->roles) || in_array('recruitment_admin', (array) $user->roles) || in_array('hr', (array) $user->roles)) {
+            remove_menu_page('edit.php'); // Hides the standard Posts menu
+        }
+    }
+}, 0);
+
+// Force comments to be globally open for all standard News posts.
+// This overrides any GoDaddy database settings that are silently blocking comment submissions.
+add_filter( 'comments_open', function( $open, $post_id ) {
+    $post = get_post( $post_id );
+    if ( $post && $post->post_type === 'post' ) {
+        return true;
+    }
+    return $open;
+}, 9999, 2 );
 
 
 /**
@@ -813,8 +820,106 @@ function kingsgroup_register_jobs_cpt()
         'show_in_rest' => true,
         'meta_box_cb' => false,
     ));
+
+    // Register job_type_tax taxonomy (Local vs Offshoring)
+    register_taxonomy('job_type_tax', 'jobs', array(
+        'labels' => array(
+            'name' => _x('Job Types', 'taxonomy general name', 'kingsgroup'),
+            'singular_name' => _x('Job Type', 'taxonomy singular name', 'kingsgroup'),
+            'search_items' => __('Search Job Types', 'kingsgroup'),
+            'all_items' => __('All Job Types', 'kingsgroup'),
+            'parent_item' => __('Parent Job Type', 'kingsgroup'),
+            'parent_item_colon' => __('Parent Job Type:', 'kingsgroup'),
+            'edit_item' => __('Edit Job Type', 'kingsgroup'),
+            'update_item' => __('Update Job Type', 'kingsgroup'),
+            'add_new_item' => __('Add New Job Type', 'kingsgroup'),
+            'new_item_name' => __('New Job Type Name', 'kingsgroup'),
+            'menu_name' => __('Job Types', 'kingsgroup'),
+        ),
+        'hierarchical' => true, // Checkbox style (like categories)
+        'show_ui' => true,
+        'show_admin_column' => true, // Adds it as a column in the Jobs list
+        'query_var' => true,
+        'rewrite' => array('slug' => 'job-type'),
+        'show_in_rest' => true, // Enables it in the block editor if used
+        'meta_box_cb' => false, // Hide the default sidebar panel
+    ));
 }
 add_action('init', 'kingsgroup_register_jobs_cpt');
+
+// Add a dropdown filter at the top of the WP Admin Jobs list for Job Types
+add_action('restrict_manage_posts', function($post_type) {
+    if ($post_type === 'jobs') {
+        $taxonomy_slug = 'job_type_tax';
+        $taxonomy_obj = get_taxonomy($taxonomy_slug);
+        
+        $selected = isset($_GET[$taxonomy_slug]) ? $_GET[$taxonomy_slug] : '';
+        wp_dropdown_categories(array(
+            'show_option_all' => __("All {$taxonomy_obj->labels->name}"),
+            'taxonomy' 		  => $taxonomy_slug,
+            'name' 			  => $taxonomy_slug,
+            'orderby' 		  => 'name',
+            'selected' 		  => $selected,
+            'show_count' 	  => false,
+            'hide_empty' 	  => false,
+            'hide_if_empty'   => false,
+            'value_field'     => 'slug',
+        ));
+    }
+});
+
+// Sync the ACF Radio Button for Job Type with the actual WordPress Taxonomy
+add_action('acf/save_post', function($post_id) {
+    if (get_post_type($post_id) !== 'jobs') return;
+    $type = get_field('job_type_tax_acf', $post_id);
+    if ($type) {
+        wp_set_object_terms($post_id, $type, 'job_type_tax', false);
+    }
+}, 20);
+
+// TEMPORARY OFFSHORING JOBS CREATION SCRIPT
+add_action('init', function() {
+    if (isset($_GET['create_offshoring_jobs'])) {
+        $jobs = array(
+            'Operations Head',
+            'Accounting and Finance Head',
+            'Building Administrator',
+            'Culinary Administrator',
+            'Software Developer',
+            'Business Analyst',
+            'Marketing Officer',
+            'HR Coordinator',
+            'Recruitment Officer',
+            'Billing and Collection Officer',
+            'Payroll Master / Senior Payroll Analyst',
+            'Payroll Staff',
+            'Accounting Supervisor',
+            'Accounting Manager'
+        );
+        
+        $count = 0;
+        foreach($jobs as $job_title) {
+            // Check if job already exists to prevent duplicates
+            $existing = get_page_by_title($job_title, OBJECT, 'jobs');
+            if (!$existing) {
+                $post_id = wp_insert_post(array(
+                    'post_title' => $job_title,
+                    'post_type' => 'jobs',
+                    'post_status' => 'publish'
+                ));
+                
+                if (!is_wp_error($post_id)) {
+                    update_post_meta($post_id, 'job_type_tax_acf', 'Offshoring');
+                    update_post_meta($post_id, 'include_in_team_builder', '1');
+                    update_post_meta($post_id, 'base_price', '1000');
+                    wp_set_object_terms($post_id, 'offshoring', 'job_type_tax', false);
+                    $count++;
+                }
+            }
+        }
+        die("Success! Generated {$count} new Offshoring jobs.");
+    }
+});
 
 // Replace Author dropdown with a Read-Only Author box on Jobs edit screen
 add_action('add_meta_boxes', function () {
@@ -843,6 +948,36 @@ add_action('add_meta_boxes', function () {
     if (isset($wp_meta_boxes['jobs']['normal']['core']['postexcerpt'])) {
         $wp_meta_boxes['jobs']['normal']['core']['postexcerpt']['title'] = 'Job Summary';
     }
+});
+
+// Dynamically hide specific meta boxes when Job is set to "Offshoring"
+add_action('admin_footer', function() {
+    global $post_type;
+    if ($post_type !== 'jobs') return;
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        function checkJobType() {
+            var selectedType = $('input[name="acf[field_job_type_tax_acf]"]:checked').val();
+            var targetBoxes = $('#kg_job_qr_code_box, #kg_job_analytics_box, #kg_job_social_toolkit_box');
+            
+            if (selectedType === 'Offshoring') {
+                targetBoxes.hide();
+            } else {
+                targetBoxes.show();
+            }
+        }
+        
+        // Check instantly on page load
+        checkJobType();
+        
+        // Listen for changes when the user clicks the Local/Offshoring radio buttons
+        $(document).on('change', 'input[name="acf[field_job_type_tax_acf]"]', function() {
+            checkJobType();
+        });
+    });
+    </script>
+    <?php
 });
 
 /**
