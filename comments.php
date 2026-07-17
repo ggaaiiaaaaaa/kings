@@ -1,4 +1,7 @@
 <?php
+// Force WordPress to believe comments are open, overriding ANY database settings or plugins!
+add_filter( 'comments_open', '__return_true', 9999 );
+
 if ( post_password_required() ) {
     return;
 }
