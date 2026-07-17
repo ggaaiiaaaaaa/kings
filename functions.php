@@ -59,6 +59,22 @@ add_action('admin_menu', function () {
     }
 }, 999);
 
+// Fix login redirects for GoDaddy: Prevent GoDaddy's custom dashboard from blocking lower-level users
+add_action('admin_init', function() {
+    global $pagenow;
+    $user = wp_get_current_user();
+    
+    // If a user lands on GoDaddy's custom wp-dashboard page
+    if ($pagenow === 'admin.php' && isset($_GET['page']) && $_GET['page'] === 'wp-dashboard') {
+        // If the user is NOT an administrator (e.g. Recruitment Admin, Recruiter, HR)
+        if (!in_array('administrator', (array) $user->roles)) {
+            // Redirect them to the standard WordPress dashboard where they have permission
+            wp_redirect(admin_url('index.php'));
+            exit;
+        }
+    }
+});
+
 
 /**
   * Compatibility Shim: Allows the site to run on localhost without WordPress.
