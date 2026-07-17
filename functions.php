@@ -1,7 +1,68 @@
 <?php
+// Removed Admin Shield to prevent conflicts with GoDaddy security plugins
+
+// GoDaddy Sync Script: Creates categories and assigns posts automatically
+add_action('init', function() {
+    // 0. EMERGENCY RECOVERY: Restore stripped Administrator core capabilities
+    if (!get_option('kg_admin_role_restored_v1')) {
+        if (!function_exists('populate_roles')) {
+            require_once(ABSPATH . 'wp-admin/includes/schema.php');
+        }
+        populate_roles(); // Factory resets standard WordPress roles (Admin, Editor, etc.)
+        update_option('kg_admin_role_restored_v1', true);
+    }
+
+    // This flag ensures it only runs ONCE on the live GoDaddy database
+    if (!get_option('kg_godaddy_categories_synced_v2')) {
+        
+        // 1. Create all 10 categories
+        $categories = [
+            'Company Updates', 'Employee & Culture', 'Fun & Engagement Events',
+            'Learning & Development', 'Recruitment', 'Community',
+            'Workplace Information', 'Recognition', 'Industry & Insights', 'Media'
+        ];
+        foreach ($categories as $cat) {
+            if (!term_exists($cat, 'category')) {
+                wp_insert_term($cat, 'category');
+            }
+        }
+        
+        // 2. Assign all existing posts to 'Company Updates'
+        $category = get_term_by('name', 'Company Updates', 'category');
+        if ($category && !is_wp_error($category)) {
+            $posts = get_posts(array(
+                'post_type' => 'post',
+                'post_status' => 'any',
+                'numberposts' => -1,
+            ));
+            foreach ($posts as $post) {
+                wp_set_post_categories($post->ID, array($category->term_id), false);
+            }
+        }
+        
+        // Mark as completed so it never runs again on GoDaddy
+        update_option('kg_godaddy_categories_synced_v2', true);
+    }
+});
+
+// Hide the standard Posts menu for recruiters, recruitment admins, and HR
+add_action('admin_menu', function () {
+    $user = wp_get_current_user();
+    if ($user && isset($user->roles)) {
+        // NEVER restrict Administrators, even if they also have testing roles
+        if (in_array('administrator', (array) $user->roles)) {
+            return;
+        }
+        if (in_array('recruiter', (array) $user->roles) || in_array('recruitment_admin', (array) $user->roles) || in_array('hr', (array) $user->roles)) {
+            remove_menu_page('edit.php'); // Hides the standard Posts menu
+        }
+    }
+}, 999);
+
+
 /**
- * Compatibility Shim: Allows the site to run on localhost without WordPress.
- */
+  * Compatibility Shim: Allows the site to run on localhost without WordPress.
+  */
 if (!defined('ABSPATH')) {
     define('ABSPATH', dirname(__FILE__) . '/');
 }
@@ -427,7 +488,8 @@ function kg_add_user_location_field($user)
         <tr>
             <th><label>Assigned Branch / Location</label></th>
             <td>
-                <div style="height: 150px; overflow-y: auto; border: 1px solid #8c8f94; border-radius: 4px; padding: 10px; min-width: 300px; max-width: 400px; background: #fff;">
+                <div
+                    style="height: 150px; overflow-y: auto; border: 1px solid #8c8f94; border-radius: 4px; padding: 10px; min-width: 300px; max-width: 400px; background: #fff;">
                     <?php foreach (kg_get_locations() as $key => $label): ?>
                         <label style="display:block; margin-bottom:5px;">
                             <input type="checkbox" name="kg_recruiter_location[]" value="<?php echo esc_attr($key); ?>">
@@ -435,7 +497,8 @@ function kg_add_user_location_field($user)
                         </label>
                     <?php endforeach; ?>
                 </div>
-                <p class="description">Check the boxes to assign multiple locations.<br>Recruiters will only be allowed to view and manage job posts and applicants matching these branch locations.</p>
+                <p class="description">Check the boxes to assign multiple locations.<br>Recruiters will only be allowed to
+                    view and manage job posts and applicants matching these branch locations.</p>
             </td>
         </tr>
     </table>
@@ -679,6 +742,9 @@ if (file_exists(get_template_directory() . '/inc/kpi-dashboard.php')) {
 if (file_exists(get_template_directory() . '/inc/recruiter-rules.php')) {
     require_once get_template_directory() . '/inc/recruiter-rules.php';
 }
+if (file_exists(get_template_directory() . '/inc/job-filters.php')) {
+    require_once get_template_directory() . '/inc/job-filters.php';
+}
 
 
 // Jobs Custom Post Type
@@ -733,6 +799,35 @@ function kingsgroup_register_jobs_cpt()
     ));
 }
 add_action('init', 'kingsgroup_register_jobs_cpt');
+
+// Replace Author dropdown with a Read-Only Author box on Jobs edit screen
+add_action('add_meta_boxes', function () {
+    remove_meta_box('authordiv', 'jobs', 'normal');
+
+    add_meta_box(
+        'job_author_readonly',
+        'Job Author',
+        function ($post) {
+            $author_id = $post->post_author;
+            if (!$author_id) {
+                $author_id = get_current_user_id();
+            }
+            $author = get_userdata($author_id);
+            if ($author) {
+                echo '<strong>' . esc_html($author->display_name) . '</strong>';
+            }
+        },
+        'jobs',
+        'side',
+        'low'
+    );
+
+    // Rename Excerpt metabox to Job Summary
+    global $wp_meta_boxes;
+    if (isset($wp_meta_boxes['jobs']['normal']['core']['postexcerpt'])) {
+        $wp_meta_boxes['jobs']['normal']['core']['postexcerpt']['title'] = 'Job Summary';
+    }
+});
 
 /**
  * Redirect default jobs archive to the custom "Our Jobs" portal page.
@@ -1724,13 +1819,14 @@ function kg_register_roles()
     );
 
     $recruiter_caps = array_merge($base_caps, $job_caps, $application_caps);
-    // HR role only gets custom post type caps + upload_files and read, but NO edit_posts (for regular blog posts)
-    $hr_caps = array_merge(array('read' => true, 'upload_files' => true), $job_caps, $application_caps, $inquiry_caps, $quote_caps);
+    unset($recruiter_caps['publish_jobs']); // Force recruiters to submit jobs for review
+    $recruitment_admin_caps = array_merge($base_caps, $job_caps, $application_caps);
+    $hr_caps = array_merge($base_caps, $job_caps, $application_caps, $inquiry_caps, $quote_caps);
     $admin_caps = array_merge($job_caps, $application_caps, $inquiry_caps, $quote_caps);
 
     if (function_exists('add_role')) {
         add_role('recruiter', 'Recruiter', $recruiter_caps);
-        add_role('recruitment_admin', 'Recruitment Admin', $recruiter_caps);
+        add_role('recruitment_admin', 'Recruitment Admin', $recruitment_admin_caps);
         add_role('hr', 'HR', $hr_caps);
         remove_role('monitoring');
     }
@@ -1738,7 +1834,7 @@ function kg_register_roles()
     if (function_exists('get_role')) {
         $roles = array(
             'recruiter' => $recruiter_caps,
-            'recruitment_admin' => $recruiter_caps,
+            'recruitment_admin' => $recruitment_admin_caps,
             'hr' => $hr_caps,
             'administrator' => $admin_caps
         );
@@ -1746,6 +1842,16 @@ function kg_register_roles()
         foreach ($roles as $role_name => $caps) {
             $role_obj = get_role($role_name);
             if ($role_obj) {
+                // Do NOT strip capabilities from the Administrator role, as they have core WordPress capabilities
+                if ($role_name !== 'administrator') {
+                    // Remove old capabilities not in the new array for custom roles
+                    foreach ($role_obj->capabilities as $cap => $grant) {
+                        if (!isset($caps[$cap])) {
+                            $role_obj->remove_cap($cap);
+                        }
+                    }
+                }
+                // Add current capabilities
                 foreach ($caps as $cap => $grant) {
                     $role_obj->add_cap($cap, $grant);
                 }
@@ -2000,7 +2106,8 @@ function kg_add_recruiter_profile_location_field($user)
         <tr>
             <th><label>Assigned Branch / Location</label></th>
             <td>
-                <div style="height: 150px; overflow-y: auto; border: 1px solid #8c8f94; border-radius: 4px; padding: 10px; min-width: 300px; max-width: 400px; background: #fff;">
+                <div
+                    style="height: 150px; overflow-y: auto; border: 1px solid #8c8f94; border-radius: 4px; padding: 10px; min-width: 300px; max-width: 400px; background: #fff;">
                     <?php foreach (kg_get_locations() as $key => $label): ?>
                         <label style="display:block; margin-bottom:5px;">
                             <input type="checkbox" name="kg_recruiter_location[]" value="<?php echo esc_attr($key); ?>" <?php checked(in_array($key, $current_locations, true)); ?>>
@@ -2008,7 +2115,8 @@ function kg_add_recruiter_profile_location_field($user)
                         </label>
                     <?php endforeach; ?>
                 </div>
-                <p class="description">Check the boxes to assign multiple locations.<br>Recruiters will only be allowed to view and manage job posts and applicants matching these branch locations.</p>
+                <p class="description">Check the boxes to assign multiple locations.<br>Recruiters will only be allowed to
+                    view and manage job posts and applicants matching these branch locations.</p>
             </td>
         </tr>
     </table>
@@ -2137,12 +2245,12 @@ function kg_run_daily_job_expiry_check()
         if ($should_close) {
             // Set job_closed meta flag to 1
             update_post_meta($job_id, 'job_closed', '1');
-            
+
             // Auto draft the job as it is closed or filled
-            wp_update_post( array(
-                'ID'          => $job_id,
+            wp_update_post(array(
+                'ID' => $job_id,
                 'post_status' => 'draft'
-            ) );
+            ));
         }
     }
 }
@@ -2297,75 +2405,76 @@ if (function_exists('add_action')) {
 /**
  * Register Customizer settings for the Footer
  */
-function kg_customize_register( $wp_customize ) {
-    $wp_customize->add_section( 'kg_footer_section', array(
-        'title'       => __( 'Footer Settings', 'kingsgroup' ),
-        'priority'    => 130,
+function kg_customize_register($wp_customize)
+{
+    $wp_customize->add_section('kg_footer_section', array(
+        'title' => __('Footer Settings', 'kingsgroup'),
+        'priority' => 130,
         'description' => 'Edit the text and copyright for the footer here.',
-    ) );
+    ));
 
     // Footer Description
-    $wp_customize->add_setting( 'footer_description', array(
-        'default'   => 'Empowering global teams with ethical Philippine talent through a worker-owned cooperative model.',
+    $wp_customize->add_setting('footer_description', array(
+        'default' => 'Empowering global teams with ethical Philippine talent through a worker-owned cooperative model.',
         'transport' => 'refresh',
-    ) );
-    $wp_customize->add_control( 'footer_description', array(
-        'label'   => 'Footer Description',
+    ));
+    $wp_customize->add_control('footer_description', array(
+        'label' => 'Footer Description',
         'section' => 'kg_footer_section',
-        'type'    => 'textarea',
-    ) );
+        'type' => 'textarea',
+    ));
 
     // Footer Copyright
-    $wp_customize->add_setting( 'footer_copyright', array(
-        'default'   => '&copy; 2026 Kings Group Cooperative. All rights reserved. Designed by <a href="https://www.itmonsterszc.com/">ITMonsters</a>',
+    $wp_customize->add_setting('footer_copyright', array(
+        'default' => '&copy; 2026 Kings Group Cooperative. All rights reserved. Designed by <a href="https://www.itmonsterszc.com/">ITMonsters</a>',
         'transport' => 'refresh',
-    ) );
-    $wp_customize->add_control( 'footer_copyright', array(
-        'label'   => 'Copyright Text',
+    ));
+    $wp_customize->add_control('footer_copyright', array(
+        'label' => 'Copyright Text',
         'section' => 'kg_footer_section',
-        'type'    => 'text',
-    ) );
+        'type' => 'text',
+    ));
 
     // Column Titles
-    $wp_customize->add_setting( 'footer_col1_title', array(
-        'default'   => 'Company',
+    $wp_customize->add_setting('footer_col1_title', array(
+        'default' => 'Company',
         'transport' => 'refresh',
-    ) );
-    $wp_customize->add_control( 'footer_col1_title', array(
-        'label'   => 'Column 1 Title (Links managed in Appearance > Menus)',
+    ));
+    $wp_customize->add_control('footer_col1_title', array(
+        'label' => 'Column 1 Title (Links managed in Appearance > Menus)',
         'section' => 'kg_footer_section',
-        'type'    => 'text',
-    ) );
+        'type' => 'text',
+    ));
 
-    $wp_customize->add_setting( 'footer_col2_title', array(
-        'default'   => 'Members',
+    $wp_customize->add_setting('footer_col2_title', array(
+        'default' => 'Members',
         'transport' => 'refresh',
-    ) );
-    $wp_customize->add_control( 'footer_col2_title', array(
-        'label'   => 'Column 2 Title (Links managed in Appearance > Menus)',
+    ));
+    $wp_customize->add_control('footer_col2_title', array(
+        'label' => 'Column 2 Title (Links managed in Appearance > Menus)',
         'section' => 'kg_footer_section',
-        'type'    => 'text',
-    ) );
+        'type' => 'text',
+    ));
 
     // Facebook URL
-    $wp_customize->add_setting( 'footer_facebook_url', array(
-        'default'   => 'https://www.facebook.com/KingsCooperative',
+    $wp_customize->add_setting('footer_facebook_url', array(
+        'default' => 'https://www.facebook.com/KingsCooperative',
         'transport' => 'refresh',
-    ) );
-    $wp_customize->add_control( 'footer_facebook_url', array(
-        'label'   => 'Facebook Link URL',
+    ));
+    $wp_customize->add_control('footer_facebook_url', array(
+        'label' => 'Facebook Link URL',
         'section' => 'kg_footer_section',
-        'type'    => 'url',
-    ) );
+        'type' => 'url',
+    ));
 }
-add_action( 'customize_register', 'kg_customize_register' );
+add_action('customize_register', 'kg_customize_register');
 
 /**
  * Allow ACF new_lines => br to pass through esc_html()
  * And automatically convert raw new lines to <br> tags.
  * This allows all text fields to render line breaks properly on the frontend.
  */
-add_filter('esc_html', function($safe_text, $text) {
+add_filter('esc_html', function ($safe_text, $text) {
     // Convert raw newlines (\n) to <br />
     $safe_text = nl2br($safe_text);
     // Unescape any <br> tags that ACF or users added directly
@@ -2375,38 +2484,44 @@ add_filter('esc_html', function($safe_text, $text) {
 /**
  * Auto-draft job if filled headcount reaches target headcount.
  */
-function kg_auto_draft_if_headcount_reached( $job_id ) {
-    if ( get_post_type( $job_id ) !== 'jobs' ) return;
-    if ( get_post_status( $job_id ) !== 'publish' ) return;
+function kg_auto_draft_if_headcount_reached($job_id)
+{
+    if (get_post_type($job_id) !== 'jobs')
+        return;
+    if (get_post_status($job_id) !== 'publish')
+        return;
 
-    $target = (int) get_post_meta( $job_id, 'job_target_headcount', true );
-    $filled = (int) get_post_meta( $job_id, 'job_filled_headcount', true );
+    $target = (int) get_post_meta($job_id, 'job_target_headcount', true);
+    $filled = (int) get_post_meta($job_id, 'job_filled_headcount', true);
 
-    if ( $target > 0 && $filled >= $target ) {
+    if ($target > 0 && $filled >= $target) {
         // Unhook to prevent loop if calling from save_post
-        remove_action( 'save_post_jobs', 'kg_auto_draft_on_job_save', 99 );
-        wp_update_post( array(
-            'ID'          => $job_id,
+        remove_action('save_post_jobs', 'kg_auto_draft_on_job_save', 99);
+        wp_update_post(array(
+            'ID' => $job_id,
             'post_status' => 'draft'
-        ) );
-        add_action( 'save_post_jobs', 'kg_auto_draft_on_job_save', 99 );
+        ));
+        add_action('save_post_jobs', 'kg_auto_draft_on_job_save', 99);
     }
 }
 
-function kg_auto_draft_on_job_save( $post_id ) {
-    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
-    kg_auto_draft_if_headcount_reached( $post_id );
+function kg_auto_draft_on_job_save($post_id)
+{
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+        return;
+    kg_auto_draft_if_headcount_reached($post_id);
 }
-add_action( 'save_post_jobs', 'kg_auto_draft_on_job_save', 99 );
-add_action( 'acf/save_post', 'kg_auto_draft_on_job_save', 99 );
+add_action('save_post_jobs', 'kg_auto_draft_on_job_save', 99);
+add_action('acf/save_post', 'kg_auto_draft_on_job_save', 99);
 
 /**
  * Create Audit Log Database Table
  */
-function kg_create_audit_log_table() {
+function kg_create_audit_log_table()
+{
     global $wpdb;
     $table_name = $wpdb->prefix . 'kg_audit_logs';
-    
+
     $installed_ver = get_option('kg_audit_db_version');
     if ($installed_ver != '1.0') {
         $charset_collate = $wpdb->get_charset_collate();

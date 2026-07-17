@@ -17,8 +17,22 @@ function kg_sync_job_location_meta_on_save( $post_id ) {
     $terms = wp_get_post_terms( $post_id, 'job_location_tax' );
     if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
         update_post_meta( $post_id, 'job_location', $terms[0]->name );
+        
+        // Auto-assign Region based on the Location
+        if (function_exists('kg_get_acf_region_key_by_location')) {
+            $region = kg_get_acf_region_key_by_location($terms[0]->name);
+            if (function_exists('update_field')) {
+                update_field( 'job_region', $region, $post_id );
+            } else {
+                update_post_meta( $post_id, 'job_region', $region );
+                update_post_meta( $post_id, '_job_region', 'field_job_region' );
+            }
+        }
     } else {
         update_post_meta( $post_id, 'job_location', '' );
+        if (function_exists('update_field')) {
+            update_field( 'job_region', '', $post_id );
+        }
     }
 }
 add_action( 'save_post_jobs', 'kg_sync_job_location_meta_on_save', 25 );
@@ -62,6 +76,61 @@ function kg_auto_assign_recruiter_location_to_job( $post_id, $post, $update ) {
     }
 }
 add_action( 'save_post_jobs', 'kg_auto_assign_recruiter_location_to_job', 10, 3 );
+
+/**
+ * 2b. Restrict ACF location dropdown to ONLY the recruiter's assigned locations.
+ */
+function kg_filter_acf_location_dropdown_for_recruiters( $args, $field, $post_id ) {
+    if ( function_exists( 'kg_is_current_user_recruiter' ) && kg_is_current_user_recruiter() && ! kg_is_current_user_recruitment_admin() ) {
+        $rec_id = get_current_user_id();
+        $rec_location_slugs = (array) get_user_meta( $rec_id, 'kg_recruiter_location', true );
+        
+        $term_ids = array();
+        foreach ( $rec_location_slugs as $slug ) {
+            $term = get_term_by( 'slug', $slug, 'job_location_tax' );
+            if ( $term && ! is_wp_error( $term ) ) {
+                $term_ids[] = (int) $term->term_id;
+            }
+        }
+        
+        if ( ! empty( $term_ids ) ) {
+            $args['include'] = $term_ids;
+        } else {
+            $args['include'] = array( 0 ); // Show empty if no locations assigned
+        }
+    }
+    return $args;
+}
+add_filter( 'acf/fields/taxonomy/query/name=job_location_tax', 'kg_filter_acf_location_dropdown_for_recruiters', 10, 3 );
+
+/**
+ * 2c. Restrict ACF Region dropdown based on recruiter locations.
+ */
+function kg_get_acf_region_key_by_location($location) {
+    $location = strtoupper(trim($location));
+    if (empty($location)) return 'Nationwide';
+
+    if (strpos($location, 'MANILA') !== false || strpos($location, 'TAGUIG') !== false || strpos($location, 'MAKATI') !== false || strpos($location, 'QC') !== false || strpos($location, 'ALABANG') !== false || strpos($location, 'NCR') !== false) return 'NCR';
+    if (strpos($location, 'BAGUIO') !== false || strpos($location, 'BENGUET') !== false || strpos($location, 'CAR') !== false) return 'CAR';
+    if (strpos($location, 'PANGASINAN') !== false || strpos($location, 'DAGUPAN') !== false || strpos($location, 'REGION I') !== false) return 'Ilocos Region (I)';
+    if (strpos($location, 'TUGUEGARAO') !== false || strpos($location, 'ISABELA') !== false || strpos($location, 'REGION II') !== false) return 'Cagayan Valley (II)';
+    if (strpos($location, 'BULACAN') !== false || strpos($location, 'PAMPANGA') !== false || strpos($location, 'TARLAC') !== false || strpos($location, 'SUBIC') !== false || strpos($location, 'REGION III') !== false) return 'Central Luzon (III)';
+    if (strpos($location, 'BATANGAS') !== false || strpos($location, 'LAGUNA') !== false || strpos($location, 'CAVITE') !== false || strpos($location, 'RIZAL') !== false || strpos($location, 'CALABARZON') !== false) return 'CALABARZON (IV-A)';
+    if (strpos($location, 'MINDORO') !== false || strpos($location, 'PALAWAN') !== false || strpos($location, 'MIMAROPA') !== false) return 'MIMAROPA (IV-B)';
+    if (strpos($location, 'BICOL') !== false || strpos($location, 'ALBAY') !== false || strpos($location, 'CAMARINES') !== false) return 'Bicol (V)';
+    if (strpos($location, 'ILOILO') !== false || strpos($location, 'BACOLOD') !== false || strpos($location, 'REGION VI') !== false) return 'Western Visayas (VI)';
+    if (strpos($location, 'CEBU') !== false || strpos($location, 'BOHOL') !== false || strpos($location, 'REGION VII') !== false) return 'Central Visayas (VII)';
+    if (strpos($location, 'LEYTE') !== false || strpos($location, 'SAMAR') !== false || strpos($location, 'REGION VIII') !== false) return 'Eastern Visayas (VIII)';
+    if (strpos($location, 'ZAMBOANGA') !== false || strpos($location, 'REGION IX') !== false) return 'Zamboanga Peninsula (IX)';
+    if (strpos($location, 'CAGAYAN DE ORO') !== false || strpos($location, 'REGION X') !== false) return 'Northern Mindanao (X)';
+    if (strpos($location, 'DAVAO') !== false || strpos($location, 'REGION XI') !== false) return 'Davao Region (XI)';
+    if (strpos($location, 'GENERAL SANTOS') !== false || strpos($location, 'SOCCSKSARGEN') !== false) return 'SOCCSKSARGEN (XII)';
+    if (strpos($location, 'BUTUAN') !== false || strpos($location, 'CARAGA') !== false) return 'Caraga (XIII)';
+    if (strpos($location, 'COTABATO') !== false || strpos($location, 'BARMM') !== false) return 'BARMM';
+    if (strpos($location, 'REMOTE') !== false || strpos($location, 'WFH') !== false) return 'Remote / WFH';
+
+    return 'Nationwide';
+}
 
 /**
  * 3. Restrict recruiters from editing/deleting other users' jobs.

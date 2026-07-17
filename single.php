@@ -86,6 +86,15 @@ get_header();
 
         </article>
 
+        <!-- Comments Section -->
+        <?php
+        if ( comments_open() || get_comments_number() ) :
+            echo '<div class="container blog-page-container" style="max-width: 800px; margin: 3rem auto 0; padding: 0 1.5rem;">';
+            comments_template();
+            echo '</div>';
+        endif;
+        ?>
+
         <!-- Recent Posts Section at the very bottom -->
         <div class="blog-footer-widget-area" style="margin-top: 4rem;">
             <div class="container blog-page-container animate-on-scroll" style="max-width: 1100px; margin: 0 auto; padding: 0 1.5rem;">

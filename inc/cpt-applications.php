@@ -1570,36 +1570,17 @@ function kg_filter_jobs_for_recruiters($query) {
             $rec_locations = (array) get_user_meta($rec_id, 'kg_recruiter_location', true);
             $rec_locations = array_filter($rec_locations);
 
-            // Recruiters see jobs they authored, OR jobs matching their location, OR jobs with no location (fallback)
-            $meta_query = (array) $query->get('meta_query');
-            $scope_query = array(
-                'relation' => 'OR',
-            );
-
-            // Job author check (can be checked via post_author or standard queries)
-            // But since WP doesn't support OR between author and meta_query easily, we use meta or filter by location
+            // Recruiters see jobs in their assigned locations
+            $tax_query = (array) $query->get('tax_query');
             if ( ! empty( $rec_locations ) ) {
-                $scope_query[] = array(
-                    'key'     => 'job_location',
-                    'value'   => $rec_locations,
-                    'compare' => 'IN',
+                $tax_query[] = array(
+                    'taxonomy' => 'job_location_tax',
+                    'field'    => 'slug',
+                    'terms'    => $rec_locations,
+                    'operator' => 'IN',
                 );
             }
-
-            // Fallbacks
-            $scope_query[] = array(
-                'key' => 'job_location',
-                'value' => '',
-                'compare' => 'NOT EXISTS',
-            );
-            $scope_query[] = array(
-                'key' => 'job_location',
-                'value' => '',
-                'compare' => '=',
-            );
-
-            $meta_query[] = $scope_query;
-            $query->set('meta_query', $meta_query);
+            $query->set('tax_query', $tax_query);
 
             // Also keep standard author assignment if they want to manage their own posts
             // But since we want them to see location-scoped jobs as well, we let them see all jobs matching the location scope.
@@ -1618,7 +1599,8 @@ function kg_register_bulk_actions_assign_recruiter( $bulk_actions ) {
     }
     return $bulk_actions;
 }
-add_filter( 'bulk_actions-edit-kg_application', 'kg_register_bulk_actions_assign_recruiter' );
+// Removed Assign Recruiter per request
+// add_filter( 'bulk_actions-edit-kg_application', 'kg_register_bulk_actions_assign_recruiter' );
 
 function kg_handle_bulk_actions_assign_recruiter( $redirect_to, $action, $post_ids ) {
     if ( $action !== 'kg_bulk_assign_recruiter' ) {
