@@ -273,6 +273,14 @@ $jobs_query = new WP_Query(array(
     'post_type' => 'jobs',
     'post_status' => 'publish',
     'posts_per_page' => -1,
+    'tax_query' => array(
+        array(
+            'taxonomy' => 'job_type_tax',
+            'field'    => 'slug',
+            'terms'    => 'offshoring',
+            'operator' => 'NOT IN',
+        ),
+    ),
     'orderby' => 'date',
     'order' => 'DESC'
 ));
@@ -800,6 +808,14 @@ $badge_colors = array(
                             'post_type'      => 'jobs',
                             'post_status'    => 'publish',
                             'posts_per_page' => -1,
+                            'tax_query'      => array(
+                                array(
+                                    'taxonomy' => 'job_type_tax',
+                                    'field'    => 'slug',
+                                    'terms'    => 'offshoring',
+                                    'operator' => 'NOT IN',
+                                ),
+                            ),
                             'orderby'        => 'title',
                             'order'          => 'ASC'
                         ));
@@ -2861,8 +2877,16 @@ $badge_colors = array(
                         <?php
                         $modal_jobs_query = new WP_Query(array(
                             'post_type'      => 'jobs',
-                            'post_status' => 'publish',
+                            'post_status'    => 'publish',
                             'posts_per_page' => -1,
+                            'tax_query'      => array(
+                                array(
+                                    'taxonomy' => 'job_type_tax',
+                                    'field'    => 'slug',
+                                    'terms'    => 'offshoring',
+                                    'operator' => 'NOT IN',
+                                ),
+                            ),
                             'orderby'        => 'title',
                             'order'          => 'ASC'
                         ));
