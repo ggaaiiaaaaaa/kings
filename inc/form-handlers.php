@@ -267,6 +267,8 @@ function kg_handle_application() {
                 $preferred_roles = array_filter( array_map( 'trim', explode( ',', sanitize_text_field( $_POST['app_preferred_roles'] ) ) ) );
             }
         }
+    } elseif ( ! empty( $_POST['app_role'] ) ) {
+        $preferred_roles[] = sanitize_text_field( $_POST['app_role'] );
     }
 
     $purpose = sanitize_text_field( $_POST['app_purpose'] ?? '' );
