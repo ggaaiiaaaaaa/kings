@@ -173,15 +173,34 @@ add_filter( 'map_meta_cap', 'kg_restrict_recruiter_job_permissions', 10, 4 );
  * 4. Hide "Inquiries" and "Quote Requests" from recruiters in the WordPress Admin Menu.
  */
 function kg_hide_inquiries_quotes_for_recruiters() {
-    if ( ! function_exists( 'kg_is_current_user_recruiter' ) || ! kg_is_current_user_recruiter() ) {
+    $is_recruiter = function_exists( 'kg_is_current_user_recruiter' ) && kg_is_current_user_recruiter();
+    $is_recruitment_admin = function_exists( 'kg_is_current_user_recruitment_admin' ) && kg_is_current_user_recruitment_admin();
+    
+    if ( ! $is_recruiter && ! $is_recruitment_admin ) {
         return;
     }
 
-    // Hide Inquiries and Quote Requests custom post types
+    // Hide Inquiries, Quote Requests, Testimonials, and Comments custom post types
     remove_menu_page( 'edit.php?post_type=kg_inquiry' );
     remove_menu_page( 'edit.php?post_type=kg_quote_lead' );
+    remove_menu_page( 'edit.php?post_type=kg_testimonial' );
+    remove_menu_page( 'edit-comments.php' );
 }
 add_action( 'admin_menu', 'kg_hide_inquiries_quotes_for_recruiters', 999 );
+
+/**
+ * Hide dashboard widgets (e.g., Activity) for recruiters and recruitment admins.
+ */
+function kg_hide_dashboard_widgets_for_recruiters() {
+    $is_recruiter = function_exists( 'kg_is_current_user_recruiter' ) && kg_is_current_user_recruiter();
+    $is_recruitment_admin = function_exists( 'kg_is_current_user_recruitment_admin' ) && kg_is_current_user_recruitment_admin();
+    
+    if ( ! $is_recruiter && ! $is_recruitment_admin ) {
+        return;
+    }
+    remove_meta_box( 'dashboard_activity', 'dashboard', 'normal' );
+}
+add_action( 'wp_dashboard_setup', 'kg_hide_dashboard_widgets_for_recruiters', 999 );
 
 /**
  * 5. Auto-bump job post date when transitioning from draft to publish.
@@ -285,3 +304,146 @@ function kg_notify_on_recruiter_job_publish( $new_status, $old_status, $post ) {
     }
 }
 add_action( 'transition_post_status', 'kg_notify_on_recruiter_job_publish', 20, 3 );
+
+/**
+ * 7. Disable Date fields in Quick Edit for recruiters.
+ */
+function kg_disable_quick_edit_date_for_recruiters() {
+    if ( ! function_exists( 'kg_is_current_user_recruiter' ) || ! kg_is_current_user_recruiter() ) {
+        return;
+    }
+    
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+    if ( $screen && $screen->id === 'edit-jobs' ) {
+        echo '<style>
+            .inline-edit-col .inline-edit-date {
+                pointer-events: none !important;
+                opacity: 0.5 !important;
+            }
+        </style>';
+    }
+}
+add_action( 'admin_head', 'kg_disable_quick_edit_date_for_recruiters' );
+
+/**
+ * 8. Auto-generate Slug in Quick Edit based on Title.
+ */
+function kg_auto_slug_in_quick_edit() {
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+    if ( $screen && $screen->id === 'edit-jobs' ) {
+        echo '<script>
+            jQuery(document).ready(function($){
+                $(document).on("keyup", ".inline-edit-row input[name=\'post_title\']", function(){
+                    var title = $(this).val();
+                    var slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+                    $(this).closest(".inline-edit-row").find("input[name=\'post_name\']").val(slug);
+                });
+            });
+        </script>';
+    }
+}
+add_action( 'admin_head', 'kg_auto_slug_in_quick_edit' );
+
+/**
+ * 9. Capture Timestamps for Job Status Changes (Pending / Published)
+ */
+function kg_capture_job_status_timestamps( $new_status, $old_status, $post ) {
+    if ( $post->post_type !== 'jobs' ) return;
+
+    if ( $new_status === 'pending' && $old_status !== 'pending' ) {
+        update_post_meta( $post->ID, 'kg_job_submitted_timestamp', current_time('timestamp') );
+    }
+
+    if ( $new_status === 'publish' && $old_status !== 'publish' ) {
+        update_post_meta( $post->ID, 'kg_job_published_timestamp', current_time('timestamp') );
+    }
+}
+add_action( 'transition_post_status', 'kg_capture_job_status_timestamps', 10, 3 );
+
+/**
+ * 10. Display Timestamps in Jobs List Table
+ */
+function kg_add_jobs_timestamp_columns( $columns ) {
+    $columns['job_submitted'] = 'Submitted (Pending)';
+    $columns['job_published'] = 'Published At';
+    return $columns;
+}
+add_filter( 'manage_jobs_posts_columns', 'kg_add_jobs_timestamp_columns' );
+
+function kg_render_jobs_timestamp_columns( $column, $post_id ) {
+    if ( $column === 'job_submitted' ) {
+        $timestamp = get_post_meta( $post_id, 'kg_job_submitted_timestamp', true );
+        if ( $timestamp ) {
+            echo date_i18n( 'M j, Y h:i a', $timestamp );
+        } else {
+            echo '<span style="color:#94a3b8;">-</span>';
+        }
+    }
+    if ( $column === 'job_published' ) {
+        $timestamp = get_post_meta( $post_id, 'kg_job_published_timestamp', true );
+        if ( $timestamp ) {
+            echo date_i18n( 'M j, Y h:i a', $timestamp );
+        } else {
+            $post_status = get_post_status($post_id);
+            if ($post_status === 'publish') {
+                echo get_the_date('M j, Y h:i a', $post_id);
+            } else {
+                echo '<span style="color:#94a3b8;">-</span>';
+            }
+        }
+    }
+}
+add_action( 'manage_jobs_posts_custom_column', 'kg_render_jobs_timestamp_columns', 10, 2 );
+
+/**
+ * 11. Hide Job Category (Local / Offshoring) ACF Field for recruiters and recruitment admins
+ */
+function kg_hide_acf_offshoring_for_recruiters() {
+    $is_recruiter = function_exists( 'kg_is_current_user_recruiter' ) && kg_is_current_user_recruiter();
+    $is_recruitment_admin = function_exists( 'kg_is_current_user_recruitment_admin' ) && kg_is_current_user_recruitment_admin();
+    
+    if ( ! $is_recruiter && ! $is_recruitment_admin ) {
+        return;
+    }
+
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+    if ( $screen && $screen->id === 'jobs' ) {
+        echo '<style>
+            .acf-field[data-key="field_job_type_tax_acf"] {
+                display: none !important;
+            }
+        </style>';
+    }
+}
+add_action( 'admin_head', 'kg_hide_acf_offshoring_for_recruiters' );
+
+/**
+ * 12. Hide Offshoring Jobs from Recruiters and Recruitment Admins in the Backend List
+ */
+function kg_hide_offshoring_jobs_from_recruiters( $query ) {
+    if ( ! is_admin() || ! $query->is_main_query() ) {
+        return;
+    }
+
+    // Only apply to the jobs post type list
+    if ( $query->get('post_type') !== 'jobs' ) {
+        return;
+    }
+
+    $is_recruiter = function_exists( 'kg_is_current_user_recruiter' ) && kg_is_current_user_recruiter();
+    $is_recruitment_admin = function_exists( 'kg_is_current_user_recruitment_admin' ) && kg_is_current_user_recruitment_admin();
+    
+    if ( $is_recruiter || $is_recruitment_admin ) {
+        $tax_query = (array) $query->get( 'tax_query' );
+        
+        $tax_query[] = array(
+            'taxonomy' => 'job_type_tax',
+            'field'    => 'slug',
+            'terms'    => array( 'offshoring' ),
+            'operator' => 'NOT IN',
+        );
+        
+        $query->set( 'tax_query', $tax_query );
+    }
+}
+add_action( 'pre_get_posts', 'kg_hide_offshoring_jobs_from_recruiters' );

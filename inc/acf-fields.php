@@ -505,6 +505,7 @@ if (function_exists('acf_add_local_field_group')):
                     'Local' => 'Local',
                     'Offshoring' => 'Offshoring',
                 ),
+                'default_value' => 'Local',
                 'instructions' => 'Select whether this job is Local or Offshoring. This will automatically show/hide the correct settings below.',
                 'required' => 1,
             ),

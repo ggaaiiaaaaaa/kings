@@ -58,15 +58,22 @@ function kg_ats_dashboard_widget_render()
         'post_status' => array('publish', 'draft'),
         'posts_per_page' => -1,
         'fields' => 'ids',
+        'tax_query' => array(
+            'relation' => 'AND',
+            array(
+                'taxonomy' => 'job_type_tax',
+                'field'    => 'slug',
+                'terms'    => 'offshoring',
+                'operator' => 'NOT IN',
+            )
+        ),
     );
     
     if ( ! empty($active_locations) ) {
-        $jobs_args['tax_query'] = array(
-            array(
-                'taxonomy' => 'job_location_tax',
-                'field'    => 'slug',
-                'terms'    => $active_locations,
-            )
+        $jobs_args['tax_query'][] = array(
+            'taxonomy' => 'job_location_tax',
+            'field'    => 'slug',
+            'terms'    => $active_locations,
         );
     } elseif ($is_recruiter) {
         $jobs_args['author'] = get_current_user_id();
@@ -622,6 +629,14 @@ function kg_ats_job_listings_overview_render()
         'post_type'      => 'jobs',
         'post_status'    => array('publish', 'draft'),
         'posts_per_page' => -1,
+        'tax_query'      => array(
+            array(
+                'taxonomy' => 'job_type_tax',
+                'field'    => 'slug',
+                'terms'    => 'offshoring',
+                'operator' => 'NOT IN',
+            )
+        ),
     ));
 
     $active_openings = 0;
