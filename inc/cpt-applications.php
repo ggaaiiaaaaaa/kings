@@ -1931,6 +1931,16 @@ function kg_email_templates_settings_render() {
             'fallback_btn_text' => 'Visit Kings Manpower',
             'fallback_btn_link' => '{site_url}',
             'tokens' => array( '{name}', '{quote_total}', '{quote_details}', '{site_url}' )
+        ),
+        'recruiter_job_review' => array(
+            'label' => 'Job Pending Review Notification (Admin/HR/Recruitment Admin)',
+            'desc'  => 'Sent to administrators, HR, and Recruitment Admin when a recruiter submits a job for review.',
+            'fallback_subj' => '[{site_name}] Job Submitted for Review: {job_title}',
+            'fallback_body' => "Hello Team,\n\nA new job post has been submitted by <strong>{author_name}</strong> and is currently waiting for your review and approval.\n\n<div style=\"border:1px solid #e8ecf0;border-radius:8px;padding:20px;margin-bottom:24px;background:#ffffff;\">{job_details}</div>",
+            'fallback_banner' => '',
+            'fallback_btn_text' => 'Review & Publish Job',
+            'fallback_btn_link' => '{edit_link}',
+            'tokens' => array( '{site_name}', '{job_title}', '{author_name}', '{job_details}', '{edit_link}', '{site_url}' )
         )
     );
 
@@ -1982,6 +1992,7 @@ function kg_email_templates_settings_render() {
         'contact_client'             => 'Inquiry Acknowledgment',
         'quote_admin'                => 'Service Proposal Request Notification',
         'quote_client'               => 'Proposal Request Acknowledgment',
+        'recruiter_job_review'       => 'Job Pending Review',
     );
 
     if ( $active_key === 'global_branding' ) {
@@ -2021,7 +2032,7 @@ function kg_email_templates_settings_render() {
                     ),
                     'apps' => array(
                         'label' => 'Applications Emails',
-                        'keys'  => array( 'pooling', 'screening', 'processing', 'interviewing_online', 'interviewing_face_to_face', 'hired', 'deployed', 'rejected', 'recruiter_change', 'admin_submission' )
+                        'keys'  => array( 'pooling', 'screening', 'processing', 'interviewing_online', 'interviewing_face_to_face', 'hired', 'deployed', 'rejected', 'recruiter_change', 'admin_submission', 'recruiter_job_review' )
                     ),
                     'quotes' => array(
                         'label' => 'Quote Emails',
@@ -2330,6 +2341,13 @@ function kg_get_parsed_email( $template_key, $replacements = array() ) {
             'fallback_banner' => 'A dedicated representative will contact you within one business day to present a detailed pricing breakdown and discuss your specific needs.',
             'fallback_btn_text' => 'Visit Kings Manpower',
             'fallback_btn_link' => '{site_url}'
+        ),
+        'recruiter_job_review' => array(
+            'fallback_subj' => '[{site_name}] Job Submitted for Review: {job_title}',
+            'fallback_body' => "Hello Team,\n\nA new job post has been submitted by <strong>{author_name}</strong> and is currently waiting for your review and approval.\n\n<div style=\"border:1px solid #e8ecf0;border-radius:8px;padding:20px;margin-bottom:24px;background:#ffffff;\">{job_details}</div>",
+            'fallback_banner' => '',
+            'fallback_btn_text' => 'Review & Publish Job',
+            'fallback_btn_link' => '{edit_link}'
         )
     );
 

@@ -950,13 +950,32 @@ add_action('add_meta_boxes', function () {
     }
 });
 
-// Dynamically hide specific meta boxes when Job is set to "Offshoring"
+// Dynamically hide specific meta boxes when Job is set to "Offshoring", handle Quick Edit overrides
 add_action('admin_footer', function() {
     global $post_type;
     if ($post_type !== 'jobs') return;
     ?>
+    <style>
+        /* Make author dropdown visible but uneditable in Quick Edit */
+        .inline-edit-row label.inline-edit-author {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .inline-edit-row label.inline-edit-author select {
+            background-color: #f0f0f1;
+        }
+    </style>
     <script>
     jQuery(document).ready(function($) {
+        // Change the Excerpt description text on the main edit screen
+        $('#postexcerpt p').html('Job summaries are optional hand-crafted summaries of your job that can be used in your theme.');
+
+        // Rename Excerpt to Job Summary in the Quick Edit form template
+        $('#inline-edit .inline-edit-excerpt .title').text('Job Summary');
+        
+        // Remove Author dropdown from tab navigation since it's uneditable
+        $('#inline-edit .inline-edit-author select').attr('tabindex', '-1');
+
         function checkJobType() {
             var selectedType = $('input[name="acf[field_job_type_tax_acf]"]:checked').val();
             var targetBoxes = $('#kg_job_qr_code_box, #kg_job_analytics_box, #kg_job_social_toolkit_box');
@@ -969,11 +988,52 @@ add_action('admin_footer', function() {
         }
         
         // Check instantly on page load
-        checkJobType();
+        if ($('input[name="acf[field_job_type_tax_acf]"]').length) {
+            checkJobType();
+        }
         
         // Listen for changes when the user clicks the Local/Offshoring radio buttons
         $(document).on('change', 'input[name="acf[field_job_type_tax_acf]"]', function() {
             checkJobType();
+        });
+
+        // Map Location to Region in real-time
+        function getRegionFromLocation(loc) {
+            loc = (loc || '').toUpperCase().trim();
+            if (!loc) return 'Nationwide';
+
+            if (loc.indexOf('MANILA') !== -1 || loc.indexOf('TAGUIG') !== -1 || loc.indexOf('MAKATI') !== -1 || loc.indexOf('QC') !== -1 || loc.indexOf('ALABANG') !== -1 || loc.indexOf('NCR') !== -1) return 'NCR';
+            if (loc.indexOf('BAGUIO') !== -1 || loc.indexOf('BENGUET') !== -1 || loc.indexOf('CAR') !== -1) return 'CAR';
+            if (loc.indexOf('PANGASINAN') !== -1 || loc.indexOf('DAGUPAN') !== -1 || loc.indexOf('REGION I') !== -1) return 'Ilocos Region (I)';
+            if (loc.indexOf('TUGUEGARAO') !== -1 || loc.indexOf('ISABELA') !== -1 || loc.indexOf('REGION II') !== -1) return 'Cagayan Valley (II)';
+            if (loc.indexOf('BULACAN') !== -1 || loc.indexOf('PAMPANGA') !== -1 || loc.indexOf('TARLAC') !== -1 || loc.indexOf('SUBIC') !== -1 || loc.indexOf('REGION III') !== -1) return 'Central Luzon (III)';
+            if (loc.indexOf('BATANGAS') !== -1 || loc.indexOf('LAGUNA') !== -1 || loc.indexOf('CAVITE') !== -1 || loc.indexOf('RIZAL') !== -1 || loc.indexOf('CALABARZON') !== -1) return 'CALABARZON (IV-A)';
+            if (loc.indexOf('MINDORO') !== -1 || loc.indexOf('PALAWAN') !== -1 || loc.indexOf('MIMAROPA') !== -1) return 'MIMAROPA (IV-B)';
+            if (loc.indexOf('BICOL') !== -1 || loc.indexOf('ALBAY') !== -1 || loc.indexOf('CAMARINES') !== -1) return 'Bicol (V)';
+            if (loc.indexOf('ILOILO') !== -1 || loc.indexOf('BACOLOD') !== -1 || loc.indexOf('REGION VI') !== -1) return 'Western Visayas (VI)';
+            if (loc.indexOf('CEBU') !== -1 || loc.indexOf('BOHOL') !== -1 || loc.indexOf('REGION VII') !== -1) return 'Central Visayas (VII)';
+            if (loc.indexOf('LEYTE') !== -1 || loc.indexOf('SAMAR') !== -1 || loc.indexOf('REGION VIII') !== -1) return 'Eastern Visayas (VIII)';
+            if (loc.indexOf('ZAMBOANGA') !== -1 || loc.indexOf('REGION IX') !== -1) return 'Zamboanga Peninsula (IX)';
+            if (loc.indexOf('CAGAYAN DE ORO') !== -1 || loc.indexOf('REGION X') !== -1) return 'Northern Mindanao (X)';
+            if (loc.indexOf('DAVAO') !== -1 || loc.indexOf('REGION XI') !== -1) return 'Davao Region (XI)';
+            if (loc.indexOf('GENERAL SANTOS') !== -1 || loc.indexOf('SOCCSKSARGEN') !== -1) return 'SOCCSKSARGEN (XII)';
+            if (loc.indexOf('BUTUAN') !== -1 || loc.indexOf('CARAGA') !== -1) return 'Caraga (XIII)';
+            if (loc.indexOf('COTABATO') !== -1 || loc.indexOf('BARMM') !== -1) return 'BARMM';
+            if (loc.indexOf('REMOTE') !== -1 || loc.indexOf('WFH') !== -1) return 'Remote / WFH';
+
+            return 'Nationwide';
+        }
+
+        $(document).on('change', 'select[name="acf[field_job_location_tax]"]', function() {
+            var selectedText = $(this).find('option:selected').text();
+            // ACF sometimes adds "- " for child categories, we should clean it up if needed,
+            // but the mapping function uses simple string matching so it's fine.
+            var region = getRegionFromLocation(selectedText);
+            var regionSelect = $('select[name="acf[field_job_region]"]');
+            
+            if (regionSelect.length && selectedText) {
+                regionSelect.val(region).trigger('change');
+            }
         });
     });
     </script>

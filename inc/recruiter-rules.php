@@ -159,6 +159,12 @@ function kg_restrict_recruiter_job_permissions( $caps, $cap, $user_id, $args ) {
         }
     }
     
+    // Deny publish capability for recruiters so their posts go to "Submit for Review" (pending)
+    if ( $cap === 'publish_jobs' || $cap === 'publish_posts' ) {
+        // This ensures the button says "Submit for Review"
+        $caps[] = 'do_not_allow';
+    }
+    
     return $caps;
 }
 add_filter( 'map_meta_cap', 'kg_restrict_recruiter_job_permissions', 10, 4 );
@@ -200,3 +206,82 @@ function kg_auto_bump_job_publish_date( $new_status, $old_status, $post ) {
     }
 }
 add_action( 'transition_post_status', 'kg_auto_bump_job_publish_date', 10, 3 );
+
+/**
+ * 6. Send email notification when a recruiter submits a job for review.
+ */
+function kg_notify_on_recruiter_job_publish( $new_status, $old_status, $post ) {
+    if ( $post->post_type === 'jobs' && $new_status === 'pending' && $old_status !== 'pending' ) {
+        
+        $author_id = $post->post_author;
+        $author = get_userdata( $author_id );
+        
+        // Ensure author exists and is a recruiter
+        if ( ! $author || ! in_array( 'recruiter', (array) $author->roles, true ) ) {
+            return;
+        }
+
+        // Get recipients (administrators, hr, recruitment_admin)
+        $roles_to_notify = array( 'administrator', 'hr', 'recruitment_admin' );
+        $emails = array();
+
+        foreach ( $roles_to_notify as $role ) {
+            $users = get_users( array( 'role' => $role ) );
+            foreach ( $users as $user ) {
+                if ( is_email( $user->user_email ) ) {
+                    $emails[] = $user->user_email;
+                }
+            }
+        }
+        
+        // Remove duplicates just in case someone has multiple roles
+        $emails = array_unique( $emails );
+
+        if ( empty( $emails ) ) {
+            return;
+        }
+
+        $job_title    = get_the_title( $post->ID );
+        $author_name  = $author->display_name;
+        $edit_link    = admin_url( 'post.php?post=' . $post->ID . '&action=edit' );
+        
+        if ( function_exists( 'kg_get_parsed_email' ) && function_exists( 'kg_email_wrap' ) ) {
+            $job_details_html = kg_email_row( 'Job Title', $job_title ) . kg_email_row( 'Submitted By', $author_name );
+            
+            $parsed = kg_get_parsed_email( 'recruiter_job_review', array(
+                '{site_name}'   => get_bloginfo('name'),
+                '{job_title}'   => esc_html( $job_title ),
+                '{author_name}' => esc_html( $author_name ),
+                '{job_details}' => $job_details_html,
+                '{edit_link}'   => esc_url( $edit_link )
+            ) );
+            
+            $subject = $parsed['subject'];
+            $body_html = kg_email_heading( $parsed['heading'] ) . $parsed['body'];
+            
+            if ( ! empty( $parsed['banner'] ) ) {
+                $body_html .= kg_email_banner( $parsed['banner'] );
+            }
+            if ( ! empty( $parsed['btn_text'] ) && ! empty( $parsed['btn_link'] ) ) {
+                $body_html .= kg_email_button( $parsed['btn_text'], $parsed['btn_link'] );
+            }
+            
+            $message = kg_email_wrap( $subject, $body_html, 'Kings Team', '', date_i18n( get_option( 'date_format' ) ) );
+            
+        } else {
+            // Fallback just in case template functions are not loaded
+            $subject  = sprintf( '[%s] Job Submitted for Review: %s', get_bloginfo('name'), $job_title );
+            $message  = "Hello,\n\n";
+            $message .= sprintf( "A new job post has been submitted for review by %s.\n\n", $author_name );
+            $message .= sprintf( "Job Title: %s\n", $job_title );
+            $message .= sprintf( "Please review and publish it here: %s\n\n", $edit_link );
+            $message .= "This is an automated notification from your WordPress system.";
+        }
+        
+        $headers = array('Content-Type: text/html; charset=UTF-8');
+        
+        // Send email
+        wp_mail( $emails, $subject, $message, $headers );
+    }
+}
+add_action( 'transition_post_status', 'kg_notify_on_recruiter_job_publish', 20, 3 );
