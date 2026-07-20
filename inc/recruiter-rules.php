@@ -447,3 +447,60 @@ function kg_hide_offshoring_jobs_from_recruiters( $query ) {
     }
 }
 add_action( 'pre_get_posts', 'kg_hide_offshoring_jobs_from_recruiters' );
+
+/**
+ * 13. Add Recruiter Active/Inactive Status to User Profile
+ */
+function kg_add_recruiter_status_field( $user ) {
+    // Allow users with 'edit_users' OR the user themselves to view/edit this field
+    if ( ! current_user_can( 'edit_users' ) && get_current_user_id() !== $user->ID ) {
+        return;
+    }
+    
+    // Only show if the user is a recruiter
+    if ( ! in_array( 'recruiter', (array) $user->roles, true ) ) {
+        return;
+    }
+
+    $status = get_user_meta( $user->ID, 'kg_recruiter_status', true ) ?: 'active';
+    ?>
+    <h3>Recruiter Status</h3>
+    <table class="form-table">
+        <tr>
+            <th><label for="kg_recruiter_status">Status</label></th>
+            <td>
+                <select name="kg_recruiter_status" id="kg_recruiter_status">
+                    <option value="active" <?php selected( $status, 'active' ); ?>>Active</option>
+                    <option value="inactive" <?php selected( $status, 'inactive' ); ?>>Inactive</option>
+                </select>
+                <p class="description">If set to Inactive, this recruiter will not be available for new applicant assignments.</p>
+            </td>
+        </tr>
+    </table>
+    <?php
+}
+add_action( 'show_user_profile', 'kg_add_recruiter_status_field' );
+add_action( 'edit_user_profile', 'kg_add_recruiter_status_field' );
+
+function kg_save_recruiter_status_field( $user_id ) {
+    // Allow users with 'edit_users' OR the user themselves to save this field
+    if ( ! current_user_can( 'edit_users' ) && get_current_user_id() != $user_id ) {
+        return false;
+    }
+
+    if ( isset( $_POST['kg_recruiter_status'] ) ) {
+        $new_status = sanitize_text_field( $_POST['kg_recruiter_status'] );
+        $old_status = get_user_meta( $user_id, 'kg_recruiter_status', true ) ?: 'active';
+        
+        update_user_meta( $user_id, 'kg_recruiter_status', $new_status );
+        
+        // Handle inactive date
+        if ( $new_status === 'inactive' && $old_status !== 'inactive' ) {
+            update_user_meta( $user_id, 'kg_recruiter_inactive_date', current_time('timestamp') );
+        } elseif ( $new_status === 'active' ) {
+            delete_user_meta( $user_id, 'kg_recruiter_inactive_date' );
+        }
+    }
+}
+add_action( 'personal_options_update', 'kg_save_recruiter_status_field' );
+add_action( 'edit_user_profile_update', 'kg_save_recruiter_status_field' );

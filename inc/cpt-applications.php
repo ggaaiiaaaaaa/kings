@@ -503,8 +503,13 @@ function kg_application_details_box($post)
                     echo '<select name="kg_app_recruiter_id" style="width:100%; max-width:400px; padding:6px 10px; font-size:14px; border: 1px solid #ccc; border-radius: 4px;">';
                     echo '<option value="">— Unassigned —</option>';
                     foreach ($recruiters as $rec) {
+                        $status = get_user_meta($rec->ID, 'kg_recruiter_status', true) ?: 'active';
+                        if ($status === 'inactive' && $rec->ID != $rec_id) {
+                            continue;
+                        }
                         $selected = selected($rec_id, $rec->ID, false);
-                        echo '<option value="' . esc_attr($rec->ID) . '" ' . $selected . '>' . esc_html($rec->display_name) . '</option>';
+                        $inactive_label = ($status === 'inactive') ? ' (Inactive)' : '';
+                        echo '<option value="' . esc_attr($rec->ID) . '" ' . $selected . '>' . esc_html($rec->display_name . $inactive_label) . '</option>';
                     }
                     echo '</select>';
                 } else {
@@ -689,9 +694,13 @@ function kg_application_status_box($post)
             <label style="font-size:11px;font-weight:600;display:block;margin-bottom:2px;">Interviewer</label>
             <select name="kg_interviewer_id" style="width:100%; padding:4px;">
                 <option value="">— Select Recruiter —</option>
-                <?php foreach ($recruiters as $rec): ?>
+                <?php foreach ($recruiters as $rec): 
+                    $status = get_user_meta($rec->ID, 'kg_recruiter_status', true) ?: 'active';
+                    if ($status === 'inactive' && $rec->ID != $int_er_id) continue;
+                    $inactive_label = ($status === 'inactive') ? ' (Inactive)' : '';
+                ?>
                     <option value="<?php echo esc_attr($rec->ID); ?>" <?php selected($int_er_id, $rec->ID); ?>>
-                        <?php echo esc_html($rec->display_name); ?></option>
+                        <?php echo esc_html($rec->display_name . $inactive_label); ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
