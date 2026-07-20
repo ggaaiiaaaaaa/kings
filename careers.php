@@ -272,6 +272,14 @@ get_header();
                                     'post_type'      => 'jobs',
                                     'post_status'    => 'publish',
                                     'posts_per_page' => -1,
+                                    'tax_query'      => array(
+                                        array(
+                                            'taxonomy' => 'job_type_tax',
+                                            'field'    => 'slug',
+                                            'terms'    => 'offshoring',
+                                            'operator' => 'NOT IN',
+                                        ),
+                                    ),
                                     'orderby'        => 'title',
                                     'order'          => 'ASC'
                                 ));

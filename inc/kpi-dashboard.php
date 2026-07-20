@@ -548,7 +548,7 @@ function kg_render_kpi_dashboard_page()
     /* ── 2. STAFFING & UTILIZATION ── */
     $jobs_args = [
         'post_type' => 'jobs',
-        'post_status' => 'publish',
+        'post_status' => array('publish', 'draft'),
         'posts_per_page' => -1,
     ];
     if ($is_filtered) {

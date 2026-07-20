@@ -958,16 +958,13 @@ function kg_save_application_status( $post_id ) {
 add_action( 'save_post_kg_application', 'kg_save_application_status' );
 
 /**
- * Auto-sync Dashboard headcount when an application is marked hired/deployed.
- * Counts all hired+deployed applications that match the same role,
+ * Auto-sync Dashboard headcount when an application is marked deployed.
+ * Counts all deployed applications that match the same role,
  * then updates job_filled_headcount on the related Job post.
  */
 function kg_sync_job_headcount_on_status_change( $post_id ) {
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
     if ( get_post_type( $post_id ) !== 'kg_application' ) return;
-
-    $status = get_post_meta( $post_id, 'kg_app_status', true );
-    if ( ! in_array( $status, array( 'hired', 'deployed' ), true ) ) return;
 
     $role = get_post_meta( $post_id, 'kg_app_role', true );
     if ( ! $role ) return;
@@ -975,7 +972,7 @@ function kg_sync_job_headcount_on_status_change( $post_id ) {
     // Find the Job post matching this role (by title)
     $jobs = get_posts( array(
         'post_type'      => 'jobs',
-        'post_status'    => 'publish',
+        'post_status'    => array('publish', 'draft'),
         'posts_per_page' => 1,
         'title'          => $role,
         'fields'         => 'ids',
@@ -983,7 +980,7 @@ function kg_sync_job_headcount_on_status_change( $post_id ) {
     if ( empty( $jobs ) ) return;
     $job_id = $jobs[0];
 
-    // Count all hired + deployed applications for this role
+    // Count all deployed applications for this role
     $filled = new WP_Query( array(
         'post_type'      => 'kg_application',
         'post_status'    => 'publish',
@@ -992,7 +989,7 @@ function kg_sync_job_headcount_on_status_change( $post_id ) {
         'meta_query'     => array(
             'relation' => 'AND',
             array( 'key' => 'kg_app_role',   'value' => $role ),
-            array( 'key' => 'kg_app_status', 'value' => array( 'hired', 'deployed' ), 'compare' => 'IN' ),
+            array( 'key' => 'kg_app_status', 'value' => 'deployed' ),
         ),
     ) );
 

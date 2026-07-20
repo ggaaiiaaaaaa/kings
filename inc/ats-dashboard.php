@@ -55,7 +55,7 @@ function kg_ats_dashboard_widget_render()
 
     $jobs_args = array(
         'post_type' => 'jobs',
-        'post_status' => 'publish',
+        'post_status' => array('publish', 'draft'),
         'posts_per_page' => -1,
         'fields' => 'ids',
     );
@@ -620,7 +620,7 @@ function kg_ats_job_listings_overview_render()
 {
     $jobs = get_posts(array(
         'post_type'      => 'jobs',
-        'post_status'    => 'publish',
+        'post_status'    => array('publish', 'draft'),
         'posts_per_page' => -1,
     ));
 
