@@ -324,14 +324,19 @@ function kg_application_audit_trail_box($post)
         return;
     }
     echo '<table class="wp-list-table widefat fixed striped">';
-    echo '<thead><tr><th>Date/Time</th><th>Action</th><th>Actor</th><th>Assignee</th></tr></thead>';
+    echo '<thead><tr><th>Date & Time</th><th>Activity Details</th><th>Done By</th></tr></thead>';
     echo '<tbody>';
     foreach ($audit_trail as $log) {
         $date = wp_date(get_option('date_format') . ' ' . get_option('time_format'), $log['timestamp']);
-        $action = esc_html($log['action']);
+        
+        $activity = esc_html($log['action']);
+        // For backwards compatibility with older logs that didn't embed the name in the action string
+        if ($log['action'] === 'Assigned to Recruiter' && !empty($log['assignee'])) {
+            $activity = 'Assigned to ' . esc_html($log['assignee']);
+        }
+        
         $actor = esc_html($log['actor']);
-        $assignee = esc_html($log['assignee']);
-        echo "<tr><td>{$date}</td><td>{$action}</td><td>{$actor}</td><td>{$assignee}</td></tr>";
+        echo "<tr><td>{$date}</td><td>{$activity}</td><td><strong>{$actor}</strong></td></tr>";
     }
     echo '</tbody></table>';
 }
@@ -497,8 +502,8 @@ function kg_application_details_box($post)
             <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
                 <?php
                 $rec_id = get_post_meta($post->ID, 'kg_app_recruiter_id', true);
-                if (current_user_can('manage_options') || kg_is_current_user_recruitment_admin()) {
-                    // Admins get an interactive select dropdown
+                if (current_user_can('manage_options') || kg_is_current_user_recruitment_admin() || kg_is_current_user_recruiter()) {
+                    // Admins and recruiters get an interactive select dropdown
                     $recruiters = get_users(array('role__in' => array('recruiter')));
                     echo '<select name="kg_app_recruiter_id" style="width:100%; max-width:400px; padding:6px 10px; font-size:14px; border: 1px solid #ccc; border-radius: 4px;">';
                     echo '<option value="">— Unassigned —</option>';
@@ -795,12 +800,7 @@ function kg_application_status_box($post)
                     $('#kg-deploy-date-section').hide();
                 }
 
-                // Toggle Recruiter row visibility based on status
-                if (status === 'pooling') {
-                    $('#kg-assigned-recruiter-row').hide();
-                } else {
-                    $('#kg-assigned-recruiter-row').show();
-                }
+                // Recruiter row is now always visible for harvesting
 
                 // 1. Check progression lock
                 if (['interviewing', 'processing', 'hired', 'deployed'].indexOf(originalStatus) !== -1 && status !== 'rejected') {
@@ -986,15 +986,36 @@ function kg_save_application_status($post_id)
         update_post_meta($post_id, 'kg_app_submission_date', sanitize_text_field($_POST['kg_app_submission_date']));
     }
 
-    if ((current_user_can('manage_options') || kg_is_current_user_recruitment_admin()) && isset($_POST['kg_app_recruiter_id'])) {
+    if ((current_user_can('manage_options') || kg_is_current_user_recruitment_admin() || kg_is_current_user_recruiter()) && isset($_POST['kg_app_recruiter_id'])) {
         $old_rec_user_id = get_post_meta($post_id, 'kg_app_recruiter_id', true);
         $rec_user_id = sanitize_text_field($_POST['kg_app_recruiter_id']);
-        update_post_meta($post_id, 'kg_app_recruiter_id', $rec_user_id);
-
+        
         if ($old_rec_user_id != $rec_user_id) {
-            $action = 'Assigned to Recruiter';
-            if (!$rec_user_id)
-                $action = 'Unassigned';
+            update_post_meta($post_id, 'kg_app_recruiter_id', $rec_user_id);
+            
+            $old_name = 'Unassigned';
+            if ($old_rec_user_id) {
+                $old_user = get_userdata($old_rec_user_id);
+                if ($old_user) {
+                    $old_name = $old_user->display_name;
+                }
+            }
+            
+            $new_name = 'Unassigned';
+            if ($rec_user_id) {
+                $new_user = get_userdata($rec_user_id);
+                if ($new_user) {
+                    $new_name = $new_user->display_name;
+                }
+            }
+            
+            $action = 'Reassigned from ' . $old_name . ' to ' . $new_name;
+            if (!$old_rec_user_id && $rec_user_id) {
+                $action = 'Assigned to ' . $new_name;
+            } elseif ($old_rec_user_id && !$rec_user_id) {
+                $action = 'Unassigned (previously ' . $old_name . ')';
+            }
+            
             kg_log_application_audit_trail($post_id, $action, $rec_user_id);
         }
     }
@@ -1658,29 +1679,9 @@ add_action('init', 'kg_handle_secure_cv_download');
  */
 function kg_filter_applications_for_recruiters($query)
 {
-    global $pagenow;
-
-    if (is_admin() && $query->is_main_query() && $pagenow === 'edit.php' && $query->get('post_type') === 'kg_application') {
-        if (kg_is_current_user_recruiter() && !kg_is_current_user_recruitment_admin()) {
-            $rec_id = get_current_user_id();
-            $rec_locations = (array) get_user_meta($rec_id, 'kg_recruiter_location', true);
-            $rec_locations = array_filter($rec_locations); // Remove empty values
-
-            $meta_query = (array) $query->get('meta_query');
-
-            // Scoping meta query:
-            // Only show applications explicitly assigned to this recruiter ID
-            $scope_query = array(
-                array(
-                    'key' => 'kg_app_recruiter_id',
-                    'value' => $rec_id,
-                ),
-            );
-
-            $meta_query[] = $scope_query;
-            $query->set('meta_query', $meta_query);
-        }
-    }
+    // Feature: Total Visibility. All recruiters can now see all applications.
+    // The previous scoping restriction by 'kg_app_recruiter_id' has been removed
+    // to allow recruiters to view and harvest any applicants.
 }
 add_action('pre_get_posts', 'kg_filter_applications_for_recruiters');
 

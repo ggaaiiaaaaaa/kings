@@ -23,11 +23,7 @@ function kg_register_ats_dashboard_widget()
     $is_recruitment_admin = function_exists( 'kg_is_current_user_recruitment_admin' ) && kg_is_current_user_recruitment_admin();
     
     if ( ! $is_recruiter || $is_recruitment_admin || current_user_can('manage_options') ) {
-        wp_add_dashboard_widget(
-            'kg_ats_abandoned_tracker',
-            'Abandoned Applications Alert',
-            'kg_ats_abandoned_tracker_render'
-        );
+        // Removed Abandoned Applications Alert
         wp_add_dashboard_widget(
             'kg_ats_recruiter_directory',
             'Recruiter Status Directory',
@@ -596,6 +592,7 @@ function kg_ats_applicant_tracker_render()
                     <th>Name</th>
                     <th>Applied Role</th>
                     <th>Date</th>
+                    <th>Assigned To</th>
                     <th style="text-align: right;">Action</th>
                 </tr>
             </thead>
@@ -604,6 +601,15 @@ function kg_ats_applicant_tracker_render()
                     $role = get_post_meta($app->ID, 'kg_app_role', true) ?: 'Not specified';
                     $cv_url = get_post_meta($app->ID, 'kg_app_cv_url', true);
                     $download_url = $cv_url ? add_query_arg('kg_download_cv', $app->ID, home_url('/')) : '';
+                    
+                    $recruiter_id = get_post_meta($app->ID, 'kg_app_recruiter_id', true);
+                    $recruiter_name = '<span style="color: #94a3b8; font-style: italic;">Unassigned</span>';
+                    if ($recruiter_id) {
+                        $rec_user = get_userdata($recruiter_id);
+                        if ($rec_user) {
+                            $recruiter_name = esc_html($rec_user->display_name);
+                        }
+                    }
                     ?>
                     <tr>
                         <td>
@@ -613,6 +619,7 @@ function kg_ats_applicant_tracker_render()
                         </td>
                         <td><?php echo esc_html($role); ?></td>
                         <td><?php echo esc_html(get_the_date('M j, Y', $app->ID)); ?></td>
+                        <td><?php echo $recruiter_name; ?></td>
                         <td style="text-align: right;">
                             <?php if ($download_url) : ?>
                                 <a href="<?php echo esc_url($download_url); ?>" target="_blank" class="button button-small" style="font-size: 10px; padding: 0 8px; min-height: 20px; line-height: 18px;">
@@ -772,114 +779,6 @@ function kg_ats_job_listings_overview_render()
     <?php
 }
 
-function kg_ats_abandoned_tracker_render() {
-    $active_stages = array('pooling', 'screening', 'processing', 'interviewing');
-
-    // 1. Stalled for 15+ days
-    $stalled_args = array(
-        'post_type' => 'kg_application',
-        'post_status' => 'publish',
-        'posts_per_page' => -1,
-        'fields' => 'ids',
-        'meta_query' => array(
-            array(
-                'key' => 'kg_app_status',
-                'value' => $active_stages,
-                'compare' => 'IN'
-            )
-        ),
-        'date_query' => array(
-            array(
-                'column' => 'post_modified',
-                'before' => '15 days ago'
-            )
-        )
-    );
-    $stalled_ids = get_posts($stalled_args);
-
-    // 2. Inactive recruiters
-    $inactive_recruiters = get_users(array(
-        'role' => 'recruiter',
-        'meta_key' => 'kg_recruiter_status',
-        'meta_value' => 'inactive',
-        'fields' => 'ID'
-    ));
-    
-    $inactive_ids = array();
-    if (!empty($inactive_recruiters)) {
-        $inactive_args = array(
-            'post_type' => 'kg_application',
-            'post_status' => 'publish',
-            'posts_per_page' => -1,
-            'fields' => 'ids',
-            'meta_query' => array(
-                'relation' => 'AND',
-                array(
-                    'key' => 'kg_app_status',
-                    'value' => $active_stages,
-                    'compare' => 'IN'
-                ),
-                array(
-                    'key' => 'kg_app_recruiter_id',
-                    'value' => $inactive_recruiters,
-                    'compare' => 'IN'
-                )
-            )
-        );
-        $inactive_ids = get_posts($inactive_args);
-    }
-
-    $abandoned_ids = array_unique(array_merge($stalled_ids, $inactive_ids));
-
-    if (empty($abandoned_ids)) {
-        echo '<div style="padding: 10px; color: #15803d; background: #dcfce7; border: 1px solid #bbf7d0; border-radius: 6px;">';
-        echo '<strong>All clear!</strong> No applications are currently abandoned or stalled.';
-        echo '</div>';
-        return;
-    }
-
-    echo '<div style="background: #fee2e2; border: 1px solid #fca5a5; border-radius: 6px; padding: 12px; margin-bottom: 12px;">';
-    echo '<h4 style="margin: 0 0 8px 0; color: #b91c1c;">Requires Immediate Attention (' . count($abandoned_ids) . ')</h4>';
-    echo '<p style="margin: 0 0 12px 0; font-size: 13px; color: #7f1d1d;">These applications have been stalled for 15+ days or are assigned to an inactive recruiter.</p>';
-    
-    echo '<table class="wp-list-table widefat fixed striped" style="border: 0; background: transparent;">';
-    echo '<thead><tr>';
-    echo '<th style="font-weight: 600;">Applicant</th>';
-    echo '<th style="font-weight: 600;">Issue</th>';
-    echo '<th style="font-weight: 600;">Action</th>';
-    echo '</tr></thead>';
-    echo '<tbody>';
-
-    $statuses = function_exists('kg_ats_statuses') ? kg_ats_statuses() : array();
-
-    foreach ($abandoned_ids as $app_id) {
-        $title = get_the_title($app_id);
-        $status_key = get_post_meta($app_id, 'kg_app_status', true);
-        $status_lbl = $statuses[$status_key] ?? $status_key;
-        
-        $issues = array();
-        if (in_array($app_id, $stalled_ids)) {
-            $modified_time = get_post_modified_time('U', false, $app_id);
-            $days = floor((time() - $modified_time) / (60 * 60 * 24));
-            $issues[] = "Stalled {$days} days";
-        }
-        if (in_array($app_id, $inactive_ids)) {
-            $issues[] = "Inactive Recruiter";
-        }
-        
-        $issue_text = implode(' / ', $issues);
-        $edit_url = get_edit_post_link($app_id);
-
-        echo '<tr>';
-        echo '<td><strong>' . esc_html($title) . '</strong><br><span style="font-size:11px; color:#666;">' . esc_html($status_lbl) . '</span></td>';
-        echo '<td style="color:#b91c1c; font-weight:500;">' . esc_html($issue_text) . '</td>';
-        echo '<td><a href="' . esc_url($edit_url) . '" class="button button-small">Reassign</a></td>';
-        echo '</tr>';
-    }
-
-    echo '</tbody></table>';
-    echo '</div>';
-}
 
 function kg_ats_recruiter_directory_render() {
     $recruiters = get_users(array(

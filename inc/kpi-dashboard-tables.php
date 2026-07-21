@@ -445,29 +445,33 @@ if ( ! kg_is_current_user_recruiter() ) :
         <thead>
             <tr>
                 <th>Date & Time</th>
-                <th>Action</th>
+                <th>Activity Details</th>
                 <th>Applicant</th>
-                <th>Actor (User)</th>
-                <th>Assigned To</th>
+                <th>Done By</th>
             </tr>
         </thead>
         <tbody>
             <?php if (!empty($audit_results)): foreach ($audit_results as $log): 
                 $app_title = get_the_title($log->post_id) ?: 'Unknown Applicant';
+                
+                $activity = esc_html($log->action);
+                // For backwards compatibility with older logs that didn't embed the name in the action string
+                if ($log->action === 'Assigned to Recruiter' && !empty($log->assignee)) {
+                    $activity = 'Assigned to ' . esc_html($log->assignee);
+                }
             ?>
             <tr>
                 <td style="white-space:nowrap;"><?php echo date('M j, Y g:i A', strtotime($log->timestamp)); ?></td>
-                <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:bold;"><?php echo esc_html($log->action); ?></span></td>
+                <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:bold;"><?php echo $activity; ?></span></td>
                 <td>
                     <a href="<?php echo get_edit_post_link($log->post_id); ?>" target="_blank" style="text-decoration:none;font-weight:600;">
                         <?php echo esc_html($app_title); ?>
                     </a>
                 </td>
-                <td><?php echo esc_html($log->actor); ?></td>
-                <td><?php echo esc_html($log->assignee); ?></td>
+                <td><strong><?php echo esc_html($log->actor); ?></strong></td>
             </tr>
             <?php endforeach; else: ?>
-            <tr><td colspan="5" style="text-align:center; padding:24px; color:#64748b;">No routing activity found for this period.</td></tr>
+            <tr><td colspan="4" style="text-align:center; padding:24px; color:#64748b;">No routing activity found for this period.</td></tr>
             <?php endif; ?>
         </tbody>
     </table>
