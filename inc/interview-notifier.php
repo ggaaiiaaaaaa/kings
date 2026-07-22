@@ -126,10 +126,25 @@ function kg_send_processing_email( $post_id ) {
     $formatted_target = $target_date ? date_i18n( get_option('date_format'), strtotime($target_date) ) : 'TBA';
     $formatted_submission = $submission_date ? date_i18n( get_option('date_format'), strtotime($submission_date) ) : 'TBA';
 
+    $job_id = get_post_meta( $post_id, 'kg_app_job_id', true );
+    $requirements_content = '';
+    if ( $job_id ) {
+        $job_post = get_post( $job_id );
+        if ( $job_post ) {
+            if ( preg_match( '/\[requirements\](.*?)\[\/requirements\]/is', $job_post->post_content, $matches ) ) {
+                $reqs = trim( $matches[1] );
+                if ( ! empty( $reqs ) ) {
+                    $requirements_content = kg_email_row( 'Specific Requirements', wpautop( wp_kses_post( $reqs ) ) );
+                }
+            }
+        }
+    }
+
     $details_html = '<div style="border:1px solid #e8ecf0;border-radius:8px;padding:20px;margin-bottom:24px;background:#ffffff;">'
         . kg_email_row( 'Applied Role', $role )
         . kg_email_row( 'Requirements Deadline', $formatted_submission )
         . kg_email_row( 'Target Deployment', $formatted_target )
+        . $requirements_content
         . '</div>';
 
     $parsed = kg_get_parsed_email( 'processing', array(

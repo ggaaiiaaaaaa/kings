@@ -2,7 +2,7 @@
 // Removed Admin Shield to prevent conflicts with GoDaddy security plugins
 
 // GoDaddy Sync Script: Creates categories and assigns posts automatically
-add_action('init', function() {
+add_action('init', function () {
     // 0. EMERGENCY RECOVERY: Restore stripped Administrator core capabilities
     if (!get_option('kg_admin_role_restored_v1')) {
         if (!function_exists('populate_roles')) {
@@ -14,19 +14,26 @@ add_action('init', function() {
 
     // This flag ensures it only runs ONCE on the live GoDaddy database
     if (!get_option('kg_godaddy_categories_synced_v2')) {
-        
+
         // 1. Create all 10 categories
         $categories = [
-            'Company Updates', 'Employee & Culture', 'Fun & Engagement Events',
-            'Learning & Development', 'Recruitment', 'Community',
-            'Workplace Information', 'Recognition', 'Industry & Insights', 'Media'
+            'Company Updates',
+            'Employee & Culture',
+            'Fun & Engagement Events',
+            'Learning & Development',
+            'Recruitment',
+            'Community',
+            'Workplace Information',
+            'Recognition',
+            'Industry & Insights',
+            'Media'
         ];
         foreach ($categories as $cat) {
             if (!term_exists($cat, 'category')) {
                 wp_insert_term($cat, 'category');
             }
         }
-        
+
         // 2. Assign all existing posts to 'Company Updates'
         $category = get_term_by('name', 'Company Updates', 'category');
         if ($category && !is_wp_error($category)) {
@@ -39,7 +46,7 @@ add_action('init', function() {
                 wp_set_post_categories($post->ID, array($category->term_id), false);
             }
         }
-        
+
         // Mark as completed so it never runs again on GoDaddy
         update_option('kg_godaddy_categories_synced_v2', true);
     }
@@ -74,18 +81,18 @@ add_action('admin_menu', function () {
 
 // Force comments to be globally open for all standard News posts.
 // This overrides any GoDaddy database settings that are silently blocking comment submissions.
-add_filter( 'comments_open', function( $open, $post_id ) {
-    $post = get_post( $post_id );
-    if ( $post && $post->post_type === 'post' ) {
+add_filter('comments_open', function ($open, $post_id) {
+    $post = get_post($post_id);
+    if ($post && $post->post_type === 'post') {
         return true;
     }
     return $open;
-}, 9999, 2 );
+}, 9999, 2);
 
 
 /**
-  * Compatibility Shim: Allows the site to run on localhost without WordPress.
-  */
+ * Compatibility Shim: Allows the site to run on localhost without WordPress.
+ */
 if (!defined('ABSPATH')) {
     define('ABSPATH', dirname(__FILE__) . '/');
 }
@@ -848,29 +855,30 @@ function kingsgroup_register_jobs_cpt()
 add_action('init', 'kingsgroup_register_jobs_cpt');
 
 // Add a dropdown filter at the top of the WP Admin Jobs list for Job Types
-add_action('restrict_manage_posts', function($post_type) {
+add_action('restrict_manage_posts', function ($post_type) {
     if ($post_type === 'jobs') {
         $taxonomy_slug = 'job_type_tax';
         $taxonomy_obj = get_taxonomy($taxonomy_slug);
-        
+
         $selected = isset($_GET[$taxonomy_slug]) ? $_GET[$taxonomy_slug] : '';
         wp_dropdown_categories(array(
             'show_option_all' => __("All {$taxonomy_obj->labels->name}"),
-            'taxonomy' 		  => $taxonomy_slug,
-            'name' 			  => $taxonomy_slug,
-            'orderby' 		  => 'name',
-            'selected' 		  => $selected,
-            'show_count' 	  => false,
-            'hide_empty' 	  => false,
-            'hide_if_empty'   => false,
-            'value_field'     => 'slug',
+            'taxonomy' => $taxonomy_slug,
+            'name' => $taxonomy_slug,
+            'orderby' => 'name',
+            'selected' => $selected,
+            'show_count' => false,
+            'hide_empty' => false,
+            'hide_if_empty' => false,
+            'value_field' => 'slug',
         ));
     }
 });
 
 // Sync the ACF Radio Button for Job Type with the actual WordPress Taxonomy
-add_action('acf/save_post', function($post_id) {
-    if (get_post_type($post_id) !== 'jobs') return;
+add_action('acf/save_post', function ($post_id) {
+    if (get_post_type($post_id) !== 'jobs')
+        return;
     $type = get_field('job_type_tax_acf', $post_id);
     if ($type) {
         wp_set_object_terms($post_id, $type, 'job_type_tax', false);
@@ -878,7 +886,7 @@ add_action('acf/save_post', function($post_id) {
 }, 20);
 
 // TEMPORARY OFFSHORING JOBS CREATION SCRIPT
-add_action('init', function() {
+add_action('init', function () {
     if (isset($_GET['create_offshoring_jobs'])) {
         $jobs = array(
             'Operations Head',
@@ -896,9 +904,9 @@ add_action('init', function() {
             'Accounting Supervisor',
             'Accounting Manager'
         );
-        
+
         $count = 0;
-        foreach($jobs as $job_title) {
+        foreach ($jobs as $job_title) {
             // Check if job already exists to prevent duplicates
             $existing = get_page_by_title($job_title, OBJECT, 'jobs');
             if (!$existing) {
@@ -907,7 +915,7 @@ add_action('init', function() {
                     'post_type' => 'jobs',
                     'post_status' => 'publish'
                 ));
-                
+
                 if (!is_wp_error($post_id)) {
                     update_post_meta($post_id, 'job_type_tax_acf', 'Offshoring');
                     update_post_meta($post_id, 'include_in_team_builder', '1');
@@ -951,9 +959,10 @@ add_action('add_meta_boxes', function () {
 });
 
 // Dynamically hide specific meta boxes when Job is set to "Offshoring", handle Quick Edit overrides
-add_action('admin_footer', function() {
+add_action('admin_footer', function () {
     global $post_type;
-    if ($post_type !== 'jobs') return;
+    if ($post_type !== 'jobs')
+        return;
     ?>
     <style>
         /* Make author dropdown visible but uneditable in Quick Edit */
@@ -961,81 +970,82 @@ add_action('admin_footer', function() {
             pointer-events: none;
             opacity: 0.7;
         }
+
         .inline-edit-row label.inline-edit-author select {
             background-color: #f0f0f1;
         }
     </style>
     <script>
-    jQuery(document).ready(function($) {
-        // Change the Excerpt description text on the main edit screen
-        $('#postexcerpt p').html('Job summaries are optional hand-crafted summaries of your job that can be used in your theme.');
+        jQuery(document).ready(function ($) {
+            // Change the Excerpt description text on the main edit screen
+            $('#postexcerpt p').html('Job summaries are optional hand-crafted summaries of your job that can be used in your theme.');
 
-        // Rename Excerpt to Job Summary in the Quick Edit form template
-        $('#inline-edit .inline-edit-excerpt .title').text('Job Summary');
-        
-        // Remove Author dropdown from tab navigation since it's uneditable
-        $('#inline-edit .inline-edit-author select').attr('tabindex', '-1');
+            // Rename Excerpt to Job Summary in the Quick Edit form template
+            $('#inline-edit .inline-edit-excerpt .title').text('Job Summary');
 
-        function checkJobType() {
-            var selectedType = $('input[name="acf[field_job_type_tax_acf]"]:checked').val();
-            var targetBoxes = $('#kg_job_qr_code_box, #kg_job_analytics_box, #kg_job_social_toolkit_box');
-            
-            if (selectedType === 'Offshoring') {
-                targetBoxes.hide();
-            } else {
-                targetBoxes.show();
+            // Remove Author dropdown from tab navigation since it's uneditable
+            $('#inline-edit .inline-edit-author select').attr('tabindex', '-1');
+
+            function checkJobType() {
+                var selectedType = $('input[name="acf[field_job_type_tax_acf]"]:checked').val();
+                var targetBoxes = $('#kg_job_qr_code_box, #kg_job_analytics_box, #kg_job_social_toolkit_box');
+
+                if (selectedType === 'Offshoring') {
+                    targetBoxes.hide();
+                } else {
+                    targetBoxes.show();
+                }
             }
-        }
-        
-        // Check instantly on page load
-        if ($('input[name="acf[field_job_type_tax_acf]"]').length) {
-            checkJobType();
-        }
-        
-        // Listen for changes when the user clicks the Local/Offshoring radio buttons
-        $(document).on('change', 'input[name="acf[field_job_type_tax_acf]"]', function() {
-            checkJobType();
-        });
 
-        // Map Location to Region in real-time
-        function getRegionFromLocation(loc) {
-            loc = (loc || '').toUpperCase().trim();
-            if (!loc) return 'Nationwide';
-
-            if (loc.indexOf('MANILA') !== -1 || loc.indexOf('TAGUIG') !== -1 || loc.indexOf('MAKATI') !== -1 || loc.indexOf('QC') !== -1 || loc.indexOf('ALABANG') !== -1 || loc.indexOf('NCR') !== -1) return 'NCR';
-            if (loc.indexOf('BAGUIO') !== -1 || loc.indexOf('BENGUET') !== -1 || loc.indexOf('CAR') !== -1) return 'CAR';
-            if (loc.indexOf('PANGASINAN') !== -1 || loc.indexOf('DAGUPAN') !== -1 || loc.indexOf('REGION I') !== -1) return 'Ilocos Region (I)';
-            if (loc.indexOf('TUGUEGARAO') !== -1 || loc.indexOf('ISABELA') !== -1 || loc.indexOf('REGION II') !== -1) return 'Cagayan Valley (II)';
-            if (loc.indexOf('BULACAN') !== -1 || loc.indexOf('PAMPANGA') !== -1 || loc.indexOf('TARLAC') !== -1 || loc.indexOf('SUBIC') !== -1 || loc.indexOf('REGION III') !== -1) return 'Central Luzon (III)';
-            if (loc.indexOf('BATANGAS') !== -1 || loc.indexOf('LAGUNA') !== -1 || loc.indexOf('CAVITE') !== -1 || loc.indexOf('RIZAL') !== -1 || loc.indexOf('CALABARZON') !== -1) return 'CALABARZON (IV-A)';
-            if (loc.indexOf('MINDORO') !== -1 || loc.indexOf('PALAWAN') !== -1 || loc.indexOf('MIMAROPA') !== -1) return 'MIMAROPA (IV-B)';
-            if (loc.indexOf('BICOL') !== -1 || loc.indexOf('ALBAY') !== -1 || loc.indexOf('CAMARINES') !== -1) return 'Bicol (V)';
-            if (loc.indexOf('ILOILO') !== -1 || loc.indexOf('BACOLOD') !== -1 || loc.indexOf('REGION VI') !== -1) return 'Western Visayas (VI)';
-            if (loc.indexOf('CEBU') !== -1 || loc.indexOf('BOHOL') !== -1 || loc.indexOf('REGION VII') !== -1) return 'Central Visayas (VII)';
-            if (loc.indexOf('LEYTE') !== -1 || loc.indexOf('SAMAR') !== -1 || loc.indexOf('REGION VIII') !== -1) return 'Eastern Visayas (VIII)';
-            if (loc.indexOf('ZAMBOANGA') !== -1 || loc.indexOf('REGION IX') !== -1) return 'Zamboanga Peninsula (IX)';
-            if (loc.indexOf('CAGAYAN DE ORO') !== -1 || loc.indexOf('REGION X') !== -1) return 'Northern Mindanao (X)';
-            if (loc.indexOf('DAVAO') !== -1 || loc.indexOf('REGION XI') !== -1) return 'Davao Region (XI)';
-            if (loc.indexOf('GENERAL SANTOS') !== -1 || loc.indexOf('SOCCSKSARGEN') !== -1) return 'SOCCSKSARGEN (XII)';
-            if (loc.indexOf('BUTUAN') !== -1 || loc.indexOf('CARAGA') !== -1) return 'Caraga (XIII)';
-            if (loc.indexOf('COTABATO') !== -1 || loc.indexOf('BARMM') !== -1) return 'BARMM';
-            if (loc.indexOf('REMOTE') !== -1 || loc.indexOf('WFH') !== -1) return 'Remote / WFH';
-
-            return 'Nationwide';
-        }
-
-        $(document).on('change', 'select[name="acf[field_job_location_tax]"]', function() {
-            var selectedText = $(this).find('option:selected').text();
-            // ACF sometimes adds "- " for child categories, we should clean it up if needed,
-            // but the mapping function uses simple string matching so it's fine.
-            var region = getRegionFromLocation(selectedText);
-            var regionSelect = $('select[name="acf[field_job_region]"]');
-            
-            if (regionSelect.length && selectedText) {
-                regionSelect.val(region).trigger('change');
+            // Check instantly on page load
+            if ($('input[name="acf[field_job_type_tax_acf]"]').length) {
+                checkJobType();
             }
+
+            // Listen for changes when the user clicks the Local/Offshoring radio buttons
+            $(document).on('change', 'input[name="acf[field_job_type_tax_acf]"]', function () {
+                checkJobType();
+            });
+
+            // Map Location to Region in real-time
+            function getRegionFromLocation(loc) {
+                loc = (loc || '').toUpperCase().trim();
+                if (!loc) return 'Nationwide';
+
+                if (loc.indexOf('MANILA') !== -1 || loc.indexOf('TAGUIG') !== -1 || loc.indexOf('MAKATI') !== -1 || loc.indexOf('QC') !== -1 || loc.indexOf('ALABANG') !== -1 || loc.indexOf('NCR') !== -1) return 'NCR';
+                if (loc.indexOf('BAGUIO') !== -1 || loc.indexOf('BENGUET') !== -1 || loc.indexOf('CAR') !== -1) return 'CAR';
+                if (loc.indexOf('PANGASINAN') !== -1 || loc.indexOf('DAGUPAN') !== -1 || loc.indexOf('REGION I') !== -1) return 'Ilocos Region (I)';
+                if (loc.indexOf('TUGUEGARAO') !== -1 || loc.indexOf('ISABELA') !== -1 || loc.indexOf('REGION II') !== -1) return 'Cagayan Valley (II)';
+                if (loc.indexOf('BULACAN') !== -1 || loc.indexOf('PAMPANGA') !== -1 || loc.indexOf('TARLAC') !== -1 || loc.indexOf('SUBIC') !== -1 || loc.indexOf('REGION III') !== -1) return 'Central Luzon (III)';
+                if (loc.indexOf('BATANGAS') !== -1 || loc.indexOf('LAGUNA') !== -1 || loc.indexOf('CAVITE') !== -1 || loc.indexOf('RIZAL') !== -1 || loc.indexOf('CALABARZON') !== -1) return 'CALABARZON (IV-A)';
+                if (loc.indexOf('MINDORO') !== -1 || loc.indexOf('PALAWAN') !== -1 || loc.indexOf('MIMAROPA') !== -1) return 'MIMAROPA (IV-B)';
+                if (loc.indexOf('BICOL') !== -1 || loc.indexOf('ALBAY') !== -1 || loc.indexOf('CAMARINES') !== -1) return 'Bicol (V)';
+                if (loc.indexOf('ILOILO') !== -1 || loc.indexOf('BACOLOD') !== -1 || loc.indexOf('REGION VI') !== -1) return 'Western Visayas (VI)';
+                if (loc.indexOf('CEBU') !== -1 || loc.indexOf('BOHOL') !== -1 || loc.indexOf('REGION VII') !== -1) return 'Central Visayas (VII)';
+                if (loc.indexOf('LEYTE') !== -1 || loc.indexOf('SAMAR') !== -1 || loc.indexOf('REGION VIII') !== -1) return 'Eastern Visayas (VIII)';
+                if (loc.indexOf('ZAMBOANGA') !== -1 || loc.indexOf('REGION IX') !== -1) return 'Zamboanga Peninsula (IX)';
+                if (loc.indexOf('CAGAYAN DE ORO') !== -1 || loc.indexOf('REGION X') !== -1) return 'Northern Mindanao (X)';
+                if (loc.indexOf('DAVAO') !== -1 || loc.indexOf('REGION XI') !== -1) return 'Davao Region (XI)';
+                if (loc.indexOf('GENERAL SANTOS') !== -1 || loc.indexOf('SOCCSKSARGEN') !== -1) return 'SOCCSKSARGEN (XII)';
+                if (loc.indexOf('BUTUAN') !== -1 || loc.indexOf('CARAGA') !== -1) return 'Caraga (XIII)';
+                if (loc.indexOf('COTABATO') !== -1 || loc.indexOf('BARMM') !== -1) return 'BARMM';
+                if (loc.indexOf('REMOTE') !== -1 || loc.indexOf('WFH') !== -1) return 'Remote / WFH';
+
+                return 'Nationwide';
+            }
+
+            $(document).on('change', 'select[name="acf[field_job_location_tax]"]', function () {
+                var selectedText = $(this).find('option:selected').text();
+                // ACF sometimes adds "- " for child categories, we should clean it up if needed,
+                // but the mapping function uses simple string matching so it's fine.
+                var region = getRegionFromLocation(selectedText);
+                var regionSelect = $('select[name="acf[field_job_region]"]');
+
+                if (regionSelect.length && selectedText) {
+                    regionSelect.val(region).trigger('change');
+                }
+            });
         });
-    });
     </script>
     <?php
 });
@@ -2754,3 +2764,62 @@ function kg_create_audit_log_table()
     }
 }
 add_action('admin_init', 'kg_create_audit_log_table');
+
+/**
+ * Add custom TinyMCE and Quicktags button for Requirements
+ */
+add_action('admin_head', 'kg_add_requirements_tinymce_button');
+function kg_add_requirements_tinymce_button()
+{
+    global $typenow;
+    if (!current_user_can('edit_posts') && !current_user_can('edit_pages'))
+        return;
+    if (!in_array($typenow, array('jobs')))
+        return;
+
+    if ( get_user_option('rich_editing') == 'true' ) {
+        add_filter( 'mce_external_plugins', 'kg_add_tinymce_plugin' );
+        add_filter( 'mce_buttons', 'kg_register_tinymce_button' );
+        ?>
+        <style>
+            .mce-btn[aria-label="Mark as Requirements"] span.mce-txt {
+                font-weight: bold !important;
+                color: #2271b1 !important; /* Bold WP blue for visibility */
+            }
+        </style>
+        <?php
+    }
+}
+function kg_register_tinymce_button($buttons)
+{
+    array_push($buttons, "requirements_button");
+    return $buttons;
+}
+function kg_add_tinymce_plugin($plugin_array)
+{
+    $plugin_array['requirements_button'] = get_template_directory_uri() . '/inc/tinymce-requirements.js';
+    return $plugin_array;
+}
+
+add_action('admin_print_footer_scripts', 'kg_add_quicktags_button');
+function kg_add_quicktags_button()
+{
+    global $typenow;
+    if (!in_array($typenow, array('jobs')))
+        return;
+    if (wp_script_is('quicktags')) {
+        ?>
+        <script type="text/javascript">
+            if (typeof QTags !== 'undefined') {
+                QTags.addButton('requirements', 'Requirements', '[requirements]', '[/requirements]', 'r', 'Mark text as specific requirements', 100);
+            }
+        </script>
+        <?php
+    }
+}
+
+add_shortcode('requirements', 'kg_requirements_shortcode');
+function kg_requirements_shortcode($atts, $content = null)
+{
+    return do_shortcode($content);
+}

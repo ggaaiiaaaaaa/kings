@@ -1183,7 +1183,7 @@ function kg_notify_recruiter_status_change($post_id, $old_status, $new_status)
     $recipients = array();
 
     // 1. Notify Admin for ALL status changes
-    $admin_email = get_option('admin_email');
+    $admin_email = defined('KG_CAREER_EMAIL') ? KG_CAREER_EMAIL : (defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : get_option('admin_email'));
     if (!empty($admin_email)) {
         $recipients[] = array('email' => $admin_email, 'name' => 'Administrator');
     }
@@ -1346,6 +1346,9 @@ function kg_notify_applicant_status($post_id, $status)
                 kg_send_interview_invitation_email($post_id);
             }
             return;
+            
+        case 'processing':
+            return; // Handled directly in save hook via kg_send_processing_email()
 
         case 'hired':
         case 'accepted':
@@ -1940,7 +1943,7 @@ function kg_email_templates_settings_render()
             'label' => 'Processing Status Email (Applicant)',
             'desc' => 'Sent to the applicant when their application is put into Processing.',
             'fallback_subj' => 'Application Processing: Action Required — Kings Manpower',
-            'fallback_body' => "Dear {fname},\n\nCongratulations! Your application for <strong>{role}</strong> is now being processed.\n\nPlease note the following important dates and ensure all your requirements are submitted on or before the deadline below.\n\n{processing_details}",
+            'fallback_body' => "Dear {fname},\n\nCongratulations! Your application for <strong>{role}</strong> is now being processed.\n\nPlease review your specific requirements and important dates below. Ensure all your requirements are submitted on or before the deadline.\n\n{processing_details}",
             'fallback_banner' => 'Submit all requirements on or before the deadline to avoid delays in your deployment.',
             'fallback_btn_text' => 'Visit Kings Manpower',
             'fallback_btn_link' => '{site_url}',
@@ -2437,7 +2440,7 @@ function kg_get_parsed_email($template_key, $replacements = array())
         ),
         'processing' => array(
             'fallback_subj' => 'Application Processing: Action Required — Kings Manpower',
-            'fallback_body' => "Dear {fname},\n\nCongratulations! Your application for <strong>{role}</strong> is now being processed.\n\nPlease note the following important dates and ensure all your requirements are submitted on or before the deadline below.\n\n{processing_details}",
+            'fallback_body' => "Dear {fname},\n\nCongratulations! Your application for <strong>{role}</strong> is now being processed.\n\nPlease review your specific requirements and important dates below. Ensure all your requirements are submitted on or before the deadline.\n\n{processing_details}",
             'fallback_banner' => 'Submit all requirements on or before the deadline to avoid delays in your deployment.',
             'fallback_btn_text' => 'Visit Kings Manpower',
             'fallback_btn_link' => '{site_url}'
