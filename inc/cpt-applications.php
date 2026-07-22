@@ -63,6 +63,10 @@ function kg_save_application_post($data)
     update_post_meta($post_id, 'kg_app_role', sanitize_text_field($data['role']));
     if (!empty($data['job_id'])) {
         update_post_meta($post_id, 'kg_app_job_id', intval($data['job_id']));
+        if (!empty($data['applied_via_single'])) {
+            update_post_meta($post_id, 'kg_app_locked_job', 'yes');
+            update_post_meta($post_id, 'kg_app_applied_via_single', 'yes');
+        }
     }
     update_post_meta($post_id, 'kg_app_preferred_roles', $data['preferred_roles'] ?? array());
     update_post_meta($post_id, 'kg_app_linkedin', esc_url_raw($data['linkedin']));
@@ -92,7 +96,7 @@ function kg_save_application_post($data)
     // Look up and save the branch location of the applied job
     $app_location = '';
     $applied_role = $data['role'] ?? '';
-    
+
     if (!empty($data['job_id'])) {
         $app_location = get_post_meta(intval($data['job_id']), 'job_location', true);
     } elseif (!empty($applied_role)) {
@@ -334,13 +338,13 @@ function kg_application_audit_trail_box($post)
     echo '<tbody>';
     foreach ($audit_trail as $log) {
         $date = wp_date(get_option('date_format') . ' ' . get_option('time_format'), $log['timestamp']);
-        
+
         $activity = esc_html($log['action']);
         // For backwards compatibility with older logs that didn't embed the name in the action string
         if ($log['action'] === 'Assigned to Recruiter' && !empty($log['assignee'])) {
             $activity = 'Assigned to ' . esc_html($log['assignee']);
         }
-        
+
         $actor = esc_html($log['actor']);
         echo "<tr><td>{$date}</td><td>{$activity}</td><td><strong>{$actor}</strong></td></tr>";
     }
@@ -438,11 +442,11 @@ function kg_application_details_box($post)
             <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
                 <?php
                 $preferred_roles = get_post_meta($post->ID, 'kg_app_preferred_roles', true);
-                
+
                 if (is_array($preferred_roles)) {
                     $preferred_roles = array_filter(array_map('trim', $preferred_roles));
                 }
-                
+
                 if (is_array($preferred_roles) && !empty($preferred_roles)) {
                     foreach ($preferred_roles as $pref_role) {
                         echo '<span style="background:#e0f2fe;color:#0369a1;padding:3px 8px;border-radius:4px;font-size:12px;font-weight:600;margin-right:6px;display:inline-block;">' . esc_html($pref_role) . '</span>';
@@ -471,8 +475,8 @@ function kg_application_details_box($post)
                     'tax_query' => array(
                         array(
                             'taxonomy' => 'job_type_tax',
-                            'field'    => 'slug',
-                            'terms'    => 'offshoring',
+                            'field' => 'slug',
+                            'terms' => 'offshoring',
                             'operator' => 'NOT IN',
                         ),
                     ),
@@ -486,7 +490,10 @@ function kg_application_details_box($post)
                 } else {
                     $filtered_jobs = $all_jobs_posts;
                 }
-                if (!empty($current_job_id)) {
+                
+                $is_locked = get_post_meta($post->ID, 'kg_app_locked_job', true);
+
+                if (!empty($current_job_id) && $is_locked === 'yes') {
                     $assigned_job = get_post($current_job_id);
                     if ($assigned_job) {
                         $location = get_post_meta($assigned_job->ID, 'job_location', true) ?: 'No Location';
@@ -496,7 +503,7 @@ function kg_application_details_box($post)
                         echo '</div>';
                         echo '<input type="hidden" name="kg_app_job_id" value="' . esc_attr($current_job_id) . '">';
                         echo '<input type="hidden" name="kg_app_role_legacy" value="' . esc_attr($role) . '">';
-                        echo '<p class="description" style="margin: 4px 0 0 0; font-size: 11px; color: #666;">This application is firmly assigned to this specific vacancy.</p>';
+                        echo '<p class="description" style="margin: 4px 0 0 0; font-size: 11px; color: #666;">This application is locked to this specific vacancy because the applicant applied directly to it.</p>';
                     }
                 } else {
                 ?>
@@ -508,16 +515,19 @@ function kg_application_details_box($post)
                         foreach ($filtered_jobs as $job) {
                             $location = get_post_meta($job->ID, 'job_location', true) ?: 'No Location';
                             $label = $job->post_title . ' - ' . $location;
-                            echo '<option value="' . esc_attr($job->ID) . '">' . esc_html($label) . '</option>';
+                            $selected = selected($current_job_id, $job->ID, false);
+                            echo '<option value="' . esc_attr($job->ID) . '" ' . $selected . '>' . esc_html($label) . '</option>';
                         }
                     }
-                    if (!empty($role)) {
+                    // Fallback if role exists but no job is explicitly selected
+                    if (!empty($role) && empty($current_job_id)) {
                         echo '<option value="" selected>Pending Job Assignment</option>';
                     }
                     ?>
                 </select>
                 <input type="hidden" name="kg_app_role_legacy" value="<?php echo esc_attr($role); ?>">
-                <p class="description" style="margin: 4px 0 0 0; font-size: 11px; color: #666;">Select the exact job post and location for this applicant.</p>
+                <p class="description" style="margin: 4px 0 0 0; font-size: 11px; color: #666;">Select the exact job post
+                    and location for this applicant.</p>
                 <?php } ?>
             </td>
         </tr>
@@ -590,7 +600,8 @@ function kg_application_details_box($post)
                                         style="color: #64748b; font-size: 11px;"><?php echo esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $note['timestamp'])); ?></span>
                                 </div>
                                 <div style="color: #334155; line-height: 1.4; white-space: pre-wrap;">
-                                    <?php echo esc_html($note['message']); ?></div>
+                                    <?php echo esc_html($note['message']); ?>
+                                </div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -723,13 +734,15 @@ function kg_application_status_box($post)
             <label style="font-size:11px;font-weight:600;display:block;margin-bottom:2px;">Interviewer</label>
             <select name="kg_interviewer_id" style="width:100%; padding:4px;">
                 <option value="">— Select Recruiter —</option>
-                <?php foreach ($recruiters as $rec): 
+                <?php foreach ($recruiters as $rec):
                     $status = get_user_meta($rec->ID, 'kg_recruiter_status', true) ?: 'active';
-                    if ($status === 'inactive' && $rec->ID != $int_er_id) continue;
+                    if ($status === 'inactive' && $rec->ID != $int_er_id)
+                        continue;
                     $inactive_label = ($status === 'inactive') ? ' (Inactive)' : '';
-                ?>
+                    ?>
                     <option value="<?php echo esc_attr($rec->ID); ?>" <?php selected($int_er_id, $rec->ID); ?>>
-                        <?php echo esc_html($rec->display_name . $inactive_label); ?></option>
+                        <?php echo esc_html($rec->display_name . $inactive_label); ?>
+                    </option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -990,6 +1003,22 @@ function kg_save_application_status($post_id)
 
     update_post_meta($post_id, 'kg_app_status', $new_status);
 
+    // Automatically unlock when moved to Pooling, lock otherwise if job is assigned
+    // ONLY if the application originated from a direct job apply
+    $was_direct = get_post_meta($post_id, 'kg_app_applied_via_single', true);
+    $has_locked_meta = metadata_exists('post', $post_id, 'kg_app_locked_job');
+    
+    if ($was_direct === 'yes' || $has_locked_meta) {
+        if ($new_status === 'pooling') {
+            update_post_meta($post_id, 'kg_app_locked_job', 'no');
+        } else {
+            $assigned_job_id = isset($_POST['kg_app_job_id']) ? intval($_POST['kg_app_job_id']) : get_post_meta($post_id, 'kg_app_job_id', true);
+            if ($assigned_job_id > 0) {
+                update_post_meta($post_id, 'kg_app_locked_job', 'yes');
+            }
+        }
+    }
+
     if (isset($_POST['kg_app_client'])) {
         update_post_meta($post_id, 'kg_app_client', sanitize_text_field($_POST['kg_app_client']));
     }
@@ -1003,8 +1032,8 @@ function kg_save_application_status($post_id)
                 update_post_meta($post_id, 'kg_app_role', $job_post->post_title);
             }
         } elseif (isset($_POST['kg_app_role_legacy']) && !empty($_POST['kg_app_role_legacy'])) {
-             // Keep legacy role if job_id is empty but they had a legacy role
-             update_post_meta($post_id, 'kg_app_role', sanitize_text_field($_POST['kg_app_role_legacy']));
+            // Keep legacy role if job_id is empty but they had a legacy role
+            update_post_meta($post_id, 'kg_app_role', sanitize_text_field($_POST['kg_app_role_legacy']));
         }
     }
 
@@ -1023,10 +1052,10 @@ function kg_save_application_status($post_id)
     if ((current_user_can('manage_options') || kg_is_current_user_recruitment_admin() || kg_is_current_user_recruiter()) && isset($_POST['kg_app_recruiter_id'])) {
         $old_rec_user_id = get_post_meta($post_id, 'kg_app_recruiter_id', true);
         $rec_user_id = sanitize_text_field($_POST['kg_app_recruiter_id']);
-        
+
         if ($old_rec_user_id != $rec_user_id) {
             update_post_meta($post_id, 'kg_app_recruiter_id', $rec_user_id);
-            
+
             $old_name = 'Unassigned';
             if ($old_rec_user_id) {
                 $old_user = get_userdata($old_rec_user_id);
@@ -1034,7 +1063,7 @@ function kg_save_application_status($post_id)
                     $old_name = $old_user->display_name;
                 }
             }
-            
+
             $new_name = 'Unassigned';
             if ($rec_user_id) {
                 $new_user = get_userdata($rec_user_id);
@@ -1042,14 +1071,14 @@ function kg_save_application_status($post_id)
                     $new_name = $new_user->display_name;
                 }
             }
-            
+
             $action = 'Reassigned from ' . $old_name . ' to ' . $new_name;
             if (!$old_rec_user_id && $rec_user_id) {
                 $action = 'Assigned to ' . $new_name;
             } elseif ($old_rec_user_id && !$rec_user_id) {
                 $action = 'Unassigned (previously ' . $old_name . ')';
             }
-            
+
             kg_log_application_audit_trail($post_id, $action, $rec_user_id);
         }
     }
@@ -1129,8 +1158,9 @@ function kg_sync_job_headcount_on_status_change($post_id)
     if (!$job_id) {
         // Fallback for legacy applications
         $role = get_post_meta($post_id, 'kg_app_role', true);
-        if (!$role) return;
-        
+        if (!$role)
+            return;
+
         $jobs = get_posts(array(
             'post_type' => 'jobs',
             'post_status' => array('publish', 'draft'),
@@ -1138,7 +1168,8 @@ function kg_sync_job_headcount_on_status_change($post_id)
             'title' => $role,
             'fields' => 'ids',
         ));
-        if (empty($jobs)) return;
+        if (empty($jobs))
+            return;
         $job_id = $jobs[0];
     }
 
@@ -1346,7 +1377,7 @@ function kg_notify_applicant_status($post_id, $status)
                 kg_send_interview_invitation_email($post_id);
             }
             return;
-            
+
         case 'processing':
             return; // Handled directly in save hook via kg_send_processing_email()
 
@@ -2400,7 +2431,8 @@ function kg_email_templates_settings_render()
                                     <input type="text" name="btn_link" id="btn_link" value="<?php echo esc_attr($btn_l); ?>"
                                         class="large-text" />
                                     <p class="description">Supports link URLs or dynamic tokens like <code>{site_url}</code> or
-                                        <code>{edit_url}</code>.</p>
+                                        <code>{edit_url}</code>.
+                                    </p>
                                 </td>
                             </tr>
                         </table>
@@ -2609,4 +2641,3 @@ function kg_get_parsed_email($template_key, $replacements = array())
         'btn_link' => $btn_link,
     );
 }
-

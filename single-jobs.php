@@ -106,8 +106,14 @@ while (have_posts()):
 
                     <!-- Elegant Back to All Jobs navigation -->
                     <div class="back-to-jobs-container" style="margin-bottom: 1.5rem;">
-                        <a href="<?php echo esc_url(home_url('/our-jobs/')); ?>" class="back-to-jobs-link" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--main-blue); font-weight: 600; text-decoration: none; font-size: 0.9rem; transition: all 0.3s ease;">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s ease;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        <a href="<?php echo esc_url(home_url('/our-jobs/')); ?>" class="back-to-jobs-link"
+                            style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--main-blue); font-weight: 600; text-decoration: none; font-size: 0.9rem; transition: all 0.3s ease;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                                style="transition: transform 0.3s ease;">
+                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                <polyline points="12 19 5 12 12 5"></polyline>
+                            </svg>
                             Back to All Jobs
                         </a>
                     </div>
@@ -115,6 +121,7 @@ while (have_posts()):
                         .back-to-jobs-link:hover {
                             color: var(--hover-blue, #0d3b66) !important;
                         }
+
                         .back-to-jobs-link:hover svg {
                             transform: translateX(-4px);
                         }
@@ -222,9 +229,10 @@ while (have_posts()):
                             <?php the_content(); ?>
                         </div>
                     </div>
-                                    <!-- Cooperative Perks Section (Beautiful borderless layout, no generic cards) -->
+                    <!-- Cooperative Perks Section (Beautiful borderless layout, no generic cards) -->
                     <div class="cooperative-perks-section animate-on-scroll">
-                        <h3><?php echo esc_html(kg_get_field('jobs_perks_title', 'Cooperative Perks & Advantages', 'option')); ?></h3>
+                        <h3><?php echo esc_html(kg_get_field('jobs_perks_title', 'Cooperative Perks & Advantages', 'option')); ?>
+                        </h3>
                         <div class="perks-grid">
                             <div class="perk-item-inline">
                                 <div class="perk-icon-wrapper">
@@ -293,7 +301,8 @@ while (have_posts()):
                                 stroke-width="2">
                                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                             </svg>
-                            <span><strong>Trust & Safety:</strong> <?php echo esc_html(kg_get_field('jobs_trust_safety_text', 'Kings Group Cooperative will never request payment or bank credentials during any stage of recruitment. Apply securely above.', 'option')); ?></span>
+                            <span><strong>Trust & Safety:</strong>
+                                <?php echo esc_html(kg_get_field('jobs_trust_safety_text', 'Kings Group Cooperative will never request payment or bank credentials during any stage of recruitment. Apply securely above.', 'option')); ?></span>
                         </p>
                     </div>
                 </div>
@@ -310,7 +319,7 @@ while (have_posts()):
                                 </div>
                                 <h3 class="sidebar-title" style="color:#dc2626;">Position Closed</h3>
                                 <p class="sidebar-desc">This position is no longer accepting applications. Browse our other open
-                                     roles below.</p>
+                                    roles below.</p>
                                 <a href="<?php echo esc_url(home_url('/our-jobs/')); ?>" class="btn-sidebar-apply"
                                     style="background:#e5e7eb;color:#6b7280;box-shadow:none;pointer-events:auto;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
                                     View Open Positions
@@ -325,8 +334,12 @@ while (have_posts()):
                                     <span class="badge-pulse"></span> Open Position
                                 </div>
 
-                                <h3 class="sidebar-title"><?php echo esc_html(kg_get_field('jobs_apply_instantly_title', 'Apply Instantly', 'option')); ?></h3>
-                                <p class="sidebar-desc"><?php echo esc_html(kg_get_field('jobs_apply_instantly_desc', 'Fast-track your application to our hiring coordinators. Form takes under 2 minutes.', 'option')); ?></p>
+                                <h3 class="sidebar-title">
+                                    <?php echo esc_html(kg_get_field('jobs_apply_instantly_title', 'Apply Instantly', 'option')); ?>
+                                </h3>
+                                <p class="sidebar-desc">
+                                    <?php echo esc_html(kg_get_field('jobs_apply_instantly_desc', 'Fast-track your application to our hiring coordinators. Form takes under 2 minutes.', 'option')); ?>
+                                </p>
 
                                 <div class="sidebar-specs">
                                     <div class="sidebar-spec-item">
@@ -417,16 +430,19 @@ while (have_posts()):
                                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                                         <input type="text" id="sidebar-app-street" placeholder="Street Address" required
                                             style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); font-size: 0.9rem; border-radius: 8px; outline: none; background: white; color: var(--text-dark);">
-                                        <select id="sidebar-app-region" required style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); font-size: 0.9rem; border-radius: 8px; background: white; color: var(--text-dark); outline: none;">
+                                        <select id="sidebar-app-region" required
+                                            style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); font-size: 0.9rem; border-radius: 8px; background: white; color: var(--text-dark); outline: none;">
                                             <option value="">Select Region</option>
                                         </select>
-                                        <select id="sidebar-app-city" required style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); font-size: 0.9rem; border-radius: 8px; background: white; color: var(--text-dark); outline: none;">
+                                        <select id="sidebar-app-city" required
+                                            style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); font-size: 0.9rem; border-radius: 8px; background: white; color: var(--text-dark); outline: none;">
                                             <option value="">Select City / Mun</option>
                                         </select>
-                                        <select id="sidebar-app-barangay" required style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); font-size: 0.9rem; border-radius: 8px; background: white; color: var(--text-dark); outline: none;">
+                                        <select id="sidebar-app-barangay" required
+                                            style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); font-size: 0.9rem; border-radius: 8px; background: white; color: var(--text-dark); outline: none;">
                                             <option value="">Select Barangay</option>
                                         </select>
-                                
+
                                         <!-- Hidden codes -->
                                         <input type="hidden" id="sidebar_app_region_code" value="">
                                         <input type="hidden" id="sidebar_app_city_code" value="">
@@ -435,35 +451,49 @@ while (have_posts()):
 
                                     <!-- Contact info -->
                                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                        <input type="email" id="sidebar-app-email" placeholder="Email Address (Optional)" style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); font-size: 0.9rem; border-radius: 8px; outline: none; background: white; color: var(--text-dark);">
-                                        <input type="tel" id="sidebar-app-phone" placeholder="Phone Number (+63)" required style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); font-size: 0.9rem; border-radius: 8px; outline: none; background: white; color: var(--text-dark);">
+                                        <input type="email" id="sidebar-app-email" placeholder="Email Address (Optional)"
+                                            style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); font-size: 0.9rem; border-radius: 8px; outline: none; background: white; color: var(--text-dark);">
+                                        <input type="tel" id="sidebar-app-phone" placeholder="Phone Number (+63)" required
+                                            style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); font-size: 0.9rem; border-radius: 8px; outline: none; background: white; color: var(--text-dark);">
                                     </div>
 
                                     <input type="hidden" id="sidebar-app-role" value="<?php echo esc_attr(get_the_title()); ?>">
-                            
+
                                     <!-- honeypot -->
                                     <div style="display:none;" aria-hidden="true">
-                                        <input type="text" id="kg_hp_sidebar" name="kg_hp_field" value="" tabindex="-1" autocomplete="off">
+                                        <input type="text" id="kg_hp_sidebar" name="kg_hp_field" value="" tabindex="-1"
+                                            autocomplete="off">
                                     </div>
 
                                     <!-- CAPTCHA -->
-                                    <div class="cf-turnstile" data-sitekey="<?php echo esc_attr(defined('CF_TURNSTILE_SITE_KEY') ? CF_TURNSTILE_SITE_KEY : ''); ?>" data-appearance="interaction-only" style="margin-top:0.25rem;"></div>
+                                    <div class="cf-turnstile"
+                                        data-sitekey="<?php echo esc_attr(defined('CF_TURNSTILE_SITE_KEY') ? CF_TURNSTILE_SITE_KEY : ''); ?>"
+                                        data-appearance="interaction-only" style="margin-top:0.25rem;"></div>
 
-                                    <div id="sidebar-careers-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;padding:0.5rem 0.75rem;border-radius:6px;">
+                                    <div id="sidebar-careers-error"
+                                        style="display:none;background:#fef2f2;border:1px solid #fca5a5;padding:0.5rem 0.75rem;border-radius:6px;">
                                         <p style="margin:0;color:#991b1b;font-size:0.8rem;" id="sidebar-careers-error-msg"></p>
                                     </div>
 
-                                    <button type="button" class="btn-sidebar-apply" style="border:none; cursor:pointer;" onclick="submitSidebarApplication()">
+                                    <button type="button" class="btn-sidebar-apply" style="border:none; cursor:pointer;"
+                                        onclick="submitSidebarApplication()">
                                         Submit Application
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2.5">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
+                                        </svg>
                                     </button>
                                 </form>
-                        
+
                                 <div class="sidebar-share">
                                     <span class="sidebar-share-lbl">Share this role</span>
                                     <div class="sidebar-share-icons">
-                                        <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode(get_permalink()); ?>" target="_blank" rel="noopener" class="mini-share-btn" title="Share on Facebook">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                                        <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode(get_permalink()); ?>"
+                                            target="_blank" rel="noopener" class="mini-share-btn" title="Share on Facebook">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                                <path
+                                                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                            </svg>
                                         </a>
                                     </div>
                                 </div>
@@ -481,12 +511,16 @@ while (have_posts()):
     <div id="mobile-sticky-apply-bar" class="mobile-sticky-apply-bar">
         <div class="mobile-sticky-info">
             <div class="mobile-sticky-title"><?php the_title(); ?></div>
-            <div class="mobile-sticky-meta"><?php echo esc_html($job_type_label); ?> · <?php echo esc_html($work_setup_label); ?></div>
+            <div class="mobile-sticky-meta"><?php echo esc_html($job_type_label); ?> ·
+                <?php echo esc_html($work_setup_label); ?></div>
         </div>
         <?php if ($job_closed): ?>
-                <span style="background:#fee2e2;color:#dc2626;padding:0.5rem 1rem;border-radius:8px;font-size:0.8rem;font-weight:700;letter-spacing:0.3px;">Position Closed</span>
+            <span
+                style="background:#fee2e2;color:#dc2626;padding:0.5rem 1rem;border-radius:8px;font-size:0.8rem;font-weight:700;letter-spacing:0.3px;">Position
+                Closed</span>
         <?php else: ?>
-                <a href="<?php echo esc_url(add_query_arg('role', get_the_title(), home_url('/careers/')) . '#apply'); ?>" class="btn btn-gold btn-sm" style="padding: 0.6rem 1.2rem; font-size: 0.8rem; border-radius: 8px;">Apply Now</a>
+            <a href="<?php echo esc_url(add_query_arg('role', get_the_title(), home_url('/careers/')) . '#apply'); ?>"
+                class="btn btn-gold btn-sm" style="padding: 0.6rem 1.2rem; font-size: 0.8rem; border-radius: 8px;">Apply Now</a>
         <?php endif; ?>
     </div>
 
@@ -593,12 +627,14 @@ while (have_posts()):
             border-bottom: 1px solid rgba(10, 37, 64, 0.08);
             margin: 0;
         }
+
         .spec-item {
             display: flex;
             align-items: center;
             gap: 0.75rem;
             transition: transform 0.2s ease;
         }
+
         .spec-icon {
             flex-shrink: 0;
             width: 38px;
@@ -612,21 +648,25 @@ while (have_posts()):
             border: 1px solid rgba(10, 37, 64, 0.05);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .spec-icon svg {
             width: 17px;
             height: 17px;
         }
+
         .spec-item:hover .spec-icon {
             background: rgba(255, 209, 102, 0.15);
             color: #b38600;
             border-color: rgba(255, 209, 102, 0.4);
             transform: translateY(-2px);
         }
+
         .spec-meta {
             display: flex;
             flex-direction: column;
             gap: 0.15rem;
         }
+
         .spec-label {
             font-size: 0.7rem;
             font-weight: 700;
@@ -635,6 +675,7 @@ while (have_posts()):
             color: var(--text-muted);
             line-height: 1;
         }
+
         .spec-value {
             font-size: 1rem;
             font-weight: 700;
@@ -713,9 +754,20 @@ while (have_posts()):
         }
 
         @keyframes pulse-ring {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 209, 102, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 209, 102, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 209, 102, 0); }
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(255, 209, 102, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 6px rgba(255, 209, 102, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(255, 209, 102, 0);
+            }
         }
 
         .sidebar-title {
@@ -866,35 +918,42 @@ while (have_posts()):
                 grid-template-columns: 1fr;
                 gap: 3rem;
             }
+
             .job-sidebar-column {
                 display: none;
             }
         }
-    
+
         /* Elegant Content Checklist System */
         .post-content {
             color: var(--text-body);
             line-height: 1.8;
             font-size: 1.05rem;
         }
-        .post-content h2, .post-content h3 {
+
+        .post-content h2,
+        .post-content h3 {
             color: var(--main-blue);
             margin: 2.5rem 0 1.25rem;
             font-weight: 800;
             font-size: 1.6rem;
             font-family: var(--font-header);
         }
+
         .post-content h2:first-of-type {
             margin-top: 0;
         }
+
         .post-content p {
             margin-bottom: 1.5rem;
         }
+
         .post-content ul {
             list-style: none;
             padding-left: 0;
             margin-bottom: 2rem;
         }
+
         .post-content li {
             position: relative;
             padding-left: 2rem;
@@ -902,6 +961,7 @@ while (have_posts()):
             font-size: 1.05rem;
             line-height: 1.7;
         }
+
         .post-content li::before {
             content: '✓';
             position: absolute;
@@ -917,6 +977,7 @@ while (have_posts()):
             padding: 2.5rem 0 1rem 0;
             border: none;
         }
+
         .cooperative-perks-section h3 {
             font-size: 1.6rem;
             font-weight: 800;
@@ -925,16 +986,19 @@ while (have_posts()):
             font-family: var(--font-header);
             text-align: center;
         }
+
         .perks-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 2rem 2.5rem;
         }
+
         .perk-item-inline {
             display: flex;
             align-items: flex-start;
             gap: 1.25rem;
         }
+
         .perk-icon-wrapper {
             flex-shrink: 0;
             width: 42px;
@@ -948,6 +1012,7 @@ while (have_posts()):
             transition: all 0.3s ease;
             border: 1px solid rgba(10, 37, 64, 0.06);
         }
+
         .perk-item-inline:hover .perk-icon-wrapper {
             background: #ffd166;
             color: #0a2540;
@@ -955,12 +1020,14 @@ while (have_posts()):
             transform: translateY(-2px) scale(1.05);
             box-shadow: 0 6px 15px rgba(255, 209, 102, 0.4);
         }
+
         .perk-content-inline h4 {
             font-size: 1.05rem;
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 0.3rem;
         }
+
         .perk-content-inline p {
             font-size: 0.92rem;
             color: var(--text-muted);
@@ -975,6 +1042,7 @@ while (have_posts()):
             border-top: 1px solid rgba(10, 37, 64, 0.06);
             position: relative;
         }
+
         .job-cta-section .cta-title {
             font-family: var(--font-header);
             font-size: 2rem;
@@ -983,6 +1051,7 @@ while (have_posts()):
             margin-bottom: 0.75rem;
             letter-spacing: -0.5px;
         }
+
         .job-cta-section .cta-desc {
             font-size: 1.05rem;
             color: var(--text-muted);
@@ -990,6 +1059,7 @@ while (have_posts()):
             max-width: 600px;
             line-height: 1.7;
         }
+
         .cta-action-row {
             display: flex;
             justify-content: center;
@@ -999,6 +1069,7 @@ while (have_posts()):
             margin-top: 1.25rem;
             flex-wrap: wrap;
         }
+
         .btn-bespoke-gold {
             display: inline-flex;
             align-items: center;
@@ -1015,6 +1086,7 @@ while (have_posts()):
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 0 6px 20px rgba(255, 209, 102, 0.35);
         }
+
         .btn-bespoke-gold:hover {
             background: #0a2540;
             border-color: #0a2540;
@@ -1022,6 +1094,7 @@ while (have_posts()):
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(10, 37, 64, 0.25);
         }
+
         .btn-bespoke-outline {
             display: inline-flex;
             align-items: center;
@@ -1037,14 +1110,17 @@ while (have_posts()):
             border: 2px solid rgba(10, 37, 64, 0.15);
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .btn-bespoke-outline svg {
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .btn-bespoke-outline:hover {
             background: rgba(10, 37, 64, 0.04);
             border-color: var(--main-blue);
             transform: translateY(-3px);
         }
+
         .btn-bespoke-outline:hover svg {
             transform: rotate(180deg) translateX(4px);
         }
@@ -1058,6 +1134,7 @@ while (have_posts()):
             padding-top: 2.5rem;
             border-top: 1px solid rgba(10, 37, 64, 0.06);
         }
+
         .job-share-container {
             display: flex;
             align-items: center;
@@ -1065,6 +1142,7 @@ while (have_posts()):
             flex-wrap: wrap;
             justify-content: center;
         }
+
         .job-share-label {
             font-size: 0.85rem;
             font-weight: 700;
@@ -1072,6 +1150,7 @@ while (have_posts()):
             letter-spacing: 1px;
             color: var(--text-muted);
         }
+
         .share-buttons-row {
             display: flex;
             gap: 0.75rem;
@@ -1089,6 +1168,7 @@ while (have_posts()):
             color: var(--text-muted);
             transition: all 0.3s ease;
         }
+
         .share-btn:hover {
             background: var(--main-blue);
             color: white;
@@ -1113,10 +1193,27 @@ while (have_posts()):
             border-radius: 50px;
             border: 1px solid rgba(10, 37, 64, 0.04);
         }
-        .sidebar-note svg { flex-shrink: 0; color: var(--sec-accent-green); }
 
-        .btn-block { display: block; text-align: center; width: 100%; padding: 1rem; border-radius: 10px; text-decoration: none; }
-        .mobile-apply-cta { display: none; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+        .sidebar-note svg {
+            flex-shrink: 0;
+            color: var(--sec-accent-green);
+        }
+
+        .btn-block {
+            display: block;
+            text-align: center;
+            width: 100%;
+            padding: 1rem;
+            border-radius: 10px;
+            text-decoration: none;
+        }
+
+        .mobile-apply-cta {
+            display: none;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
 
         /* Mobile Sticky Apply Bar */
         .mobile-sticky-apply-bar {
@@ -1167,21 +1264,25 @@ while (have_posts()):
             .job-single-grid {
                 gap: 2.5rem;
             }
+
             .perks-grid {
                 gap: 1.5rem;
             }
         }
+
         @media (max-width: 576px) {
             .perks-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
+
             .job-share-container {
                 flex-direction: column;
                 align-items: center;
                 gap: 0.75rem;
             }
         }
+
         #sidebar-cv-dropzone.drag-over {
             border-color: var(--sec-accent-green) !important;
             background: rgba(0, 208, 156, 0.04) !important;
@@ -1220,7 +1321,7 @@ while (have_posts()):
                 });
             }
 
-            window.removeSidebarFile = function() {
+            window.removeSidebarFile = function () {
                 sidebarCvInput.value = '';
                 sidebarFileInfo.style.display = 'none';
                 sidebarDropzone.style.display = 'block';
@@ -1251,30 +1352,30 @@ while (have_posts()):
             });
 
             // Submit for Sidebar Form
-            window.submitSidebarApplication = function() {
-                const fname    = document.getElementById('sidebar-app-fname').value.trim();
-                const mname    = document.getElementById('sidebar-app-mname').value.trim();
-                const lname    = document.getElementById('sidebar-app-lname').value.trim();
-                const email    = document.getElementById('sidebar-app-email').value.trim();
-                const phone    = document.getElementById('sidebar-app-phone').value.trim();
-                const gender   = document.getElementById('sidebar-app-gender').value;
+            window.submitSidebarApplication = function () {
+                const fname = document.getElementById('sidebar-app-fname').value.trim();
+                const mname = document.getElementById('sidebar-app-mname').value.trim();
+                const lname = document.getElementById('sidebar-app-lname').value.trim();
+                const email = document.getElementById('sidebar-app-email').value.trim();
+                const phone = document.getElementById('sidebar-app-phone').value.trim();
+                const gender = document.getElementById('sidebar-app-gender').value;
                 const birthday = document.getElementById('sidebar-app-birthday').value;
-                const street   = document.getElementById('sidebar-app-street').value.trim();
-                const role     = document.getElementById('sidebar-app-role').value;
-                const cvFile   = sidebarCvInput.files[0];
+                const street = document.getElementById('sidebar-app-street').value.trim();
+                const role = document.getElementById('sidebar-app-role').value;
+                const cvFile = sidebarCvInput.files[0];
 
-                const purpose  = document.getElementById('sidebar-app-purpose').value;
+                const purpose = document.getElementById('sidebar-app-purpose').value;
 
-                const regionEl   = document.getElementById('sidebar-app-region');
-                const cityEl     = document.getElementById('sidebar-app-city');
+                const regionEl = document.getElementById('sidebar-app-region');
+                const cityEl = document.getElementById('sidebar-app-city');
                 const barangayEl = document.getElementById('sidebar-app-barangay');
-                const region     = regionEl ? regionEl.value.trim() : '';
-                const city       = cityEl ? cityEl.value.trim() : '';
-                const barangay   = barangayEl ? barangayEl.value.trim() : '';
+                const region = regionEl ? regionEl.value.trim() : '';
+                const city = cityEl ? cityEl.value.trim() : '';
+                const barangay = barangayEl ? barangayEl.value.trim() : '';
 
                 const regionCode = document.getElementById('sidebar_app_region_code') ? document.getElementById('sidebar_app_region_code').value : '';
-                const cityCode   = document.getElementById('sidebar_app_city_code') ? document.getElementById('sidebar_app_city_code').value : '';
-                const brgyCode   = document.getElementById('sidebar_app_barangay_code') ? document.getElementById('sidebar_app_barangay_code').value : '';
+                const cityCode = document.getElementById('sidebar_app_city_code') ? document.getElementById('sidebar_app_city_code').value : '';
+                const brgyCode = document.getElementById('sidebar_app_barangay_code') ? document.getElementById('sidebar_app_barangay_code').value : '';
 
                 const errBox = document.getElementById('sidebar-careers-error');
                 const errMsg = document.getElementById('sidebar-careers-error-msg');
@@ -1318,33 +1419,33 @@ while (have_posts()):
 
                 const submitBtn = document.querySelector('#sidebar-apply-form .btn-sidebar-apply');
                 const submitBtnText = submitBtn.innerHTML;
-                submitBtn.disabled    = true;
+                submitBtn.disabled = true;
                 submitBtn.textContent = 'Submitting…';
 
                 const turnstileResponse = document.querySelector('#sidebar-apply-form [name="cf-turnstile-response"]')?.value || '';
 
                 const formData = new FormData();
-                formData.append('action',       'kg_submit_application');
-                formData.append('kg_nonce',     KG_AJAX.careers_nonce);
-                formData.append('app_fname',    fname);
-                formData.append('app_mname',    mname);
-                formData.append('app_lname',    lname);
-                formData.append('app_email',    email);
-                formData.append('app_phone',    phone);
-                formData.append('app_purpose',  purpose);
-                formData.append('app_gender',   gender);
+                formData.append('action', 'kg_submit_application');
+                formData.append('kg_nonce', KG_AJAX.careers_nonce);
+                formData.append('app_fname', fname);
+                formData.append('app_mname', mname);
+                formData.append('app_lname', lname);
+                formData.append('app_email', email);
+                formData.append('app_phone', phone);
+                formData.append('app_purpose', purpose);
+                formData.append('app_gender', gender);
                 formData.append('app_birthday', birthday);
-                formData.append('app_street',   street);
-                formData.append('app_region',   region);
-                formData.append('app_city',     city);
+                formData.append('app_street', street);
+                formData.append('app_region', region);
+                formData.append('app_city', city);
                 formData.append('app_barangay', barangay);
                 formData.append('app_region_code', regionCode);
-                formData.append('app_city_code',   cityCode);
+                formData.append('app_city_code', cityCode);
                 formData.append('app_barangay_code', brgyCode);
-                formData.append('app_role',     role);
-                formData.append('app_job_id',   '<?php echo esc_js(get_the_ID()); ?>');
-                formData.append('app_cv',       cvFile, cvFile.name);
-                formData.append('kg_hp_field',  document.getElementById('kg_hp_sidebar').value);
+                formData.append('app_role', role);
+                formData.append('app_job_id', '<?php echo esc_js(get_the_ID()); ?>');
+                formData.append('app_cv', cvFile, cvFile.name);
+                formData.append('kg_hp_field', document.getElementById('kg_hp_sidebar').value);
                 formData.append('cf-turnstile-response', turnstileResponse);
 
                 fetch(KG_AJAX.url, { method: 'POST', body: formData })
@@ -1378,8 +1479,8 @@ while (have_posts()):
                         if (typeof turnstile !== 'undefined') turnstile.reset();
                     })
                     .finally(() => {
-                        submitBtn.disabled    = false;
-                        submitBtn.innerHTML   = submitBtnText;
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = submitBtnText;
                     });
             }
         })();

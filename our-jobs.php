@@ -7,14 +7,16 @@ $page_title = 'Our Jobs | Kings Group Careers';
 $page_description = 'Browse open positions at Kings Group Cooperative. Filter by Full-Time, Part-Time, Contract, and Remote roles across the Philippines.';
 
 if (!function_exists('kg_get_region_by_location')) {
-    function kg_get_region_by_location($location) {
+    function kg_get_region_by_location($location)
+    {
         $location = strtoupper(trim($location));
         if (empty($location)) {
             return 'Other';
         }
 
         // 1. National Capital Region (NCR)
-        if (strpos($location, 'METRO MANILA') !== false ||
+        if (
+            strpos($location, 'METRO MANILA') !== false ||
             strpos($location, 'MANILA') !== false ||
             strpos($location, 'TAGUIG') !== false ||
             strpos($location, 'MAKATI') !== false ||
@@ -38,36 +40,42 @@ if (!function_exists('kg_get_region_by_location')) {
             strpos($location, 'SAN JUAN') !== false ||
             strpos($location, 'VALENZUELA') !== false ||
             strpos($location, 'PATEROS') !== false ||
-            strpos($location, 'NCR') !== false) {
+            strpos($location, 'NCR') !== false
+        ) {
             return 'National Capital Region (NCR)';
         }
 
         // 2. Cordillera Administrative Region (CAR)
-        if (strpos($location, 'BAGUIO') !== false ||
+        if (
+            strpos($location, 'BAGUIO') !== false ||
             strpos($location, 'BENGUET') !== false ||
             strpos($location, 'ABRA') !== false ||
             strpos($location, 'APAYAO') !== false ||
             strpos($location, 'IFUGAO') !== false ||
             strpos($location, 'KALINGA') !== false ||
             strpos($location, 'MOUNTAIN PROVINCE') !== false ||
-            strpos($location, 'CAR') !== false) {
+            strpos($location, 'CAR') !== false
+        ) {
             return 'Cordillera Administrative Region (CAR)';
         }
 
         // 3. Ilocos Region (Region I)
-        if (strpos($location, 'PANGASINAN') !== false ||
+        if (
+            strpos($location, 'PANGASINAN') !== false ||
             strpos($location, 'DAGUPAN') !== false ||
             strpos($location, 'LAOAG') !== false ||
             strpos($location, 'ILOCOS') !== false ||
             strpos($location, 'LA UNION') !== false ||
             strpos($location, 'VIGAN') !== false ||
             strpos($location, 'SAN FERNANDO, LA UNION') !== false ||
-            strpos($location, 'REGION I') !== false) {
+            strpos($location, 'REGION I') !== false
+        ) {
             return 'Ilocos Region (Region I)';
         }
 
         // 4. Cagayan Valley (Region II)
-        if (strpos($location, 'TUGUEGARAO') !== false ||
+        if (
+            strpos($location, 'TUGUEGARAO') !== false ||
             strpos($location, 'SOLANO') !== false ||
             strpos($location, 'NUEVA VIZCAYA') !== false ||
             strpos($location, 'CAUAYAN') !== false ||
@@ -76,12 +84,14 @@ if (!function_exists('kg_get_region_by_location')) {
             strpos($location, 'CAGAYAN') !== false ||
             strpos($location, 'QUIRINO') !== false ||
             strpos($location, 'SANTIAGO') !== false ||
-            strpos($location, 'REGION II') !== false) {
+            strpos($location, 'REGION II') !== false
+        ) {
             return 'Cagayan Valley (Region II)';
         }
 
         // 5. Central Luzon (Region III)
-        if (strpos($location, 'BULACAN') !== false ||
+        if (
+            strpos($location, 'BULACAN') !== false ||
             strpos($location, 'MALOLOS') !== false ||
             strpos($location, 'PAMPANGA') !== false ||
             strpos($location, 'TARLAC') !== false ||
@@ -97,12 +107,14 @@ if (!function_exists('kg_get_region_by_location')) {
             strpos($location, 'ZAMBALES') !== false ||
             strpos($location, 'ANGELES') !== false ||
             strpos($location, 'SAN FERNANDO, PAMPANGA') !== false ||
-            strpos($location, 'REGION III') !== false) {
+            strpos($location, 'REGION III') !== false
+        ) {
             return 'Central Luzon (Region III)';
         }
 
         // 6. CALABARZON (Region IV-A)
-        if (strpos($location, 'IMUS') !== false ||
+        if (
+            strpos($location, 'IMUS') !== false ||
             strpos($location, 'LIMA') !== false ||
             strpos($location, 'BATANGAS') !== false ||
             strpos($location, 'LAGUNA') !== false ||
@@ -115,24 +127,28 @@ if (!function_exists('kg_get_region_by_location')) {
             strpos($location, 'QUEZON') !== false ||
             strpos($location, 'LUCENA') !== false ||
             strpos($location, 'CALABARZON') !== false ||
-            strpos($location, 'REGION IV-A') !== false) {
+            strpos($location, 'REGION IV-A') !== false
+        ) {
             return 'CALABARZON (Region IV-A)';
         }
 
         // 7. MIMAROPA Region
-        if (strpos($location, 'MOGPOG') !== false ||
+        if (
+            strpos($location, 'MOGPOG') !== false ||
             strpos($location, 'MARINDUQUE') !== false ||
             strpos($location, 'MIMAROPA') !== false ||
             strpos($location, 'MINDORO') !== false ||
             strpos($location, 'PALAWAN') !== false ||
             strpos($location, 'ROMBLON') !== false ||
             strpos($location, 'PUERTO PRINCESA') !== false ||
-            strpos($location, 'REGION IV-B') !== false) {
+            strpos($location, 'REGION IV-B') !== false
+        ) {
             return 'MIMAROPA Region';
         }
 
         // 8. Bicol Region (Region V)
-        if (strpos($location, 'BICOL') !== false ||
+        if (
+            strpos($location, 'BICOL') !== false ||
             strpos($location, 'CAMARINES') !== false ||
             strpos($location, 'IRIGA') !== false ||
             strpos($location, 'TABACO') !== false ||
@@ -143,12 +159,14 @@ if (!function_exists('kg_get_region_by_location')) {
             strpos($location, 'CATANDUANES') !== false ||
             strpos($location, 'MASBATE') !== false ||
             strpos($location, 'SORSOGON') !== false ||
-            strpos($location, 'REGION V') !== false) {
+            strpos($location, 'REGION V') !== false
+        ) {
             return 'Bicol Region (Region V)';
         }
 
         // 9. Western Visayas (Region VI)
-        if (strpos($location, 'BACOLOD') !== false ||
+        if (
+            strpos($location, 'BACOLOD') !== false ||
             strpos($location, 'KABANKALAN') !== false ||
             strpos($location, 'ILOILO') !== false ||
             strpos($location, 'AKLAN') !== false ||
@@ -156,12 +174,14 @@ if (!function_exists('kg_get_region_by_location')) {
             strpos($location, 'CAPIZ') !== false ||
             strpos($location, 'GUIMARAS') !== false ||
             strpos($location, 'NEGROS OCCIDENTAL') !== false ||
-            strpos($location, 'REGION VI') !== false) {
+            strpos($location, 'REGION VI') !== false
+        ) {
             return 'Western Visayas (Region VI)';
         }
 
         // 10. Central Visayas (Region VII)
-        if (strpos($location, 'CEBU') !== false ||
+        if (
+            strpos($location, 'CEBU') !== false ||
             strpos($location, 'BOHOL') !== false ||
             strpos($location, 'NEGROS ORIENTAL') !== false ||
             strpos($location, 'SIQUIJOR') !== false ||
@@ -169,79 +189,94 @@ if (!function_exists('kg_get_region_by_location')) {
             strpos($location, 'LAPU-LAPU') !== false ||
             strpos($location, 'DUMAGUETE') !== false ||
             strpos($location, 'TAGBILARAN') !== false ||
-            strpos($location, 'REGION VII') !== false) {
+            strpos($location, 'REGION VII') !== false
+        ) {
             return 'Central Visayas (Region VII)';
         }
 
         // 11. Eastern Visayas (Region VIII)
-        if (strpos($location, 'BILIRAN') !== false ||
+        if (
+            strpos($location, 'BILIRAN') !== false ||
             strpos($location, 'LEYTE') !== false ||
             strpos($location, 'SAMAR') !== false ||
             strpos($location, 'TACLOBAN') !== false ||
             strpos($location, 'ORMOC') !== false ||
-            strpos($location, 'REGION VIII') !== false) {
+            strpos($location, 'REGION VIII') !== false
+        ) {
             return 'Eastern Visayas (Region VIII)';
         }
 
         // 12. Zamboanga Peninsula (Region IX)
-        if (strpos($location, 'ZAMBOANGA') !== false ||
+        if (
+            strpos($location, 'ZAMBOANGA') !== false ||
             strpos($location, 'PAGADIAN') !== false ||
             strpos($location, 'DIPOLOG') !== false ||
             strpos($location, 'DAPITAN') !== false ||
             strpos($location, 'SIBUGAY') !== false ||
             strpos($location, 'ISABELA CITY') !== false ||
-            strpos($location, 'REGION IX') !== false) {
+            strpos($location, 'REGION IX') !== false
+        ) {
             return 'Zamboanga Peninsula (Region IX)';
         }
 
         // 13. Northern Mindanao (Region X)
-        if (strpos($location, 'BUKIDNON') !== false ||
+        if (
+            strpos($location, 'BUKIDNON') !== false ||
             strpos($location, 'CAMIGUIN') !== false ||
             strpos($location, 'LANAO DEL NORTE') !== false ||
             strpos($location, 'MISAMIS') !== false ||
             strpos($location, 'CAGAYAN DE ORO') !== false ||
             strpos($location, 'CDO') !== false ||
             strpos($location, 'ILIGAN') !== false ||
-            strpos($location, 'REGION X') !== false) {
+            strpos($location, 'REGION X') !== false
+        ) {
             return 'Northern Mindanao (Region X)';
         }
 
         // 14. Davao Region (Region XI)
-        if (strpos($location, 'TAGUM') !== false ||
+        if (
+            strpos($location, 'TAGUM') !== false ||
             strpos($location, 'DAVAO') !== false ||
-            strpos($location, 'REGION XI') !== false) {
+            strpos($location, 'REGION XI') !== false
+        ) {
             return 'Davao Region (Region XI)';
         }
 
         // 15. SOCCSKSARGEN (Region XII)
-        if (strpos($location, 'MIDSAYAP') !== false ||
+        if (
+            strpos($location, 'MIDSAYAP') !== false ||
             strpos($location, 'COTABATO') !== false ||
             strpos($location, 'SARANGANI') !== false ||
             strpos($location, 'GENERAL SANTOS') !== false ||
             strpos($location, 'GENSAN') !== false ||
             strpos($location, 'KORONADAL') !== false ||
             strpos($location, 'SULTAN KUDARAT') !== false ||
-            strpos($location, 'REGION XII') !== false) {
+            strpos($location, 'REGION XII') !== false
+        ) {
             return 'SOCCSKSARGEN (Region XII)';
         }
 
         // 16. Caraga (Region XIII)
-        if (strpos($location, 'AGUSAN') !== false ||
+        if (
+            strpos($location, 'AGUSAN') !== false ||
             strpos($location, 'DINAGAT') !== false ||
             strpos($location, 'SURIGAO') !== false ||
             strpos($location, 'BUTUAN') !== false ||
             strpos($location, 'REGION XIII') !== false ||
-            strpos($location, 'CARAGA') !== false) {
+            strpos($location, 'CARAGA') !== false
+        ) {
             return 'Caraga (Region XIII)';
         }
 
         // 17. Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)
-        if (strpos($location, 'SULU') !== false ||
+        if (
+            strpos($location, 'SULU') !== false ||
             strpos($location, 'TAWI-TAWI') !== false ||
             strpos($location, 'BASILAN') !== false ||
             strpos($location, 'LANAO DEL SUR') !== false ||
             strpos($location, 'MAGUINDANAO') !== false ||
-            strpos($location, 'BARMM') !== false) {
+            strpos($location, 'BARMM') !== false
+        ) {
             return 'Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)';
         }
 
@@ -262,8 +297,11 @@ $hero_bg = kg_get_field('jobs_hero_bg', 'https://images.unsplash.com/photo-15217
 <section class="page-hero"
     style="background-image: linear-gradient(rgba(10, 37, 64, 0.8), rgba(10, 37, 64, 0.8)), url('<?php echo esc_url($hero_bg); ?>'); padding: 6rem 0 7rem 0;">
     <div class="container text-center">
-        <h1 class="animate-on-scroll" style="font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem;"><?php echo esc_html($hero_headline); ?></h1>
-        <p class="animate-on-scroll" style="margin-bottom: 0; font-size: 1.15rem; color: rgba(255, 255, 255, 0.8);"><?php echo esc_html($hero_desc); ?></p>
+        <h1 class="animate-on-scroll"
+            style="font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem;">
+            <?php echo esc_html($hero_headline); ?></h1>
+        <p class="animate-on-scroll" style="margin-bottom: 0; font-size: 1.15rem; color: rgba(255, 255, 255, 0.8);">
+            <?php echo esc_html($hero_desc); ?></p>
     </div>
 </section>
 
@@ -276,8 +314,8 @@ $jobs_query = new WP_Query(array(
     'tax_query' => array(
         array(
             'taxonomy' => 'job_type_tax',
-            'field'    => 'slug',
-            'terms'    => 'offshoring',
+            'field' => 'slug',
+            'terms' => 'offshoring',
             'operator' => 'NOT IN',
         ),
     ),
@@ -309,42 +347,61 @@ $badge_colors = array(
                 <div class="search-filters-row">
                     <!-- Title or Keyword -->
                     <div class="filter-group keyword-group">
-                        <label for="job-search-input"><?php echo esc_html(kg_get_field('jobs_search_keyword_label', 'Title or Keyword')); ?></label>
+                        <label
+                            for="job-search-input"><?php echo esc_html(kg_get_field('jobs_search_keyword_label', 'Title or Keyword')); ?></label>
                         <div class="input-pill-wrapper">
-                            <input type="text" id="job-search-input" placeholder="<?php echo esc_attr(kg_get_field('jobs_search_keyword_placeholder', 'Type Here')); ?>" autocomplete="off">
+                            <input type="text" id="job-search-input"
+                                placeholder="<?php echo esc_attr(kg_get_field('jobs_search_keyword_placeholder', 'Type Here')); ?>"
+                                autocomplete="off">
                         </div>
                     </div>
 
                     <!-- Select Region -->
                     <div class="filter-group">
-                        <label for="filter-region"><?php echo esc_html(kg_get_field('jobs_search_region_label', 'Select Region')); ?></label>
+                        <label
+                            for="filter-region"><?php echo esc_html(kg_get_field('jobs_search_region_label', 'Select Region')); ?></label>
                         <div class="select-pill-wrapper">
                             <div class="custom-select-container" id="custom-select-region">
                                 <div class="custom-select-trigger">
-                                    <span class="selected-text"><?php echo esc_html(kg_get_field('jobs_search_region_label', 'Select Region')); ?></span>
-                                    <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                    <span
+                                        class="selected-text"><?php echo esc_html(kg_get_field('jobs_search_region_label', 'Select Region')); ?></span>
+                                    <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
                                 </div>
                                 <div class="custom-options-menu"></div>
                             </div>
                             <select id="filter-region" style="display: none;">
-                                <option value="all"><?php echo esc_html(kg_get_field('jobs_search_region_label', 'Select Region')); ?></option>
+                                <option value="all">
+                                    <?php echo esc_html(kg_get_field('jobs_search_region_label', 'Select Region')); ?>
+                                </option>
                             </select>
                         </div>
                     </div>
 
                     <!-- Select Location -->
                     <div class="filter-group">
-                        <label for="filter-location"><?php echo esc_html(kg_get_field('jobs_search_location_label', 'Select Location')); ?></label>
+                        <label
+                            for="filter-location"><?php echo esc_html(kg_get_field('jobs_search_location_label', 'Select Location')); ?></label>
                         <div class="select-pill-wrapper">
                             <div class="custom-select-container disabled" id="custom-select-location">
                                 <div class="custom-select-trigger">
-                                    <span class="selected-text"><?php echo esc_html(kg_get_field('jobs_search_location_label', 'Select Location')); ?></span>
-                                    <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                    <span
+                                        class="selected-text"><?php echo esc_html(kg_get_field('jobs_search_location_label', 'Select Location')); ?></span>
+                                    <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
                                 </div>
                                 <div class="custom-options-menu"></div>
                             </div>
                             <select id="filter-location" style="display: none;" disabled>
-                                <option value="all"><?php echo esc_html(kg_get_field('jobs_search_location_label', 'Select Location')); ?></option>
+                                <option value="all">
+                                    <?php echo esc_html(kg_get_field('jobs_search_location_label', 'Select Location')); ?>
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -352,7 +409,12 @@ $badge_colors = array(
                     <!-- Search button -->
                     <div class="filter-group btn-group">
                         <button type="button" id="search-submit-btn" class="search-btn-pill">
-                            <?php echo esc_html(kg_get_field('jobs_search_btn_text', 'SEARCH JOB')); ?> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 5px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <?php echo esc_html(kg_get_field('jobs_search_btn_text', 'SEARCH JOB')); ?> <svg width="14"
+                                height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                                stroke-linecap="round" stroke-linejoin="round" style="margin-left: 5px;">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -362,10 +424,13 @@ $badge_colors = array(
                 <!-- Row 2: CV and Popular Search -->
                 <div class="search-extra-row">
                     <!-- Left: Upload CV (opens application modal) -->
-                    <div class="cv-upload-column" id="cv-upload-column-trigger" style="cursor:pointer;" title="Click to upload your CV">
-                        <h4 class="extra-group-title" onclick="openPoolingModal()"><?php echo esc_html(kg_get_field('jobs_upload_cv_label', 'Upload Your CV')); ?></h4>
+                    <div class="cv-upload-column" id="cv-upload-column-trigger" style="cursor:pointer;"
+                        title="Click to upload your CV">
+                        <h4 class="extra-group-title" onclick="openPoolingModal()">
+                            <?php echo esc_html(kg_get_field('jobs_upload_cv_label', 'Upload Your CV')); ?></h4>
                         <div class="cv-dropzone-inline-container">
-                            <div class="cv-dropzone-inline cv-dropzone-clickable" id="inline-cv-dropzone" onclick="openPoolingModal(); event.stopPropagation();">
+                            <div class="cv-dropzone-inline cv-dropzone-clickable" id="inline-cv-dropzone"
+                                onclick="openPoolingModal(); event.stopPropagation();">
                                 <span><?php echo esc_html(kg_get_field('jobs_drag_drop_text', 'Drag and drop your document here or browse for a document to upload')); ?></span>
                             </div>
                             <input type="file" id="inline-cv-upload" style="display:none;" accept=".pdf,.doc,.docx">
@@ -377,7 +442,8 @@ $badge_colors = array(
 
                     <!-- Right: Popular Search -->
                     <div class="popular-search-column">
-                        <h4 class="extra-group-title"><?php echo esc_html(kg_get_field('jobs_popular_searches_label', 'Popular Search:')); ?></h4>
+                        <h4 class="extra-group-title">
+                            <?php echo esc_html(kg_get_field('jobs_popular_searches_label', 'Popular Search:')); ?></h4>
                         <div class="popular-tags-container">
                             <?php
                             $pop_tags_raw = kg_get_field('jobs_popular_searches_tags');
@@ -388,7 +454,8 @@ $badge_colors = array(
                             }
                             foreach ($pop_tags as $tag) {
                                 $tag = trim($tag);
-                                if (empty($tag)) continue;
+                                if (empty($tag))
+                                    continue;
                                 echo '<button type="button" class="popular-tag-badge" data-tag="' . esc_attr($tag) . '">' . esc_html($tag) . '</button>';
                             }
                             ?>
@@ -408,7 +475,8 @@ $badge_colors = array(
 
             <div class="jobs-meta-header animate-on-scroll">
                 <div id="results-count" class="results-count">
-                    Showing <strong id="visible-count"><?php echo $jobs_query->post_count; ?></strong> matching opportunities
+                    Showing <strong id="visible-count"><?php echo $jobs_query->post_count; ?></strong> matching
+                    opportunities
                 </div>
             </div>
 
@@ -436,33 +504,35 @@ $badge_colors = array(
                     // Priority 1: ACF Custom Image, Priority 2: Featured Image, Priority 3: Premium Dynamic Placeholder
                     $custom_img = kg_get_field('job_card_image', '', get_the_ID());
                     $thumb_url = trim($custom_img ? $custom_img : get_the_post_thumbnail_url(get_the_ID(), 'kg-card'));
-                    
+
                     // Intercept empty, boolean false, null, placeholder, or theme default paths
-                    if (empty($thumb_url) || 
-                        $thumb_url === 'false' || 
-                        $thumb_url === 'null' || 
-                        strpos($thumb_url, 'http') === false || 
-                        strpos($thumb_url, 'placeholder') !== false || 
-                        strpos($thumb_url, 'photo-1600880292203-757bb62b4baf') !== false) {
-                        
+                    if (
+                        empty($thumb_url) ||
+                        $thumb_url === 'false' ||
+                        $thumb_url === 'null' ||
+                        strpos($thumb_url, 'http') === false ||
+                        strpos($thumb_url, 'placeholder') !== false ||
+                        strpos($thumb_url, 'photo-1600880292203-757bb62b4baf') !== false
+                    ) {
+
                         $job_title = trim(get_the_title());
                         $title_images_raw = array(
-                            'operations head'                        => 'https://images.unsplash.com/photo-1531538606174-0f90ff5dce83?auto=format&fit=crop&w=800&q=80',
-                            'accounting and finance head'            => 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80',
-                            'building administrator'                 => 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
-                            'culinary administrator'                 => 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=80',
-                            'software developer'                     => 'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?auto=format&fit=crop&w=800&q=80',
-                            'business analyst'                       => 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
-                            'marketing officer'                      => 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
-                            'hr coordinator'                         => 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80',
-                            'recruitment officer'                    => 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80',
-                            'billing and collection officer'         => 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80',
+                            'operations head' => 'https://images.unsplash.com/photo-1531538606174-0f90ff5dce83?auto=format&fit=crop&w=800&q=80',
+                            'accounting and finance head' => 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80',
+                            'building administrator' => 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
+                            'culinary administrator' => 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=80',
+                            'software developer' => 'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?auto=format&fit=crop&w=800&q=80',
+                            'business analyst' => 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+                            'marketing officer' => 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
+                            'hr coordinator' => 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80',
+                            'recruitment officer' => 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80',
+                            'billing and collection officer' => 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80',
                             'payroll master / senior payroll analyst' => 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80',
-                            'payroll staff'                          => 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=800&q=80',
-                            'accounting supervisor'                  => 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80',
-                            'accounting manager'                     => 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80',
+                            'payroll staff' => 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=800&q=80',
+                            'accounting supervisor' => 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80',
+                            'accounting manager' => 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80',
                         );
-                        
+
                         $lookup_title = strtolower($job_title);
                         if (isset($title_images_raw[$lookup_title])) {
                             $thumb_url = $title_images_raw[$lookup_title];
@@ -500,13 +570,11 @@ $badge_colors = array(
                             $work_setup = 'Hybrid';
                         }
                     }
-                    
+
                     $job_reg = kg_get_region_by_location($job_location);
                     ?>
-                    <article class="job-glass-card" 
-                        data-type="<?php echo esc_attr($job_type); ?>"
-                        data-department="<?php echo esc_attr($job_dept); ?>"
-                        data-setup="<?php echo esc_attr($work_setup); ?>"
+                    <article class="job-glass-card" data-type="<?php echo esc_attr($job_type); ?>"
+                        data-department="<?php echo esc_attr($job_dept); ?>" data-setup="<?php echo esc_attr($work_setup); ?>"
                         data-location="<?php echo esc_attr(strtoupper(trim($job_location))); ?>"
                         data-region="<?php echo esc_attr($job_reg); ?>">
 
@@ -556,7 +624,7 @@ $badge_colors = array(
                                 <span class="job-type-badge" style="color: <?php echo $badge['color']; ?>;">
                                     <?php echo esc_html($type_label); ?>
                                 </span>
-                                
+
                                 <?php if ($slots_left !== null): ?>
                                     <div class="job-card-slots">
                                         <span class="slots-indicator <?php echo $slots_left > 0 ? 'pulse' : ''; ?>"></span>
@@ -567,7 +635,8 @@ $badge_colors = array(
 
                             <div class="job-card-actions">
                                 <a href="<?php the_permalink(); ?>" class="btn btn-outline btn-sm">Details</a>
-                                <a href="javascript:void(0)" onclick="openApplyModal('<?php echo esc_js(get_the_title()); ?>')" class="btn btn-primary btn-sm">Apply Now</a>
+                                <a href="javascript:void(0)" onclick="openApplyModal('<?php echo esc_js(get_the_title()); ?>')"
+                                    class="btn btn-primary btn-sm">Apply Now</a>
                             </div>
                         </div>
                     </article>
@@ -589,7 +658,8 @@ $badge_colors = array(
             <div class="empty-state-glass animate-on-scroll">
                 <div class="empty-icon"><?php echo kg_icon('briefcase'); ?></div>
                 <h2 class="section-title">Hiring Soon</h2>
-                <p class="section-subtitle">We are currently updating our job board. Check back soon for new opportunities!</p>
+                <p class="section-subtitle">We are currently updating our job board. Check back soon for new opportunities!
+                </p>
                 <a href="<?php echo esc_url(home_url('/careers/#apply')); ?>" class="btn btn-primary">Join Talent Pool</a>
             </div>
         <?php endif; ?>
@@ -605,7 +675,10 @@ $badge_colors = array(
         <!-- Header -->
         <div class="oj-modal-header">
             <div class="oj-modal-header-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                </svg>
             </div>
             <div style="flex:1;">
                 <h2 id="oj-modal-title" class="oj-modal-title">Submit Your CV</h2>
@@ -621,16 +694,27 @@ $badge_colors = array(
         <div class="oj-stepper-bar">
             <div class="oj-stepper-track">
                 <div class="oj-stepper-step active" id="oj-stepper-1">
-                    <div class="oj-stepper-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+                    <div class="oj-stepper-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg></div>
                     <span>Upload CV</span>
                 </div>
                 <div class="oj-stepper-line" id="oj-stepper-line"></div>
                 <div class="oj-stepper-step" id="oj-stepper-2">
-                    <div class="oj-stepper-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                    <div class="oj-stepper-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg></div>
                     <span>Your Details</span>
                 </div>
             </div>
-            <div class="oj-progress-bar"><div id="oj-progress-fill" class="oj-progress-fill" style="width:50%"></div></div>
+            <div class="oj-progress-bar">
+                <div id="oj-progress-fill" class="oj-progress-fill" style="width:50%"></div>
+            </div>
         </div>
 
         <!-- ===== STEP 1: Purpose + Upload CV ===== -->
@@ -651,17 +735,22 @@ $badge_colors = array(
                         <input type="radio" name="oj_purpose" value="pooling" checked>
                         <div class="oj-purpose-badge">Pooling</div>
                         <div class="oj-purpose-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                             </svg>
                         </div>
                         <div class="oj-purpose-label">For Pooling</div>
-                        <div class="oj-purpose-desc">Add me to your talent pool for future openings. I'm open to opportunities.</div>
+                        <div class="oj-purpose-desc">Add me to your talent pool for future openings. I'm open to
+                            opportunities.</div>
                         <div class="oj-purpose-check">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
                         </div>
                     </label>
 
@@ -669,15 +758,20 @@ $badge_colors = array(
                         <input type="radio" name="oj_purpose" value="looking_for_job">
                         <div class="oj-purpose-badge oj-badge-blue">Active</div>
                         <div class="oj-purpose-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8"/>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
                             </svg>
                         </div>
                         <div class="oj-purpose-label">Looking for a Job</div>
-                        <div class="oj-purpose-desc">I'm actively job hunting and want to be considered for current openings.</div>
+                        <div class="oj-purpose-desc">I'm actively job hunting and want to be considered for current
+                            openings.</div>
                         <div class="oj-purpose-check">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
                         </div>
                     </label>
                 </div>
@@ -698,15 +792,23 @@ $badge_colors = array(
 
                 <div id="oj-cv-dropzone" class="oj-dropzone" onclick="document.getElementById('oj-cv-input').click()">
                     <div class="oj-dropzone-icon">
-                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffd166" stroke-width="1.7"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffd166" stroke-width="1.7">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
                     </div>
-                    <p class="oj-dropzone-text"><strong>Drag &amp; drop your CV here</strong><br><span>or <u>click to browse files</u></span></p>
+                    <p class="oj-dropzone-text"><strong>Drag &amp; drop your CV here</strong><br><span>or <u>click to
+                                browse files</u></span></p>
                     <p class="oj-dropzone-hint">PDF &nbsp;·&nbsp; DOC &nbsp;·&nbsp; DOCX &nbsp;—&nbsp; Max 5 MB</p>
                     <input type="file" id="oj-cv-input" style="display:none;" accept=".pdf,.doc,.docx">
                 </div>
 
                 <div id="oj-file-info" class="oj-file-info">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg>
                     <span id="oj-file-name" class="oj-file-name"></span>
                     <button type="button" onclick="ojRemoveFile()" class="oj-file-remove">✕ Remove</button>
                 </div>
@@ -717,7 +819,11 @@ $badge_colors = array(
                 <p class="oj-file-note">File names should not contain spaces or underscores</p>
                 <button type="button" id="oj-continue-btn" class="oj-submit-btn" onclick="ojGoStep2()" disabled>
                     Next: Your Details
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
                 </button>
             </div>
         </div>
@@ -777,15 +883,25 @@ $badge_colors = array(
                 <div class="oj-field">
                     <input type="text" id="oj-street" class="oj-input" placeholder="Street / Barangay">
                 </div>
-                <div class="oj-field-row" style="margin-top:0.6rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div class="oj-field-row"
+                    style="margin-top:0.6rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                     <div style="grid-column: span 2;">
-                        <select id="oj-region" class="oj-input" onchange="this.title = this.options[this.selectedIndex]?.text || '';"><option value="">Region</option></select>
+                        <select id="oj-region" class="oj-input"
+                            onchange="this.title = this.options[this.selectedIndex]?.text || '';">
+                            <option value="">Region</option>
+                        </select>
                     </div>
                     <div>
-                        <select id="oj-city" class="oj-input" disabled onchange="this.title = this.options[this.selectedIndex]?.text || '';"><option value="">City / Municipality</option></select>
+                        <select id="oj-city" class="oj-input" disabled
+                            onchange="this.title = this.options[this.selectedIndex]?.text || '';">
+                            <option value="">City / Municipality</option>
+                        </select>
                     </div>
                     <div>
-                        <select id="oj-barangay" class="oj-input" disabled onchange="this.title = this.options[this.selectedIndex]?.text || '';"><option value="">Barangay</option></select>
+                        <select id="oj-barangay" class="oj-input" disabled
+                            onchange="this.title = this.options[this.selectedIndex]?.text || '';">
+                            <option value="">Barangay</option>
+                        </select>
                     </div>
                 </div>
                 <input type="hidden" id="oj_region_code">
@@ -796,7 +912,11 @@ $badge_colors = array(
                 <div class="oj-preferred-role-banner" style="margin-top: 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 0.85rem;">
                         <div class="oj-pr-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" />
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                            </svg>
                         </div>
                         <div class="oj-pr-content">
                             <label class="oj-pr-label">Preferred Role(s) <span class="oj-req">*</span></label>
@@ -805,19 +925,19 @@ $badge_colors = array(
                     <div class="oj-pr-checkbox-grid">
                         <?php
                         $oj_jobs_query = new WP_Query(array(
-                            'post_type'      => 'jobs',
-                            'post_status'    => 'publish',
+                            'post_type' => 'jobs',
+                            'post_status' => 'publish',
                             'posts_per_page' => -1,
-                            'tax_query'      => array(
+                            'tax_query' => array(
                                 array(
                                     'taxonomy' => 'job_type_tax',
-                                    'field'    => 'slug',
-                                    'terms'    => 'offshoring',
+                                    'field' => 'slug',
+                                    'terms' => 'offshoring',
                                     'operator' => 'NOT IN',
                                 ),
                             ),
-                            'orderby'        => 'title',
-                            'order'          => 'ASC'
+                            'orderby' => 'title',
+                            'order' => 'ASC'
                         ));
                         if ($oj_jobs_query->have_posts()) {
                             $unique_oj_titles = array();
@@ -834,7 +954,7 @@ $badge_colors = array(
                                 $unique_oj_titles[] = $job_title;
                             }
                             wp_reset_postdata();
-                            
+
                             if (!empty($unique_oj_titles)) {
                                 foreach ($unique_oj_titles as $job_title) {
                                     echo '<label class="oj-checkbox-item">';
@@ -854,10 +974,13 @@ $badge_colors = array(
                 <input type="hidden" id="oj-role" value="General Pooling">
 
                 <!-- honeypot -->
-                <div style="display:none;" aria-hidden="true"><input type="text" id="oj_hp" name="oj_hp" value="" tabindex="-1" autocomplete="off"></div>
+                <div style="display:none;" aria-hidden="true"><input type="text" id="oj_hp" name="oj_hp" value=""
+                        tabindex="-1" autocomplete="off"></div>
 
                 <!-- CAPTCHA -->
-                <div class="cf-turnstile" data-sitekey="<?php echo esc_attr(defined('CF_TURNSTILE_SITE_KEY') ? CF_TURNSTILE_SITE_KEY : ''); ?>" data-appearance="interaction-only" style="margin-top:0.5rem;margin-bottom:0.5rem;"></div>
+                <div class="cf-turnstile"
+                    data-sitekey="<?php echo esc_attr(defined('CF_TURNSTILE_SITE_KEY') ? CF_TURNSTILE_SITE_KEY : ''); ?>"
+                    data-appearance="interaction-only" style="margin-top:0.5rem;margin-bottom:0.5rem;"></div>
 
                 <!-- Error -->
                 <div id="oj-error-box" class="oj-error-box">
@@ -867,16 +990,26 @@ $badge_colors = array(
                 <!-- Step 2 Footer -->
                 <div class="oj-form-footer">
                     <button type="button" class="oj-back-btn" onclick="ojGoStep1()">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <line x1="19" y1="12" x2="5" y2="12" />
+                            <polyline points="12 19 5 12 12 5" />
+                        </svg>
                         Back
                     </button>
                     <label class="oj-privacy-label">
                         <input type="checkbox" id="oj-privacy" style="accent-color:var(--main-blue);">
-                        <span>I agree to the <a href="<?php echo esc_url(home_url('/privacy-policy/')); ?>" target="_blank">Privacy Policy</a> &amp; <a href="<?php echo esc_url(home_url('/terms/')); ?>" target="_blank">Terms</a></span>
+                        <span>I agree to the <a href="<?php echo esc_url(home_url('/privacy-policy/')); ?>"
+                                target="_blank">Privacy Policy</a> &amp; <a
+                                href="<?php echo esc_url(home_url('/terms/')); ?>" target="_blank">Terms</a></span>
                     </label>
                     <button type="button" id="oj-submit-btn" onclick="ojSubmitApplication()" class="oj-submit-btn">
                         Submit CV
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                        </svg>
                     </button>
                 </div>
 
@@ -891,10 +1024,13 @@ $badge_colors = array(
     <div class="oj-modal-box" style="max-width:420px;text-align:center;padding:3rem 2rem;">
         <button class="oj-modal-close" onclick="closeOjSuccess()" style="color:var(--text-muted);">&times;</button>
         <div class="oj-success-icon">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12" />
+            </svg>
         </div>
         <h3 style="font-size:1.5rem;font-weight:700;margin-bottom:0.5rem;color:var(--text-dark);">CV Submitted!</h3>
-        <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:1.75rem;">Our team will review your profile and reach out within 2–3 business days. Thank you!</p>
+        <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:1.75rem;">Our team will review your profile
+            and reach out within 2–3 business days. Thank you!</p>
         <button onclick="closeOjSuccess()" class="oj-submit-btn" style="max-width:200px;margin:0 auto;">Done</button>
     </div>
 </div>
@@ -909,7 +1045,8 @@ $badge_colors = array(
     /* Redesigned Search Panel styling */
     .search-panel-section {
         padding: 3rem 0;
-        margin-top: 2rem; /* Keep distance from the hero section */
+        margin-top: 2rem;
+        /* Keep distance from the hero section */
         position: relative;
         z-index: 99;
     }
@@ -956,18 +1093,21 @@ $badge_colors = array(
         text-align: left;
     }
 
-    .input-pill-wrapper, .select-pill-wrapper {
+    .input-pill-wrapper,
+    .select-pill-wrapper {
         position: relative;
         width: 100%;
     }
 
-    .input-pill-wrapper input, .select-pill-wrapper select {
+    .input-pill-wrapper input,
+    .select-pill-wrapper select {
         width: 100%;
         padding: 0.75rem 1.25rem;
         font-size: 0.9rem;
         color: var(--text-dark);
         background: #ffffff;
-        border: 2px solid #ffd166; /* Themed gold/orange border */
+        border: 2px solid #ffd166;
+        /* Themed gold/orange border */
         border-radius: 100px;
         outline: none;
         transition: all 0.3s ease;
@@ -1022,7 +1162,8 @@ $badge_colors = array(
         margin-right: 0.5rem;
     }
 
-    .custom-select-trigger:hover, .custom-select-container.active .custom-select-trigger {
+    .custom-select-trigger:hover,
+    .custom-select-container.active .custom-select-trigger {
         border-color: var(--main-blue);
         box-shadow: 0 0 10px rgba(10, 37, 64, 0.1);
     }
@@ -1074,13 +1215,16 @@ $badge_colors = array(
     .custom-options-menu::-webkit-scrollbar {
         width: 6px;
     }
+
     .custom-options-menu::-webkit-scrollbar-track {
         background: transparent;
     }
+
     .custom-options-menu::-webkit-scrollbar-thumb {
         background: rgba(10, 37, 64, 0.12);
         border-radius: 100px;
     }
+
     .custom-options-menu::-webkit-scrollbar-thumb:hover {
         background: rgba(10, 37, 64, 0.25);
     }
@@ -1113,7 +1257,8 @@ $badge_colors = array(
         color: #cbd5e0;
     }
 
-    .input-pill-wrapper input:focus, .select-pill-wrapper select:focus {
+    .input-pill-wrapper input:focus,
+    .select-pill-wrapper select:focus {
         border-color: var(--main-blue);
         box-shadow: 0 0 10px rgba(10, 37, 64, 0.15);
     }
@@ -1125,7 +1270,8 @@ $badge_colors = array(
         font-weight: 700;
         letter-spacing: 0.05em;
         color: #ffffff;
-        background: var(--main-blue); /* Premium primary blue button */
+        background: var(--main-blue);
+        /* Premium primary blue button */
         border: none;
         border-radius: 100px;
         cursor: pointer;
@@ -1210,7 +1356,8 @@ $badge_colors = array(
         text-decoration: underline;
     }
 
-    .cv-dropzone-inline:hover, .cv-dropzone-inline.drag-over {
+    .cv-dropzone-inline:hover,
+    .cv-dropzone-inline.drag-over {
         background: rgba(10, 37, 64, 0.02);
         border-color: var(--main-blue);
     }
@@ -1259,13 +1406,16 @@ $badge_colors = array(
             grid-template-columns: repeat(2, 1fr);
             display: grid;
         }
+
         .filter-group.btn-group {
             grid-column: span 2;
         }
+
         .search-extra-row {
             grid-template-columns: 1fr;
             gap: 1.75rem;
         }
+
         .popular-search-column {
             border-left: none;
             padding-left: 0;
@@ -1278,14 +1428,17 @@ $badge_colors = array(
         .search-filters-row {
             grid-template-columns: 1fr;
         }
+
         .filter-group.btn-group {
             grid-column: span 1;
         }
+
         .cv-dropzone-inline-container {
             flex-direction: column;
             align-items: stretch;
             gap: 0.75rem;
         }
+
         .cv-upload-note {
             text-align: center;
         }
@@ -1457,9 +1610,11 @@ $badge_colors = array(
         0% {
             box-shadow: 0 0 0 0 rgba(255, 209, 102, 0.7);
         }
+
         70% {
             box-shadow: 0 0 0 6px rgba(255, 209, 102, 0);
         }
+
         100% {
             box-shadow: 0 0 0 0 rgba(255, 209, 102, 0);
         }
@@ -1544,7 +1699,7 @@ $badge_colors = array(
             grid-template-columns: 1fr;
             gap: 0.75rem;
         }
-        
+
         .search-panel-glass {
             padding: 1.25rem;
         }
@@ -1566,6 +1721,7 @@ $badge_colors = array(
         gap: 0.4rem;
         min-width: 80px;
     }
+
     .modal-cprog-circle {
         width: 36px;
         height: 36px;
@@ -1580,25 +1736,30 @@ $badge_colors = array(
         background: var(--bg-white);
         transition: var(--transition);
     }
+
     .modal-cprog-step span {
         font-size: 0.75rem;
         color: var(--text-muted);
         font-weight: 500;
     }
+
     .modal-cprog-step.active .modal-cprog-circle {
         background: var(--main-blue);
         color: #fff;
         border-color: var(--main-blue);
     }
+
     .modal-cprog-step.active span {
         color: var(--main-blue);
         font-weight: 600;
     }
+
     .modal-cprog-step.done .modal-cprog-circle {
         background: var(--sec-accent-green);
         color: #fff;
         border-color: var(--sec-accent-green);
     }
+
     .modal-cprog-line {
         flex: 1;
         height: 2px;
@@ -1608,18 +1769,23 @@ $badge_colors = array(
         margin-top: -1rem;
         transition: var(--transition);
     }
+
     .modal-cprog-line.active {
         background: var(--main-blue);
     }
+
     .modal-cprog-line.done {
         background: var(--sec-accent-green);
     }
+
     .modal-career-step {
         display: none;
     }
+
     .modal-career-step.active {
         display: block;
     }
+
     #modal-cv-dropzone.drag-over {
         border-color: var(--sec-accent-green);
         background: rgba(0, 208, 156, 0.04);
@@ -1642,7 +1808,10 @@ $badge_colors = array(
         justify-content: center;
         padding: 2rem 1rem;
     }
-    .oj-modal-overlay.visible { display: flex; }
+
+    .oj-modal-overlay.visible {
+        display: flex;
+    }
 
     /* Box */
     .oj-modal-box {
@@ -1654,13 +1823,21 @@ $badge_colors = array(
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        box-shadow: 0 40px 80px rgba(5,20,45,0.28), 0 0 0 1px rgba(255,255,255,0.05);
+        box-shadow: 0 40px 80px rgba(5, 20, 45, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.05);
         margin: auto;
-        animation: ojSlideIn 0.35s cubic-bezier(0.16,1,0.3,1);
+        animation: ojSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
     @keyframes ojSlideIn {
-        from { opacity: 0; transform: translateY(30px) scale(0.98); }
-        to   { opacity: 1; transform: translateY(0) scale(1); }
+        from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.98);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
     }
 
     /* Close */
@@ -1676,7 +1853,10 @@ $badge_colors = array(
         margin-left: auto;
         padding: 0;
     }
-    .oj-modal-close:hover { opacity: 1; }
+
+    .oj-modal-close:hover {
+        opacity: 1;
+    }
 
     /* Header */
     .oj-modal-header {
@@ -1687,11 +1867,12 @@ $badge_colors = array(
         gap: 1rem;
         color: #fff;
     }
+
     .oj-modal-header-icon {
         width: 44px;
         height: 44px;
-        background: rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.15);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: 12px;
         display: flex;
         align-items: center;
@@ -1699,6 +1880,7 @@ $badge_colors = array(
         flex-shrink: 0;
         color: #ffd166;
     }
+
     .oj-modal-title {
         font-size: 1.15rem;
         font-weight: 700;
@@ -1706,9 +1888,10 @@ $badge_colors = array(
         color: #fff;
         letter-spacing: -0.01em;
     }
+
     .oj-modal-subtitle {
         font-size: 0.8rem;
-        color: rgba(255,255,255,0.6);
+        color: rgba(255, 255, 255, 0.6);
         margin: 0.15rem 0 0;
     }
 
@@ -1717,6 +1900,7 @@ $badge_colors = array(
         background: #f8fafc;
         border-bottom: 1px solid #eef2f7;
     }
+
     .oj-stepper-track {
         display: flex;
         align-items: center;
@@ -1724,12 +1908,14 @@ $badge_colors = array(
         gap: 0;
         padding: 1rem 2rem 0.75rem;
     }
+
     .oj-stepper-step {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 0.3rem;
     }
+
     .oj-stepper-step span {
         font-size: 0.7rem;
         font-weight: 600;
@@ -1738,8 +1924,15 @@ $badge_colors = array(
         letter-spacing: 0.04em;
         transition: color 0.3s;
     }
-    .oj-stepper-step.active span { color: var(--main-blue); }
-    .oj-stepper-step.done span { color: #16a34a; }
+
+    .oj-stepper-step.active span {
+        color: var(--main-blue);
+    }
+
+    .oj-stepper-step.done span {
+        color: #16a34a;
+    }
+
     .oj-stepper-circle {
         width: 36px;
         height: 36px;
@@ -1750,19 +1943,22 @@ $badge_colors = array(
         align-items: center;
         justify-content: center;
         color: #94a3b8;
-        transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
     .oj-stepper-step.active .oj-stepper-circle {
         border-color: var(--main-blue);
         background: var(--main-blue);
         color: #fff;
-        box-shadow: 0 4px 12px rgba(10,37,64,0.25);
+        box-shadow: 0 4px 12px rgba(10, 37, 64, 0.25);
     }
+
     .oj-stepper-step.done .oj-stepper-circle {
         border-color: #16a34a;
         background: #16a34a;
         color: #fff;
     }
+
     .oj-stepper-line {
         flex: 1;
         height: 2px;
@@ -1773,17 +1969,25 @@ $badge_colors = array(
         border-radius: 2px;
         transition: background 0.4s;
     }
-    .oj-stepper-line.active { background: var(--main-blue); }
-    .oj-stepper-line.done   { background: #16a34a; }
+
+    .oj-stepper-line.active {
+        background: var(--main-blue);
+    }
+
+    .oj-stepper-line.done {
+        background: #16a34a;
+    }
+
     .oj-progress-bar {
         height: 3px;
         background: transparent;
         overflow: hidden;
     }
+
     .oj-progress-fill {
         height: 100%;
         background: linear-gradient(90deg, var(--main-blue), #ffd166);
-        transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+        transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* ── Step 1 Layout ── */
@@ -1792,11 +1996,13 @@ $badge_colors = array(
         flex-direction: column;
         gap: 1rem;
     }
+
     .oj-s1-section-header {
         display: flex;
         align-items: flex-start;
         gap: 0.85rem;
     }
+
     .oj-s1-section-num {
         font-size: 0.7rem;
         font-weight: 800;
@@ -1808,17 +2014,20 @@ $badge_colors = array(
         flex-shrink: 0;
         margin-top: 0.15rem;
     }
+
     .oj-s1-section-title {
         font-size: 0.95rem;
         font-weight: 700;
         color: var(--text-dark);
         line-height: 1.2;
     }
+
     .oj-s1-section-sub {
         font-size: 0.78rem;
         color: var(--text-muted);
         margin-top: 0.1rem;
     }
+
     .oj-s1-divider {
         height: 1px;
         background: linear-gradient(to right, transparent, #e2e8f0, transparent);
@@ -1831,6 +2040,7 @@ $badge_colors = array(
         grid-template-columns: 1fr 1fr;
         gap: 0.85rem;
     }
+
     .oj-purpose-card {
         position: relative;
         display: flex;
@@ -1842,32 +2052,45 @@ $badge_colors = array(
         border: 2px solid #e8edf4;
         border-radius: 16px;
         background: #fafbfc;
-        transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         overflow: hidden;
     }
+
     .oj-purpose-card::before {
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(135deg, rgba(255,209,102,0.06), transparent);
+        background: linear-gradient(135deg, rgba(255, 209, 102, 0.06), transparent);
         opacity: 0;
         transition: opacity 0.25s;
     }
-    .oj-purpose-card input { display: none; }
-    .oj-purpose-card:hover {
-        border-color: rgba(255,209,102,0.6);
-        background: #fff;
-        box-shadow: 0 4px 20px rgba(10,37,64,0.07);
+
+    .oj-purpose-card input {
+        display: none;
     }
-    .oj-purpose-card:hover::before { opacity: 1; }
+
+    .oj-purpose-card:hover {
+        border-color: rgba(255, 209, 102, 0.6);
+        background: #fff;
+        box-shadow: 0 4px 20px rgba(10, 37, 64, 0.07);
+    }
+
+    .oj-purpose-card:hover::before {
+        opacity: 1;
+    }
+
     .oj-purpose-active,
     .oj-purpose-card:has(input:checked) {
         border-color: #ffd166;
         background: #fff;
-        box-shadow: 0 6px 24px rgba(245,166,35,0.15);
+        box-shadow: 0 6px 24px rgba(245, 166, 35, 0.15);
     }
+
     .oj-purpose-active::before,
-    .oj-purpose-card:has(input:checked)::before { opacity: 1; }
+    .oj-purpose-card:has(input:checked)::before {
+        opacity: 1;
+    }
+
     .oj-purpose-badge {
         font-size: 0.65rem;
         font-weight: 700;
@@ -1875,33 +2098,41 @@ $badge_colors = array(
         letter-spacing: 0.08em;
         padding: 0.2rem 0.55rem;
         border-radius: 100px;
-        background: rgba(255,209,102,0.15);
+        background: rgba(255, 209, 102, 0.15);
         color: #a07800;
         margin-bottom: 0.5rem;
     }
+
     .oj-badge-blue {
-        background: rgba(10,37,64,0.07);
+        background: rgba(10, 37, 64, 0.07);
         color: var(--main-blue);
     }
+
     .oj-purpose-icon {
         color: #cbd5e0;
         margin-bottom: 0.25rem;
         transition: color 0.25s;
     }
+
     .oj-purpose-active .oj-purpose-icon,
-    .oj-purpose-card:has(input:checked) .oj-purpose-icon { color: #f5a623; }
+    .oj-purpose-card:has(input:checked) .oj-purpose-icon {
+        color: #f5a623;
+    }
+
     .oj-purpose-label {
         font-weight: 700;
         font-size: 0.95rem;
         color: var(--text-dark);
         line-height: 1.2;
     }
+
     .oj-purpose-desc {
         font-size: 0.78rem;
         color: var(--text-muted);
         line-height: 1.45;
         margin-top: 0.1rem;
     }
+
     .oj-purpose-check {
         position: absolute;
         top: 0.85rem;
@@ -1916,6 +2147,7 @@ $badge_colors = array(
         color: transparent;
         transition: all 0.25s;
     }
+
     .oj-purpose-active .oj-purpose-check,
     .oj-purpose-card:has(input:checked) .oj-purpose-check {
         background: #f5a623;
@@ -1925,12 +2157,13 @@ $badge_colors = array(
     /* ── Preferred Role Banner (Step 2) ── */
     .oj-preferred-role-banner {
         display: block;
-        background: linear-gradient(135deg, rgba(10,37,64,0.03), rgba(255,209,102,0.05));
-        border: 1.5px solid rgba(255,209,102,0.35);
+        background: linear-gradient(135deg, rgba(10, 37, 64, 0.03), rgba(255, 209, 102, 0.05));
+        border: 1.5px solid rgba(255, 209, 102, 0.35);
         border-radius: 14px;
         padding: 1rem 1.1rem;
         margin-bottom: 0.25rem;
     }
+
     .oj-pr-icon {
         width: 38px;
         height: 38px;
@@ -1942,7 +2175,14 @@ $badge_colors = array(
         color: #ffd166;
         flex-shrink: 0;
     }
-    .oj-pr-content { flex: 1; display: flex; flex-direction: column; gap: 0.35rem; }
+
+    .oj-pr-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
     .oj-pr-label {
         font-size: 0.75rem;
         font-weight: 700;
@@ -1950,6 +2190,7 @@ $badge_colors = array(
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
+
     .oj-pr-checkbox-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
@@ -1958,11 +2199,12 @@ $badge_colors = array(
         overflow-y: auto;
         padding: 0.8rem;
         background: #fff;
-        border: 1.5px solid rgba(255,209,102,0.4);
+        border: 1.5px solid rgba(255, 209, 102, 0.4);
         border-radius: 10px;
         box-sizing: border-box;
         margin-top: 0.5rem;
     }
+
     .oj-checkbox-item {
         display: flex;
         align-items: center;
@@ -1974,9 +2216,11 @@ $badge_colors = array(
         user-select: none;
         transition: color 0.2s;
     }
+
     .oj-checkbox-item:hover {
         color: var(--main-blue);
     }
+
     .oj-checkbox-input {
         width: 15px;
         height: 15px;
@@ -1987,6 +2231,7 @@ $badge_colors = array(
         margin: 0;
         flex-shrink: 0;
     }
+
     .oj-checkbox-text {
         white-space: nowrap;
         overflow: hidden;
@@ -2005,10 +2250,20 @@ $badge_colors = array(
         display: grid;
         gap: 0.75rem;
     }
-    .oj-two-col   { grid-template-columns: 1fr 1fr; }
-    .oj-three-col { grid-template-columns: 1fr 1fr 1fr; }
 
-    .oj-field { display: flex; flex-direction: column; gap: 0.25rem; }
+    .oj-two-col {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .oj-three-col {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .oj-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
 
     .oj-label {
         font-size: 0.78rem;
@@ -2018,7 +2273,10 @@ $badge_colors = array(
         letter-spacing: 0.4px;
         padding-left: 0.25rem;
     }
-    .oj-req { color: var(--neutral-yellow); }
+
+    .oj-req {
+        color: var(--neutral-yellow);
+    }
 
     /* Inputs */
     .oj-input {
@@ -2034,11 +2292,13 @@ $badge_colors = array(
         background: #fafafa;
         box-sizing: border-box;
     }
+
     .oj-input:focus {
         border-color: var(--main-blue);
         background: #fff;
-        box-shadow: 0 0 0 3px rgba(10,37,64,0.15);
+        box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.15);
     }
+
     select.oj-input {
         appearance: none;
         -webkit-appearance: none;
@@ -2049,19 +2309,23 @@ $badge_colors = array(
         cursor: pointer;
         height: 42px;
     }
+
     input[type="date"].oj-input {
         height: 42px;
         color: var(--text-dark);
     }
+
     /* Style date placeholder / empty indicator behavior */
     input[type="date"].oj-input:invalid {
         color: #b0b8c8;
     }
+
     input[type="date"].oj-input::-webkit-calendar-picker-indicator {
         cursor: pointer;
         opacity: 0.5;
         transition: opacity 0.2s;
     }
+
     input[type="date"].oj-input::-webkit-calendar-picker-indicator:hover {
         opacity: 0.8;
     }
@@ -2079,7 +2343,11 @@ $badge_colors = array(
     }
 
     /* Dropzone */
-    .oj-upload-row { display: flex; flex-direction: column; gap: 0.5rem; }
+    .oj-upload-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 
     .oj-dropzone {
         border: 2px dashed #cbd5e1;
@@ -2094,17 +2362,25 @@ $badge_colors = array(
         align-items: center;
         gap: 0.4rem;
     }
-    .oj-dropzone:hover, .oj-dropzone.drag-over {
+
+    .oj-dropzone:hover,
+    .oj-dropzone.drag-over {
         border-color: var(--main-blue);
         background: rgba(10, 37, 64, 0.02);
     }
+
     .oj-dropzone-text {
         margin: 0;
         font-size: 0.875rem;
         color: var(--text-dark);
         line-height: 1.4;
     }
-    .oj-dropzone-text span { color: var(--text-muted); font-size: 0.8rem; }
+
+    .oj-dropzone-text span {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+    }
+
     .oj-dropzone-hint {
         margin: 0;
         font-size: 0.72rem;
@@ -2121,6 +2397,7 @@ $badge_colors = array(
         border-radius: 10px;
         padding: 0.65rem 1rem;
     }
+
     .oj-file-name {
         flex: 1;
         font-size: 0.85rem;
@@ -2130,6 +2407,7 @@ $badge_colors = array(
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+
     .oj-file-remove {
         background: none;
         border: none;
@@ -2163,6 +2441,7 @@ $badge_colors = array(
         border-top: 1px solid #f1f5f9;
         margin-top: 0.25rem;
     }
+
     .oj-privacy-label {
         display: flex;
         align-items: center;
@@ -2172,12 +2451,16 @@ $badge_colors = array(
         cursor: pointer;
         flex: 1;
     }
+
     .oj-privacy-label a {
         color: var(--main-blue);
         font-weight: 600;
         text-decoration: none;
     }
-    .oj-privacy-label a:hover { text-decoration: underline; }
+
+    .oj-privacy-label a:hover {
+        text-decoration: underline;
+    }
 
     /* Submit button — inline in footer */
     .oj-submit-btn {
@@ -2198,12 +2481,17 @@ $badge_colors = array(
         white-space: nowrap;
         flex-shrink: 0;
     }
+
     .oj-submit-btn:hover {
         background: #0e3060;
         transform: translateY(-1px);
-        box-shadow: 0 6px 18px rgba(10,37,64,0.2);
+        box-shadow: 0 6px 18px rgba(10, 37, 64, 0.2);
     }
-    .oj-submit-btn:disabled { opacity: 0.6; pointer-events: none; }
+
+    .oj-submit-btn:disabled {
+        opacity: 0.6;
+        pointer-events: none;
+    }
 
     /* Success icon */
     .oj-success-icon {
@@ -2218,12 +2506,18 @@ $badge_colors = array(
     }
 
     /* CV column hover */
-    .cv-upload-column { transition: all 0.3s ease; }
+    .cv-upload-column {
+        transition: all 0.3s ease;
+    }
+
     .cv-upload-column:hover .cv-dropzone-inline {
         background: rgba(10, 37, 64, 0.04);
         border-color: var(--main-blue);
     }
-    .cv-dropzone-clickable { cursor: pointer; }
+
+    .cv-dropzone-clickable {
+        cursor: pointer;
+    }
 
     /* Responsive */
     /* Step wizard UI */
@@ -2232,14 +2526,16 @@ $badge_colors = array(
         background: #f1f5f9;
         overflow: hidden;
     }
+
     .oj-progress-fill {
         height: 100%;
         background: linear-gradient(90deg, #f5a623, #ffd166);
-        transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
     .oj-step-pill {
-        background: rgba(255,255,255,0.15);
-        border: 1px solid rgba(255,255,255,0.25);
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
         border-radius: 100px;
         padding: 0.25rem 0.75rem;
         font-size: 0.8rem;
@@ -2248,6 +2544,7 @@ $badge_colors = array(
         white-space: nowrap;
         flex-shrink: 0;
     }
+
     .oj-step-panel {
         padding: 1.5rem 2.25rem;
         overflow-y: auto;
@@ -2255,9 +2552,11 @@ $badge_colors = array(
         -ms-overflow-style: none;
         scrollbar-width: none;
     }
+
     .oj-step-panel::-webkit-scrollbar {
         display: none;
     }
+
     .oj-step-intro {
         font-size: 0.78rem;
         font-weight: 700;
@@ -2266,16 +2565,18 @@ $badge_colors = array(
         color: var(--text-muted);
         margin: 0 0 0.75rem;
     }
+
     .oj-dropzone-icon {
         width: 56px;
         height: 56px;
-        background: rgba(245,166,35,0.08);
+        background: rgba(245, 166, 35, 0.08);
         border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 0.5rem;
     }
+
     .oj-step-footer {
         display: flex;
         align-items: center;
@@ -2286,12 +2587,14 @@ $badge_colors = array(
         border-top: 1px solid #f1f5f9;
         flex-wrap: wrap;
     }
+
     .oj-file-note {
         font-size: 0.72rem;
         color: #94a3b8;
         line-height: 1.4;
         flex: 1;
     }
+
     .oj-back-btn {
         display: inline-flex;
         align-items: center;
@@ -2308,10 +2611,12 @@ $badge_colors = array(
         flex-shrink: 0;
         white-space: nowrap;
     }
+
     .oj-back-btn:hover {
         border-color: var(--main-blue);
         color: var(--main-blue);
     }
+
     /* Disabled continue btn */
     #oj-continue-btn:disabled {
         opacity: 0.45;
@@ -2319,6 +2624,7 @@ $badge_colors = array(
         transform: none !important;
         box-shadow: none !important;
     }
+
     /* Pagination CSS */
     .oj-pagination {
         display: flex;
@@ -2327,6 +2633,7 @@ $badge_colors = array(
         gap: 0.5rem;
         margin-top: 3rem;
     }
+
     .oj-pagination-btn {
         background: #fff;
         border: 1.5px solid var(--border-color);
@@ -2344,24 +2651,39 @@ $badge_colors = array(
         padding: 0;
         font-family: var(--font-header);
     }
+
     .oj-pagination-btn:hover {
         border-color: var(--main-blue);
         color: var(--main-blue);
         background: #f8fafc;
     }
+
     .oj-pagination-btn.active {
         background: var(--main-blue);
         border-color: var(--main-blue);
         color: #fff;
     }
+
     .oj-pagination-btn.disabled {
         opacity: 0.35;
         pointer-events: none;
     }
+
     @media (max-width: 560px) {
-        .oj-step-panel { padding: 1.25rem 1.25rem; }
-        .oj-step-footer { flex-direction: column; align-items: stretch; }
-        .oj-submit-btn, .oj-back-btn { width: 100%; justify-content: center; }
+        .oj-step-panel {
+            padding: 1.25rem 1.25rem;
+        }
+
+        .oj-step-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .oj-submit-btn,
+        .oj-back-btn {
+            width: 100%;
+            justify-content: center;
+        }
     }
 </style>
 
@@ -2418,15 +2740,15 @@ $badge_colors = array(
                 const selectedOpt = this.options[this.selectedIndex];
                 const regionCode = selectedOpt ? selectedOpt.dataset.code : '';
                 if (!selectLocation) return;
-                
+
                 selectLocation.innerHTML = '<option value="all">Select Location</option>';
-                
+
                 if (selectedRegion === 'all') {
                     selectLocation.disabled = true;
                     filterJobs();
                 } else {
                     selectLocation.disabled = false;
-                    
+
                     // Harvest any locations matching this region from DOM cards
                     const domLocations = [];
                     cards.forEach(card => {
@@ -2504,7 +2826,7 @@ $badge_colors = array(
 
                 const matchesQuery = !query || cardTitle.includes(query) || cardDept.includes(query) || cardLoc.toLowerCase().includes(query);
                 const matchesRegion = region === 'all' || cardReg === region;
-                
+
                 let matchesLocation = false;
                 if (location === 'all') {
                     matchesLocation = true;
@@ -2566,7 +2888,7 @@ $badge_colors = array(
             }
 
             let html = '';
-            
+
             // Previous Button
             html += `<button type="button" class="oj-pagination-btn ${currentPage === 1 ? 'disabled' : ''}" onclick="window.ojChangePage(${currentPage - 1})">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -2585,7 +2907,7 @@ $badge_colors = array(
             paginationContainer.innerHTML = html;
         }
 
-        window.ojChangePage = function(page) {
+        window.ojChangePage = function (page) {
             currentPage = page;
             filterJobs(false);
             const gridHeader = document.querySelector('.jobs-meta-header');
@@ -2608,7 +2930,7 @@ $badge_colors = array(
             tag.addEventListener('click', function () {
                 const val = this.dataset.tag;
                 if (!searchInput) return;
-                
+
                 if (val === 'other...') {
                     searchInput.value = '';
                     searchInput.focus();
@@ -2629,10 +2951,10 @@ $badge_colors = array(
                 // Pipe files to the modal cv upload input
                 ojCvInput.files = files;
                 ojCvInput.dispatchEvent(new Event('change'));
-                
+
                 // Open modal
                 openPoolingModal();
-                
+
                 // Go straight to Step 2 since the CV is already preloaded
                 setTimeout(() => {
                     ojGoStep2();
@@ -2676,7 +2998,7 @@ $badge_colors = array(
             trigger.addEventListener('click', function (e) {
                 e.stopPropagation();
                 if (containerEl.classList.contains('disabled')) return;
-                
+
                 document.querySelectorAll('.custom-select-container').forEach(el => {
                     if (el !== containerEl) el.classList.remove('active');
                 });
@@ -2696,7 +3018,7 @@ $badge_colors = array(
             const populateCustomMenu = () => {
                 menu.innerHTML = '';
                 const options = Array.from(selectEl.options);
-                
+
                 options.forEach(opt => {
                     const item = document.createElement('div');
                     item.className = 'custom-option-item';
@@ -2710,7 +3032,7 @@ $badge_colors = array(
                     item.addEventListener('click', function () {
                         selectEl.value = opt.value;
                         selectEl.dispatchEvent(new Event('change'));
-                        
+
                         menu.querySelectorAll('.custom-option-item').forEach(child => child.classList.remove('selected'));
                         item.classList.add('selected');
                         textSpan.textContent = opt.textContent;
@@ -2752,17 +3074,23 @@ $badge_colors = array(
 </script>
 
 <!-- Pooling Modal Wrapper -->
-<div id="pooling-modal" class="career-modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(10, 37, 64, 0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 9999; align-items: center; justify-content: center;">
-    <div class="career-modal" style="background: var(--bg-white); padding: 3rem 2.5rem; max-width: 600px; width: 90%; position: relative; box-shadow: var(--shadow-xl); max-height: 90vh; overflow-y: auto; border-radius: 12px;">
-        <button class="career-modal-close" id="close-pooling-btn" style="position: absolute; top: 1rem; right: 1.25rem; background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s; line-height: 1;">&times;</button>
-        
+<div id="pooling-modal" class="career-modal-overlay"
+    style="display: none; position: fixed; inset: 0; background: rgba(10, 37, 64, 0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 9999; align-items: center; justify-content: center;">
+    <div class="career-modal"
+        style="background: var(--bg-white); padding: 3rem 2.5rem; max-width: 600px; width: 90%; position: relative; box-shadow: var(--shadow-xl); max-height: 90vh; overflow-y: auto; border-radius: 12px;">
+        <button class="career-modal-close" id="close-pooling-btn"
+            style="position: absolute; top: 1rem; right: 1.25rem; background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s; line-height: 1;">&times;</button>
+
         <div style="text-align:center;margin-bottom:2rem;">
-            <h3 style="color:var(--text-dark);font-size:1.5rem;margin-bottom:0.5rem;margin-top:0;">Fast-Track Application</h3>
-            <p style="color:var(--text-muted);font-size:0.95rem;margin:0;">Upload your CV and we'll match you to the right role.</p>
+            <h3 style="color:var(--text-dark);font-size:1.5rem;margin-bottom:0.5rem;margin-top:0;">Fast-Track
+                Application</h3>
+            <p style="color:var(--text-muted);font-size:0.95rem;margin:0;">Upload your CV and we'll match you to the
+                right role.</p>
         </div>
 
         <!-- Progress Bar -->
-        <div id="modal-career-progress" style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:2rem;">
+        <div id="modal-career-progress"
+            style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:2rem;">
             <div class="modal-cprog-step active" data-step="1">
                 <div class="modal-cprog-circle">1</div>
                 <span>Upload CV</span>
@@ -2776,28 +3104,42 @@ $badge_colors = array(
 
         <!-- Step 1: Upload -->
         <div id="modal-step-1" class="modal-career-step active">
-            <div id="modal-cv-dropzone" style="border:2px dashed var(--border-color);padding:3rem 2rem;text-align:center;cursor:pointer;transition:var(--transition);background:var(--bg-light);" onclick="document.getElementById('modal-cv-upload').click()">
-                <div style="width:72px;height:72px;margin:0 auto 1.25rem;background:rgba(0,208,156,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--sec-accent-green)" stroke-width="2">
+            <div id="modal-cv-dropzone"
+                style="border:2px dashed var(--border-color);padding:3rem 2rem;text-align:center;cursor:pointer;transition:var(--transition);background:var(--bg-light);"
+                onclick="document.getElementById('modal-cv-upload').click()">
+                <div
+                    style="width:72px;height:72px;margin:0 auto 1.25rem;background:rgba(0,208,156,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--sec-accent-green)"
+                        stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                         <polyline points="17 8 12 3 7 8" />
                         <line x1="12" y1="3" x2="12" y2="15" />
                     </svg>
                 </div>
-                <h4 style="color:var(--text-dark);font-size:1.15rem;margin-bottom:0.5rem;margin-top:0;">Drag & drop your CV here</h4>
-                <p style="color:var(--text-muted);font-size:0.9rem;margin:0;">or <span style="color:var(--sec-accent-green);font-weight:600;text-decoration:underline;">browse files</span></p>
-                <p style="color:var(--text-light);font-size:0.8rem;margin-top:0.75rem;margin-bottom:0;">PDF, DOCX — Max 5 MB</p>
+                <h4 style="color:var(--text-dark);font-size:1.15rem;margin-bottom:0.5rem;margin-top:0;">Drag & drop your
+                    CV here</h4>
+                <p style="color:var(--text-muted);font-size:0.9rem;margin:0;">or <span
+                        style="color:var(--sec-accent-green);font-weight:600;text-decoration:underline;">browse
+                        files</span></p>
+                <p style="color:var(--text-light);font-size:0.8rem;margin-top:0.75rem;margin-bottom:0;">PDF, DOCX — Max
+                    5 MB</p>
                 <input type="file" id="modal-cv-upload" style="display:none;" accept=".pdf,.doc,.docx">
             </div>
-            <div id="modal-file-info" style="display:none;margin-top:1rem;padding:1rem 1.25rem;background:rgba(0,208,156,0.06);border:1px solid rgba(0,208,156,0.2);align-items:center;gap:0.75rem;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sec-accent-green)" stroke-width="2">
+            <div id="modal-file-info"
+                style="display:none;margin-top:1rem;padding:1rem 1.25rem;background:rgba(0,208,156,0.06);border:1px solid rgba(0,208,156,0.2);align-items:center;gap:0.75rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sec-accent-green)"
+                    stroke-width="2">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                     <polyline points="14 2 14 8 20 8" />
                 </svg>
-                <span id="modal-file-name" style="flex:1;font-weight:500;color:var(--text-dark);font-size:0.95rem;"></span>
-                <button type="button" onclick="removeModalFile()" style="background:none;border:none;cursor:pointer;color:var(--accent-red);font-size:0.85rem;font-weight:600;">Remove</button>
+                <span id="modal-file-name"
+                    style="flex:1;font-weight:500;color:var(--text-dark);font-size:0.95rem;"></span>
+                <button type="button" onclick="removeModalFile()"
+                    style="background:none;border:none;cursor:pointer;color:var(--accent-red);font-size:0.85rem;font-weight:600;">Remove</button>
             </div>
-            <button type="button" id="modal-btn-step1" class="btn btn-primary" style="width:100%;margin-top:1.5rem;padding:1rem;font-size:1.05rem;opacity:0.5;pointer-events:none;" onclick="goToModalStep(2)">Continue</button>
+            <button type="button" id="modal-btn-step1" class="btn btn-primary"
+                style="width:100%;margin-top:1.5rem;padding:1rem;font-size:1.05rem;opacity:0.5;pointer-events:none;"
+                onclick="goToModalStep(2)">Continue</button>
         </div>
 
         <!-- Step 2: Info -->
@@ -2805,29 +3147,38 @@ $badge_colors = array(
             <div style="display:flex;flex-direction:column;gap:1.25rem;">
                 <!-- Purpose -->
                 <div>
-                    <label style="font-weight:600;color:var(--text-dark);display:block;margin-bottom:0.5rem;font-size:0.95rem;">Application Purpose</label>
+                    <label
+                        style="font-weight:600;color:var(--text-dark);display:block;margin-bottom:0.5rem;font-size:0.95rem;">Application
+                        Purpose</label>
                     <div style="display:flex;gap:1.5rem;align-items:center;">
                         <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.95rem;cursor:pointer;">
-                            <input type="radio" name="modal_app_purpose" value="pooling" checked style="accent-color:var(--main-blue);"> For Pooling (Future Openings)
+                            <input type="radio" name="modal_app_purpose" value="pooling" checked
+                                style="accent-color:var(--main-blue);"> For Pooling (Future Openings)
                         </label>
                         <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.95rem;cursor:pointer;">
-                            <input type="radio" name="modal_app_purpose" value="looking_for_job" style="accent-color:var(--main-blue);"> Looking for a Job (Active Candidate)
+                            <input type="radio" name="modal_app_purpose" value="looking_for_job"
+                                style="accent-color:var(--main-blue);"> Looking for a Job (Active Candidate)
                         </label>
                     </div>
                 </div>
 
                 <!-- Name Row -->
                 <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:1rem;">
-                    <input type="text" id="modal-app-fname" placeholder="First Name" required style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
-                    <input type="text" id="modal-app-mname" placeholder="Middle Name (Optional)" style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
-                    <input type="text" id="modal-app-lname" placeholder="Last Name" required style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
+                    <input type="text" id="modal-app-fname" placeholder="First Name" required
+                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
+                    <input type="text" id="modal-app-mname" placeholder="Middle Name (Optional)"
+                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
+                    <input type="text" id="modal-app-lname" placeholder="Last Name" required
+                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
                 </div>
 
                 <!-- Demographics Row -->
                 <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:1rem;">
                     <div style="display:flex;flex-direction:column;gap:0.3rem;">
-                        <label for="modal-app-gender" style="font-weight:600;font-size:0.85rem;color:var(--text-muted);">Gender</label>
-                        <select id="modal-app-gender" required style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;background:white;">
+                        <label for="modal-app-gender"
+                            style="font-weight:600;font-size:0.85rem;color:var(--text-muted);">Gender</label>
+                        <select id="modal-app-gender" required
+                            style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;background:white;">
                             <option value="" disabled selected>Select Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
@@ -2836,24 +3187,32 @@ $badge_colors = array(
                         </select>
                     </div>
                     <div style="display:flex;flex-direction:column;gap:0.3rem;">
-                        <label for="modal-app-birthday" style="font-weight:600;font-size:0.85rem;color:var(--text-muted);">Birthdate</label>
-                        <input type="date" id="modal-app-birthday" required style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
+                        <label for="modal-app-birthday"
+                            style="font-weight:600;font-size:0.85rem;color:var(--text-muted);">Birthdate</label>
+                        <input type="date" id="modal-app-birthday" required
+                            style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
                     </div>
                 </div>
 
                 <!-- Address Cascades -->
                 <div style="display:flex;flex-direction:column;gap:0.8rem;">
-                    <label style="font-weight:600;color:var(--text-dark);font-size:0.95rem;margin-bottom:0.1rem;">Address Details</label>
-                    <input type="text" id="modal-app-street" placeholder="Street Address" required style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
-                    
+                    <label
+                        style="font-weight:600;color:var(--text-dark);font-size:0.95rem;margin-bottom:0.1rem;">Address
+                        Details</label>
+                    <input type="text" id="modal-app-street" placeholder="Street Address" required
+                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
+
                     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:1rem;">
-                        <select id="modal-app-region" required style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;background:white;">
+                        <select id="modal-app-region" required
+                            style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;background:white;">
                             <option value="">Select Region</option>
                         </select>
-                        <select id="modal-app-city" required style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;background:white;">
+                        <select id="modal-app-city" required
+                            style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;background:white;">
                             <option value="">Select City / Municipality</option>
                         </select>
-                        <select id="modal-app-barangay" required style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;background:white;">
+                        <select id="modal-app-barangay" required
+                            style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;background:white;">
                             <option value="">Select Barangay</option>
                         </select>
                     </div>
@@ -2866,29 +3225,34 @@ $badge_colors = array(
 
                 <!-- Contact Row -->
                 <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:1rem;">
-                    <input type="email" id="modal-app-email" placeholder="Email Address (Optional)" style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
-                    <input type="tel" id="modal-app-phone" placeholder="Phone Number (+63)" required style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
+                    <input type="email" id="modal-app-email" placeholder="Email Address (Optional)"
+                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
+                    <input type="tel" id="modal-app-phone" placeholder="Phone Number (+63)" required
+                        style="padding:0.95rem 1.1rem;border:2px solid var(--border-color);font-family:var(--font-body);font-size:0.95rem;width:100%;transition:var(--transition);outline:none;">
                 </div>
 
                 <!-- Preferred Roles Checkboxes -->
                 <div style="margin-top:0.5rem;" id="modal-preferred-roles-container">
-                    <label style="font-weight:600;color:var(--text-dark);display:block;margin-bottom:0.75rem;font-size:0.95rem;">Select Your Preferred Role(s) <span style="color:red;">*</span></label>
-                    <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));gap:0.5rem;max-height: 150px;overflow-y: auto;padding: 0.5rem;border: 1px solid var(--border-color);border-radius: 8px;">
+                    <label
+                        style="font-weight:600;color:var(--text-dark);display:block;margin-bottom:0.75rem;font-size:0.95rem;">Select
+                        Your Preferred Role(s) <span style="color:red;">*</span></label>
+                    <div
+                        style="display:grid;grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));gap:0.5rem;max-height: 150px;overflow-y: auto;padding: 0.5rem;border: 1px solid var(--border-color);border-radius: 8px;">
                         <?php
                         $modal_jobs_query = new WP_Query(array(
-                            'post_type'      => 'jobs',
-                            'post_status'    => 'publish',
+                            'post_type' => 'jobs',
+                            'post_status' => 'publish',
                             'posts_per_page' => -1,
-                            'tax_query'      => array(
+                            'tax_query' => array(
                                 array(
                                     'taxonomy' => 'job_type_tax',
-                                    'field'    => 'slug',
-                                    'terms'    => 'offshoring',
+                                    'field' => 'slug',
+                                    'terms' => 'offshoring',
                                     'operator' => 'NOT IN',
                                 ),
                             ),
-                            'orderby'        => 'title',
-                            'order'          => 'ASC'
+                            'orderby' => 'title',
+                            'order' => 'ASC'
                         ));
                         if ($modal_jobs_query->have_posts()) {
                             $unique_modal_titles = array();
@@ -2930,26 +3294,36 @@ $badge_colors = array(
             </div>
 
             <!-- CAPTCHA -->
-            <div class="cf-turnstile" data-sitekey="<?php echo esc_attr(defined('CF_TURNSTILE_SITE_KEY') ? CF_TURNSTILE_SITE_KEY : ''); ?>" data-appearance="interaction-only" style="margin-top:1rem;margin-bottom:0.75rem;"></div>
+            <div class="cf-turnstile"
+                data-sitekey="<?php echo esc_attr(defined('CF_TURNSTILE_SITE_KEY') ? CF_TURNSTILE_SITE_KEY : ''); ?>"
+                data-appearance="interaction-only" style="margin-top:1rem;margin-bottom:0.75rem;"></div>
 
-            <div id="modal-careers-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;padding:0.75rem 1rem;margin-top:1rem;margin-bottom:0.75rem;border-radius:6px;">
+            <div id="modal-careers-error"
+                style="display:none;background:#fef2f2;border:1px solid #fca5a5;padding:0.75rem 1rem;margin-top:1rem;margin-bottom:0.75rem;border-radius:6px;">
                 <p style="margin:0;color:#991b1b;font-size:0.9rem;" id="modal-careers-error-msg"></p>
             </div>
-            
+
             <div style="display:flex;gap:1rem;margin-top:1.5rem;">
-                <button type="button" class="btn btn-outline" style="flex:1;padding:1rem;" onclick="goToModalStep(1)">Back</button>
-                <button type="button" class="btn btn-primary" style="flex:2;padding:1rem;background:var(--sec-accent-green);color:var(--main-blue);font-size:1.05rem;" onclick="submitModalApplication()">Submit Application</button>
+                <button type="button" class="btn btn-outline" style="flex:1;padding:1rem;"
+                    onclick="goToModalStep(1)">Back</button>
+                <button type="button" class="btn btn-primary"
+                    style="flex:2;padding:1rem;background:var(--sec-accent-green);color:var(--main-blue);font-size:1.05rem;"
+                    onclick="submitModalApplication()">Submit Application</button>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Modal Success Overlay -->
-<div id="modal-success-modal" class="career-modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(10, 37, 64, 0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 10000; align-items: center; justify-content: center;">
-    <div class="career-modal" style="background: var(--bg-white); padding: 3rem 2.5rem; max-width: 480px; width: 90%; position: relative; box-shadow: var(--shadow-xl); border-radius: 12px; text-align:center;">
+<div id="modal-success-modal" class="career-modal-overlay"
+    style="display: none; position: fixed; inset: 0; background: rgba(10, 37, 64, 0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 10000; align-items: center; justify-content: center;">
+    <div class="career-modal"
+        style="background: var(--bg-white); padding: 3rem 2.5rem; max-width: 480px; width: 90%; position: relative; box-shadow: var(--shadow-xl); border-radius: 12px; text-align:center;">
         <button class="career-modal-close" onclick="closeModalSuccess()">&times;</button>
-        <div style="width:80px;height:80px;margin:0 auto 1.5rem;background:rgba(0,208,156,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--sec-accent-green)" stroke-width="2.5">
+        <div
+            style="width:80px;height:80px;margin:0 auto 1.5rem;background:rgba(0,208,156,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--sec-accent-green)"
+                stroke-width="2.5">
                 <polyline points="20 6 9 17 4 12" />
             </svg>
         </div>
@@ -2957,12 +3331,14 @@ $badge_colors = array(
         <p style="color:var(--text-muted);font-size:1.05rem;max-width:440px;margin:0 auto 1.25rem;">
             Thank you for submitting your application. Our team will review your CV shortly.
         </p>
-        <button class="btn btn-primary" style="padding:0.8rem 2.5rem;background:var(--sec-accent-green);color:var(--main-blue);width:100%;max-width:300px;margin:1.5rem auto 0;border:none;cursor:pointer;border-radius:100px;font-weight:700;" onclick="closeModalSuccess()">Close</button>
+        <button class="btn btn-primary"
+            style="padding:0.8rem 2.5rem;background:var(--sec-accent-green);color:var(--main-blue);width:100%;max-width:300px;margin:1.5rem auto 0;border:none;cursor:pointer;border-radius:100px;font-weight:700;"
+            onclick="closeModalSuccess()">Close</button>
     </div>
 </div>
 
 <script>
-    (function() {
+    (function () {
         const poolingModal = document.getElementById('pooling-modal');
         const openPoolingBtn = document.getElementById('open-pooling-btn');
         const closePoolingBtn = document.getElementById('close-pooling-btn');
@@ -2988,27 +3364,27 @@ $badge_colors = array(
             poolingModal.style.display = 'none';
             document.body.style.overflow = '';
             removeModalFile();
-            document.querySelectorAll('#modal-step-2 input').forEach(el => { 
+            document.querySelectorAll('#modal-step-2 input').forEach(el => {
                 if (el.type === 'checkbox' || el.type === 'radio') {
                     el.checked = false;
                 } else {
-                    el.value = ''; 
+                    el.value = '';
                 }
             });
             document.querySelectorAll('#modal-step-2 select').forEach(el => { el.value = ''; });
         }
 
-        window.closeModalSuccess = function() {
+        window.closeModalSuccess = function () {
             modalSuccessModal.style.display = 'none';
             document.body.style.overflow = '';
         }
 
         // Modal Wizard Navigation
         let modalCurrentStep = 1;
-        window.goToModalStep = function(step) {
+        window.goToModalStep = function (step) {
             document.querySelectorAll('.modal-career-step').forEach(s => s.style.display = 'none');
             document.getElementById('modal-step-' + step).style.display = 'block';
-            
+
             const steps = document.querySelectorAll('.modal-cprog-step');
             const lines = document.querySelectorAll('.modal-cprog-line');
             steps.forEach((s, i) => {
@@ -3040,7 +3416,7 @@ $badge_colors = array(
             }
         });
 
-        window.removeModalFile = function() {
+        window.removeModalFile = function () {
             modalCvInput.value = '';
             modalFileInfo.style.display = 'none';
             modalDropzone.style.display = 'block';
@@ -3071,30 +3447,30 @@ $badge_colors = array(
         });
 
         // Submit for Modal
-        window.submitModalApplication = function() {
-            const fname    = document.getElementById('modal-app-fname').value.trim();
-            const mname    = document.getElementById('modal-app-mname').value.trim();
-            const lname    = document.getElementById('modal-app-lname').value.trim();
-            const email    = document.getElementById('modal-app-email').value.trim();
-            const phone    = document.getElementById('modal-app-phone').value.trim();
-            const gender   = document.getElementById('modal-app-gender').value;
+        window.submitModalApplication = function () {
+            const fname = document.getElementById('modal-app-fname').value.trim();
+            const mname = document.getElementById('modal-app-mname').value.trim();
+            const lname = document.getElementById('modal-app-lname').value.trim();
+            const email = document.getElementById('modal-app-email').value.trim();
+            const phone = document.getElementById('modal-app-phone').value.trim();
+            const gender = document.getElementById('modal-app-gender').value;
             const birthday = document.getElementById('modal-app-birthday').value;
-            const street   = document.getElementById('modal-app-street').value.trim();
-            const cvFile   = modalCvInput.files[0];
+            const street = document.getElementById('modal-app-street').value.trim();
+            const cvFile = modalCvInput.files[0];
 
             const purposeElement = document.querySelector('input[name="modal_app_purpose"]:checked');
-            const purpose  = purposeElement ? purposeElement.value : 'pooling';
+            const purpose = purposeElement ? purposeElement.value : 'pooling';
 
-            const regionEl   = document.getElementById('modal-app-region');
-            const cityEl     = document.getElementById('modal-app-city');
+            const regionEl = document.getElementById('modal-app-region');
+            const cityEl = document.getElementById('modal-app-city');
             const barangayEl = document.getElementById('modal-app-barangay');
-            const region     = regionEl ? regionEl.value.trim() : '';
-            const city       = cityEl ? cityEl.value.trim() : '';
-            const barangay   = barangayEl ? barangayEl.value.trim() : '';
+            const region = regionEl ? regionEl.value.trim() : '';
+            const city = cityEl ? cityEl.value.trim() : '';
+            const barangay = barangayEl ? barangayEl.value.trim() : '';
 
             const regionCode = document.getElementById('modal_app_region_code') ? document.getElementById('modal_app_region_code').value : '';
-            const cityCode   = document.getElementById('modal_app_city_code') ? document.getElementById('modal_app_city_code').value : '';
-            const brgyCode   = document.getElementById('modal_app_barangay_code') ? document.getElementById('modal_app_barangay_code').value : '';
+            const cityCode = document.getElementById('modal_app_city_code') ? document.getElementById('modal_app_city_code').value : '';
+            const brgyCode = document.getElementById('modal_app_barangay_code') ? document.getElementById('modal_app_barangay_code').value : '';
 
             const errBox = document.getElementById('modal-careers-error');
             const errMsg = document.getElementById('modal-careers-error-msg');
@@ -3150,33 +3526,33 @@ $badge_colors = array(
             }
 
             const submitBtn = document.querySelector('#modal-step-2 .btn-primary');
-            submitBtn.disabled    = true;
+            submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting…';
 
             const turnstileResponse = document.querySelector('#modal-step-2 [name="cf-turnstile-response"]')?.value || '';
 
             const formData = new FormData();
-            formData.append('action',       'kg_submit_application');
-            formData.append('kg_nonce',     KG_AJAX.careers_nonce);
-            formData.append('app_fname',    fname);
-            formData.append('app_mname',    mname);
-            formData.append('app_lname',    lname);
-            formData.append('app_email',    email);
-            formData.append('app_phone',    phone);
-            formData.append('app_purpose',  purpose);
-            formData.append('app_gender',   gender);
+            formData.append('action', 'kg_submit_application');
+            formData.append('kg_nonce', KG_AJAX.careers_nonce);
+            formData.append('app_fname', fname);
+            formData.append('app_mname', mname);
+            formData.append('app_lname', lname);
+            formData.append('app_email', email);
+            formData.append('app_phone', phone);
+            formData.append('app_purpose', purpose);
+            formData.append('app_gender', gender);
             formData.append('app_birthday', birthday);
-            formData.append('app_street',   street);
-            formData.append('app_region',   region);
-            formData.append('app_city',     city);
+            formData.append('app_street', street);
+            formData.append('app_region', region);
+            formData.append('app_city', city);
             formData.append('app_barangay', barangay);
             formData.append('app_region_code', regionCode);
-            formData.append('app_city_code',   cityCode);
+            formData.append('app_city_code', cityCode);
             formData.append('app_barangay_code', brgyCode);
             formData.append('app_preferred_roles', JSON.stringify(preferredRoles));
-            formData.append('app_role',     preferredRoles.length > 0 ? preferredRoles[0] : '');
-            formData.append('app_cv',       cvFile, cvFile.name);
-            formData.append('kg_hp_field',  document.getElementById('kg_hp_modal').value);
+            formData.append('app_role', preferredRoles.length > 0 ? preferredRoles[0] : '');
+            formData.append('app_cv', cvFile, cvFile.name);
+            formData.append('kg_hp_field', document.getElementById('kg_hp_modal').value);
             formData.append('cf-turnstile-response', turnstileResponse);
 
             fetch(KG_AJAX.url, { method: 'POST', body: formData })
@@ -3198,7 +3574,7 @@ $badge_colors = array(
                     if (typeof turnstile !== 'undefined') turnstile.reset();
                 })
                 .finally(() => {
-                    submitBtn.disabled    = false;
+                    submitBtn.disabled = false;
                     submitBtn.textContent = 'Submit Application';
                 });
         }
@@ -3324,9 +3700,9 @@ $badge_colors = array(
     }
 
     // Purpose card active toggle (cross-browser :has() fallback)
-    document.querySelectorAll('.oj-purpose-card input[type="radio"]').forEach(function(radio) {
-        radio.addEventListener('change', function() {
-            document.querySelectorAll('.oj-purpose-card').forEach(function(c) { c.classList.remove('oj-purpose-active'); });
+    document.querySelectorAll('.oj-purpose-card input[type="radio"]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            document.querySelectorAll('.oj-purpose-card').forEach(function (c) { c.classList.remove('oj-purpose-active'); });
             if (this.checked) this.closest('.oj-purpose-card').classList.add('oj-purpose-active');
         });
     });
@@ -3354,7 +3730,7 @@ $badge_colors = array(
     }
 
     // Wire up CV file input
-    (function() {
+    (function () {
         const ojCvInput = document.getElementById('oj-cv-input');
         const ojFileInfo = document.getElementById('oj-file-info');
         const ojFileName = document.getElementById('oj-file-name');
@@ -3373,14 +3749,14 @@ $badge_colors = array(
         }
 
         if (ojDropzone) {
-            ojDropzone.addEventListener('dragover', function(e) {
+            ojDropzone.addEventListener('dragover', function (e) {
                 e.preventDefault();
                 ojDropzone.classList.add('drag-over');
             });
-            ojDropzone.addEventListener('dragleave', function() {
+            ojDropzone.addEventListener('dragleave', function () {
                 ojDropzone.classList.remove('drag-over');
             });
-            ojDropzone.addEventListener('drop', function(e) {
+            ojDropzone.addEventListener('drop', function (e) {
                 e.preventDefault();
                 ojDropzone.classList.remove('drag-over');
                 if (e.dataTransfer.files.length > 0) {
@@ -3393,27 +3769,27 @@ $badge_colors = array(
 
     // Submit application
     function ojSubmitApplication() {
-        const fname    = (document.getElementById('oj-fname')?.value || '').trim();
-        const mname    = (document.getElementById('oj-mname')?.value || '').trim();
-        const lname    = (document.getElementById('oj-lname')?.value || '').trim();
-        const email    = (document.getElementById('oj-email')?.value || '').trim();
-        const phone    = (document.getElementById('oj-phone')?.value || '').trim();
-        const gender   = document.getElementById('oj-gender')?.value || '';
+        const fname = (document.getElementById('oj-fname')?.value || '').trim();
+        const mname = (document.getElementById('oj-mname')?.value || '').trim();
+        const lname = (document.getElementById('oj-lname')?.value || '').trim();
+        const email = (document.getElementById('oj-email')?.value || '').trim();
+        const phone = (document.getElementById('oj-phone')?.value || '').trim();
+        const gender = document.getElementById('oj-gender')?.value || '';
         const birthday = document.getElementById('oj-birthday')?.value || '';
-        const street   = (document.getElementById('oj-street')?.value || '').trim();
-        const message  = (document.getElementById('oj-message')?.value || '').trim();
-        const cvFile   = document.getElementById('oj-cv-input')?.files[0];
-        const privacy  = document.getElementById('oj-privacy')?.checked;
+        const street = (document.getElementById('oj-street')?.value || '').trim();
+        const message = (document.getElementById('oj-message')?.value || '').trim();
+        const cvFile = document.getElementById('oj-cv-input')?.files[0];
+        const privacy = document.getElementById('oj-privacy')?.checked;
 
         const purposeEl = document.querySelector('input[name="oj_purpose"]:checked');
-        const purpose   = purposeEl ? purposeEl.value : 'pooling';
+        const purpose = purposeEl ? purposeEl.value : 'pooling';
 
-        const region   = document.getElementById('oj-region')?.value || '';
-        const city     = document.getElementById('oj-city')?.value || '';
+        const region = document.getElementById('oj-region')?.value || '';
+        const city = document.getElementById('oj-city')?.value || '';
         const barangay = document.getElementById('oj-barangay')?.value || '';
         const regionCode = document.getElementById('oj_region_code')?.value || '';
-        const cityCode   = document.getElementById('oj_city_code')?.value || '';
-        const brgyCode   = document.getElementById('oj_barangay_code')?.value || '';
+        const cityCode = document.getElementById('oj_city_code')?.value || '';
+        const brgyCode = document.getElementById('oj_barangay_code')?.value || '';
 
         const preferredRoles = [];
         document.querySelectorAll('input[name="oj_preferred_roles[]"]:checked').forEach(cb => {
@@ -3430,45 +3806,45 @@ $badge_colors = array(
             errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        if (!fname || !lname)   return showErr('Please fill in your first and last name.');
-        if (!email && !phone)   return showErr('Please provide either an email address or a phone number.');
+        if (!fname || !lname) return showErr('Please fill in your first and last name.');
+        if (!email && !phone) return showErr('Please provide either an email address or a phone number.');
         if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showErr('Please provide a valid email address.');
-        if (!gender)            return showErr('Please select your gender.');
-        if (!birthday)          return showErr('Please select your birthdate.');
+        if (!gender) return showErr('Please select your gender.');
+        if (!birthday) return showErr('Please select your birthdate.');
         if (!street || !region || !city || !barangay) return showErr('Please fill in your complete address details.');
         if (purpose !== 'pooling' && preferredRoles.length === 0) return showErr('Please select at least one preferred position.');
-        if (!cvFile)            return showErr('Please upload your CV before submitting.');
-        if (!privacy)           return showErr('Please agree to the Privacy Policy and Terms of Service.');
+        if (!cvFile) return showErr('Please upload your CV before submitting.');
+        if (!privacy) return showErr('Please agree to the Privacy Policy and Terms of Service.');
 
         const submitBtn = document.getElementById('oj-submit-btn');
-        submitBtn.disabled    = true;
+        submitBtn.disabled = true;
         submitBtn.textContent = 'Submitting…';
 
         const turnstileResponse = document.querySelector('#oj-pooling-overlay [name="cf-turnstile-response"]')?.value || '';
 
         const formData = new FormData();
-        formData.append('action',        'kg_submit_application');
-        formData.append('kg_nonce',      typeof KG_AJAX !== 'undefined' ? KG_AJAX.careers_nonce : '');
-        formData.append('app_fname',     fname);
-        formData.append('app_mname',     mname);
-        formData.append('app_lname',     lname);
-        formData.append('app_email',     email);
-        formData.append('app_phone',     phone);
-        formData.append('app_purpose',   purpose);
-        formData.append('app_gender',    gender);
-        formData.append('app_birthday',  birthday);
-        formData.append('app_street',    street);
-        formData.append('app_region',    region);
-        formData.append('app_city',      city);
-        formData.append('app_barangay',  barangay);
-        formData.append('app_region_code',   regionCode);
-        formData.append('app_city_code',     cityCode);
+        formData.append('action', 'kg_submit_application');
+        formData.append('kg_nonce', typeof KG_AJAX !== 'undefined' ? KG_AJAX.careers_nonce : '');
+        formData.append('app_fname', fname);
+        formData.append('app_mname', mname);
+        formData.append('app_lname', lname);
+        formData.append('app_email', email);
+        formData.append('app_phone', phone);
+        formData.append('app_purpose', purpose);
+        formData.append('app_gender', gender);
+        formData.append('app_birthday', birthday);
+        formData.append('app_street', street);
+        formData.append('app_region', region);
+        formData.append('app_city', city);
+        formData.append('app_barangay', barangay);
+        formData.append('app_region_code', regionCode);
+        formData.append('app_city_code', cityCode);
         formData.append('app_barangay_code', brgyCode);
         formData.append('app_preferred_roles', JSON.stringify(preferredRoles));
-        formData.append('app_role',      preferredRoles.length > 0 ? preferredRoles[0] : 'General Pooling');
-        formData.append('app_message',   message);
-        formData.append('app_cv',        cvFile, cvFile.name);
-        formData.append('kg_hp_field',   document.getElementById('oj_hp')?.value || '');
+        formData.append('app_role', preferredRoles.length > 0 ? preferredRoles[0] : 'General Pooling');
+        formData.append('app_message', message);
+        formData.append('app_cv', cvFile, cvFile.name);
+        formData.append('kg_hp_field', document.getElementById('oj_hp')?.value || '');
         formData.append('cf-turnstile-response', turnstileResponse);
 
         const ajaxUrl = typeof KG_AJAX !== 'undefined' ? KG_AJAX.url : '/wp-admin/admin-ajax.php';
@@ -3491,13 +3867,13 @@ $badge_colors = array(
                 if (typeof turnstile !== 'undefined') turnstile.reset();
             })
             .finally(() => {
-                submitBtn.disabled    = false;
+                submitBtn.disabled = false;
                 submitBtn.textContent = 'UPLOAD RESUME/CV';
             });
     }
 
     // Keyboard: Escape to close modals
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             closePoolingModal();
             closeOjSuccess();
