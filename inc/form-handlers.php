@@ -271,6 +271,8 @@ function kg_handle_application() {
         $preferred_roles[] = sanitize_text_field( $_POST['app_role'] );
     }
 
+    $preferred_roles = array_filter($preferred_roles);
+    
     $purpose = sanitize_text_field( $_POST['app_purpose'] ?? '' );
     if ( $purpose !== 'pooling' && empty( $preferred_roles ) ) {
         wp_send_json_error( array( 'message' => 'Please select at least one preferred position.' ), 422 );
@@ -395,6 +397,7 @@ function kg_handle_application() {
             'email'    => $email,
             'phone'    => $phone,
             'role'     => $role,
+            'job_id'   => sanitize_text_field( $_POST['app_job_id'] ?? '' ),
             'preferred_roles' => $preferred_roles,
             'linkedin' => '',
             'cv_url'   => $cv_url,
@@ -421,7 +424,18 @@ function kg_handle_application() {
     /* — Email Routing & Recruiter Lookup — */
     $recruiter_email = '';
     $recruiter_name = '';
-    if ( ! empty( $role ) ) {
+    $submitted_job_id = sanitize_text_field( $_POST['app_job_id'] ?? '' );
+    
+    if ( ! empty( $submitted_job_id ) ) {
+        $author_id = get_post_field( 'post_author', $submitted_job_id );
+        if ( $author_id ) {
+            $author_user = get_userdata( $author_id );
+            if ( $author_user ) {
+                $recruiter_email = $author_user->user_email;
+                $recruiter_name  = $author_user->display_name;
+            }
+        }
+    } elseif ( ! empty( $role ) ) {
         $job_posts = get_posts( array(
             'post_type'      => 'jobs',
             'title'          => $role,

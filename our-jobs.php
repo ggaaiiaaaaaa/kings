@@ -2988,7 +2988,13 @@ $badge_colors = array(
             poolingModal.style.display = 'none';
             document.body.style.overflow = '';
             removeModalFile();
-            document.querySelectorAll('#modal-step-2 input').forEach(el => { el.value = ''; });
+            document.querySelectorAll('#modal-step-2 input').forEach(el => { 
+                if (el.type === 'checkbox' || el.type === 'radio') {
+                    el.checked = false;
+                } else {
+                    el.value = ''; 
+                }
+            });
             document.querySelectorAll('#modal-step-2 select').forEach(el => { el.value = ''; });
         }
 

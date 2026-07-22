@@ -1342,6 +1342,7 @@ while (have_posts()):
                 formData.append('app_city_code',   cityCode);
                 formData.append('app_barangay_code', brgyCode);
                 formData.append('app_role',     role);
+                formData.append('app_job_id',   '<?php echo esc_js(get_the_ID()); ?>');
                 formData.append('app_cv',       cvFile, cvFile.name);
                 formData.append('kg_hp_field',  document.getElementById('kg_hp_sidebar').value);
                 formData.append('cf-turnstile-response', turnstileResponse);

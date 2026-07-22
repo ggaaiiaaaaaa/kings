@@ -61,6 +61,9 @@ function kg_save_application_post($data)
     update_post_meta($post_id, 'kg_app_email', sanitize_email($data['email']));
     update_post_meta($post_id, 'kg_app_phone', sanitize_text_field($data['phone']));
     update_post_meta($post_id, 'kg_app_role', sanitize_text_field($data['role']));
+    if (!empty($data['job_id'])) {
+        update_post_meta($post_id, 'kg_app_job_id', intval($data['job_id']));
+    }
     update_post_meta($post_id, 'kg_app_preferred_roles', $data['preferred_roles'] ?? array());
     update_post_meta($post_id, 'kg_app_linkedin', esc_url_raw($data['linkedin']));
     update_post_meta($post_id, 'kg_app_cv_url', esc_url_raw($data['cv_url']));
@@ -89,7 +92,10 @@ function kg_save_application_post($data)
     // Look up and save the branch location of the applied job
     $app_location = '';
     $applied_role = $data['role'] ?? '';
-    if (!empty($applied_role)) {
+    
+    if (!empty($data['job_id'])) {
+        $app_location = get_post_meta(intval($data['job_id']), 'job_location', true);
+    } elseif (!empty($applied_role)) {
         $job_posts = get_posts(array(
             'post_type' => 'jobs',
             'title' => $applied_role,
@@ -432,12 +438,17 @@ function kg_application_details_box($post)
             <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
                 <?php
                 $preferred_roles = get_post_meta($post->ID, 'kg_app_preferred_roles', true);
+                
+                if (is_array($preferred_roles)) {
+                    $preferred_roles = array_filter(array_map('trim', $preferred_roles));
+                }
+                
                 if (is_array($preferred_roles) && !empty($preferred_roles)) {
                     foreach ($preferred_roles as $pref_role) {
                         echo '<span style="background:#e0f2fe;color:#0369a1;padding:3px 8px;border-radius:4px;font-size:12px;font-weight:600;margin-right:6px;display:inline-block;">' . esc_html($pref_role) . '</span>';
                     }
                 } else {
-                    echo '<span style="color:#777;font-style:italic;">No preferences selected (defaulting to current assigned role)</span>';
+                    echo '<span style="color:#777;font-style:italic;">No preferences selected</span>';
                 }
                 ?>
             </td>
@@ -449,6 +460,7 @@ function kg_application_details_box($post)
                 $preferred_roles = get_post_meta($post->ID, 'kg_app_preferred_roles', true) ?: array();
                 $applied_roles = array_unique(array_filter(array_merge((array) $role, (array) $preferred_roles)));
                 $current_status_for_dropdown = get_post_meta($post->ID, 'kg_app_status', true) ?: 'pooling';
+                $current_job_id = get_post_meta($post->ID, 'kg_app_job_id', true);
 
                 $all_jobs_posts = get_posts(array(
                     'post_type' => 'jobs',
@@ -456,45 +468,57 @@ function kg_application_details_box($post)
                     'posts_per_page' => -1,
                     'orderby' => 'title',
                     'order' => 'ASC',
+                    'tax_query' => array(
+                        array(
+                            'taxonomy' => 'job_type_tax',
+                            'field'    => 'slug',
+                            'terms'    => 'offshoring',
+                            'operator' => 'NOT IN',
+                        ),
+                    ),
                 ));
 
-                $unique_job_titles = array();
-                foreach ($all_jobs_posts as $job) {
-                    $unique_job_titles[$job->post_title] = $job->post_title;
-                }
-
                 // For pooling applicants: show all jobs. For others: restrict to applied roles only.
-                if ($current_status_for_dropdown !== 'pooling') {
-                    if (!empty($unique_job_titles) && !empty($applied_roles)) {
-                        $unique_job_titles = array_filter($unique_job_titles, function ($title) use ($applied_roles) {
-                            return in_array($title, $applied_roles, true);
-                        });
-                    } else {
-                        $unique_job_titles = array();
-                    }
+                if ($current_status_for_dropdown !== 'pooling' && !empty($applied_roles)) {
+                    $filtered_jobs = array_filter($all_jobs_posts, function ($job) use ($applied_roles) {
+                        return in_array($job->post_title, $applied_roles, true);
+                    });
+                } else {
+                    $filtered_jobs = $all_jobs_posts;
                 }
+                if (!empty($current_job_id)) {
+                    $assigned_job = get_post($current_job_id);
+                    if ($assigned_job) {
+                        $location = get_post_meta($assigned_job->ID, 'job_location', true) ?: 'No Location';
+                        $label = $assigned_job->post_title . ' - ' . $location;
+                        echo '<div style="padding: 6px 12px; font-size: 14px; border: 1px solid #ddd; border-radius: 4px; background: #f5f5f5; color: #333; display: inline-block;">';
+                        echo '<strong>' . esc_html($label) . '</strong>';
+                        echo '</div>';
+                        echo '<input type="hidden" name="kg_app_job_id" value="' . esc_attr($current_job_id) . '">';
+                        echo '<input type="hidden" name="kg_app_role_legacy" value="' . esc_attr($role) . '">';
+                        echo '<p class="description" style="margin: 4px 0 0 0; font-size: 11px; color: #666;">This application is firmly assigned to this specific vacancy.</p>';
+                    }
+                } else {
                 ?>
-                <select name="kg_app_role"
+                <select name="kg_app_job_id"
                     style="width:100%; max-width:400px; padding:6px 10px; font-size:14px; border: 1px solid #ccc; border-radius: 4px;">
-                    <option value="">— Choose a Suitable Job —</option>
+                    <option value="">— Choose a Specific Vacancy —</option>
                     <?php
-                    $found_current = false;
-                    if (!empty($unique_job_titles)) {
-                        foreach ($unique_job_titles as $job_title) {
-                            $selected = selected($role, $job_title, false);
-                            if ($selected) {
-                                $found_current = true;
-                            }
-                            echo '<option value="' . esc_attr($job_title) . '" ' . $selected . '>' . esc_html($job_title) . '</option>';
+                    if (!empty($filtered_jobs)) {
+                        foreach ($filtered_jobs as $job) {
+                            $location = get_post_meta($job->ID, 'job_location', true) ?: 'No Location';
+                            $label = $job->post_title . ' - ' . $location;
+                            echo '<option value="' . esc_attr($job->ID) . '">' . esc_html($label) . '</option>';
                         }
                     }
-                    if (!empty($role) && !$found_current) {
-                        echo '<option value="' . esc_attr($role) . '" selected>' . esc_html($role) . ' (Custom/Legacy)</option>';
+                    if (!empty($role)) {
+                        echo '<option value="" selected>Pending Job Assignment</option>';
                     }
                     ?>
                 </select>
-                <p class="description" style="margin: 4px 0 0 0; font-size: 11px; color: #666;">Select the matching job post
-                    that fits this applicant's profile.</p>
+                <input type="hidden" name="kg_app_role_legacy" value="<?php echo esc_attr($role); ?>">
+                <p class="description" style="margin: 4px 0 0 0; font-size: 11px; color: #666;">Select the exact job post and location for this applicant.</p>
+                <?php } ?>
             </td>
         </tr>
         <tr id="kg-assigned-recruiter-row">
@@ -970,8 +994,18 @@ function kg_save_application_status($post_id)
         update_post_meta($post_id, 'kg_app_client', sanitize_text_field($_POST['kg_app_client']));
     }
 
-    if (isset($_POST['kg_app_role'])) {
-        update_post_meta($post_id, 'kg_app_role', sanitize_text_field($_POST['kg_app_role']));
+    if (isset($_POST['kg_app_job_id'])) {
+        $job_id = intval($_POST['kg_app_job_id']);
+        update_post_meta($post_id, 'kg_app_job_id', $job_id);
+        if ($job_id > 0) {
+            $job_post = get_post($job_id);
+            if ($job_post) {
+                update_post_meta($post_id, 'kg_app_role', $job_post->post_title);
+            }
+        } elseif (isset($_POST['kg_app_role_legacy']) && !empty($_POST['kg_app_role_legacy'])) {
+             // Keep legacy role if job_id is empty but they had a legacy role
+             update_post_meta($post_id, 'kg_app_role', sanitize_text_field($_POST['kg_app_role_legacy']));
+        }
     }
 
     if (isset($_POST['kg_app_deploy_date'])) {
@@ -1091,23 +1125,26 @@ function kg_sync_job_headcount_on_status_change($post_id)
     if (get_post_type($post_id) !== 'kg_application')
         return;
 
-    $role = get_post_meta($post_id, 'kg_app_role', true);
-    if (!$role)
-        return;
+    $job_id = get_post_meta($post_id, 'kg_app_job_id', true);
+    if (!$job_id) {
+        // Fallback for legacy applications
+        $role = get_post_meta($post_id, 'kg_app_role', true);
+        if (!$role) return;
+        
+        $jobs = get_posts(array(
+            'post_type' => 'jobs',
+            'post_status' => array('publish', 'draft'),
+            'posts_per_page' => 1,
+            'title' => $role,
+            'fields' => 'ids',
+        ));
+        if (empty($jobs)) return;
+        $job_id = $jobs[0];
+    }
 
-    // Find the Job post matching this role (by title)
-    $jobs = get_posts(array(
-        'post_type' => 'jobs',
-        'post_status' => array('publish', 'draft'),
-        'posts_per_page' => 1,
-        'title' => $role,
-        'fields' => 'ids',
-    ));
-    if (empty($jobs))
-        return;
-    $job_id = $jobs[0];
-
-    // Count all deployed applications for this role
+    // Count all deployed applications for this specific job ID
+    // (Legacy deployed applicants won't be counted here unless they are updated with a job_id, 
+    // ensuring accurate per-location counts moving forward)
     $filled = new WP_Query(array(
         'post_type' => 'kg_application',
         'post_status' => 'publish',
@@ -1115,7 +1152,7 @@ function kg_sync_job_headcount_on_status_change($post_id)
         'fields' => 'ids',
         'meta_query' => array(
             'relation' => 'AND',
-            array('key' => 'kg_app_role', 'value' => $role),
+            array('key' => 'kg_app_job_id', 'value' => $job_id),
             array('key' => 'kg_app_status', 'value' => 'deployed'),
         ),
     ));

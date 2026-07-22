@@ -769,7 +769,13 @@ get_header();
             document.body.style.overflow = '';
             goToStep(1);
             removeFile();
-            document.querySelectorAll('#step-2 input').forEach(el => { el.value = ''; });
+            document.querySelectorAll('#step-2 input').forEach(el => { 
+                if (el.type === 'checkbox' || el.type === 'radio') {
+                    el.checked = false;
+                } else {
+                    el.value = ''; 
+                }
+            });
             document.querySelectorAll('#step-2 select').forEach(el => { el.value = ''; });
         }
 
