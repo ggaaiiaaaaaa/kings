@@ -134,27 +134,48 @@ function kg_inquiry_details_box( $post ) {
     $status  = get_post_meta( $post->ID, 'kg_inq_status',  true ) ?: 'new';
     wp_nonce_field( 'kg_inq_status_save', 'kg_inq_status_nonce' );
     ?>
-    <table style="width:100%;border-collapse:collapse;">
-        <tr><td style="padding:10px 8px;font-weight:600;width:140px;border-bottom:1px solid #f0f0f0;">Name</td>
-            <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;"><?php echo esc_html($name); ?></td></tr>
-        <tr><td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Email</td>
-            <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
-                <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a></td></tr>
-        <tr><td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Phone</td>
-            <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;"><?php echo esc_html($phone ?: '—'); ?></td></tr>
-        <tr><td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Subject</td>
-            <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;"><?php echo esc_html($subject); ?></td></tr>
-        <tr><td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Message</td>
-            <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;white-space:pre-wrap;"><?php echo esc_html($message); ?></td></tr>
-        <tr><td style="padding:10px 8px;font-weight:600;">Status</td>
-            <td style="padding:10px 8px;">
-                <select name="kg_inq_status" style="padding:6px 10px;font-size:13px;width:200px;">
+    <style>
+        .kg-inq-details-card { background: #fff; padding: 4px 10px; }
+        .kg-inq-row { display: flex; padding: 14px 16px; border-bottom: 1px solid #f0f4f8; align-items: flex-start; }
+        .kg-inq-row:last-child { border-bottom: none; }
+        .kg-inq-label { flex: 0 0 160px; font-weight: 600; color: #64748b; font-size: 14px; }
+        .kg-inq-value { flex: 1; font-size: 14px; color: #0f172a; }
+        .kg-inq-value a { color: #2563eb; text-decoration: none; font-weight: 500; }
+        .kg-inq-value a:hover { text-decoration: underline; }
+        .kg-inq-select { padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 14px; min-width: 200px; cursor: pointer; }
+    </style>
+    <div class="kg-inq-details-card">
+        <div class="kg-inq-row">
+            <div class="kg-inq-label">Name</div>
+            <div class="kg-inq-value"><?php echo esc_html($name); ?></div>
+        </div>
+        <div class="kg-inq-row">
+            <div class="kg-inq-label">Email</div>
+            <div class="kg-inq-value"><a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a></div>
+        </div>
+        <div class="kg-inq-row">
+            <div class="kg-inq-label">Phone</div>
+            <div class="kg-inq-value"><?php echo esc_html($phone ?: '—'); ?></div>
+        </div>
+        <div class="kg-inq-row">
+            <div class="kg-inq-label">Subject</div>
+            <div class="kg-inq-value"><?php echo esc_html($subject); ?></div>
+        </div>
+        <div class="kg-inq-row">
+            <div class="kg-inq-label">Message</div>
+            <div class="kg-inq-value" style="white-space:pre-wrap;line-height:1.6;"><?php echo esc_html($message); ?></div>
+        </div>
+        <div class="kg-inq-row" style="align-items: center;">
+            <div class="kg-inq-label">Status</div>
+            <div class="kg-inq-value">
+                <select name="kg_inq_status" class="kg-inq-select">
                     <option value="new"         <?php selected($status,'new');         ?>>New</option>
                     <option value="in_progress" <?php selected($status,'in_progress'); ?>>In Progress</option>
                     <option value="resolved"    <?php selected($status,'resolved');    ?>>Resolved</option>
                 </select>
-            </td></tr>
-    </table>
+            </div>
+        </div>
+    </div>
     <?php
 }
 
