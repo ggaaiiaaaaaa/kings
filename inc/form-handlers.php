@@ -154,6 +154,23 @@ function kg_handle_contact()
         wp_send_json_error(array('message' => 'Please fill in all required fields.'), 422);
     }
 
+    // Check for existing active inquiry from the same email
+    $existing_inquiries = get_posts(array(
+        'post_type'      => 'kg_inquiry',
+        'posts_per_page' => 1,
+        'post_status'    => 'publish',
+        'meta_query'     => array(
+            array('key' => 'kg_inq_email', 'value' => $email)
+        )
+    ));
+
+    if (!empty($existing_inquiries)) {
+        $status = get_post_meta($existing_inquiries[0]->ID, 'kg_inq_status', true) ?: 'new';
+        if (in_array($status, array('new', 'in_progress'), true)) {
+            wp_send_json_error(array('message' => 'You already have an active inquiry. Our team is reviewing it and will get back to you shortly.'), 422);
+        }
+    }
+
     $to_email = defined('KG_INQUIRY_EMAIL') ? KG_INQUIRY_EMAIL : (defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : 'info@kingsgroup.com.ph');
 
     $contact_details = '<table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;margin-bottom:24px;">'
@@ -558,6 +575,23 @@ function kg_handle_quote()
     }
     if (empty($roles) || !is_array($roles)) {
         wp_send_json_error(array('message' => 'Please add at least one role to your team.'), 422);
+    }
+
+    // Check for existing pending quote request from the same email
+    $existing_quotes = get_posts(array(
+        'post_type'      => 'kg_quote_lead',
+        'posts_per_page' => 1,
+        'post_status'    => 'publish',
+        'meta_query'     => array(
+            array('key' => 'kg_quote_email', 'value' => $email)
+        )
+    ));
+
+    if (!empty($existing_quotes)) {
+        $status = get_post_meta($existing_quotes[0]->ID, 'kg_quote_status', true) ?: 'pending';
+        if ($status === 'pending') {
+            wp_send_json_error(array('message' => 'You already have a pending quote request. Our team will contact you soon.'), 422);
+        }
     }
 
     // Determine exchange rates relative to USD in case we need math

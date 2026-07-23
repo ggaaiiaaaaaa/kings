@@ -164,12 +164,28 @@
             var iti = window.intlTelInput(input, {
                 initialCountry: "ph",
                 preferredCountries: ["ph", "us", "gb", "au", "ae"],
-                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js",
-                hiddenInput: inputName ? inputName : undefined
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
             });
-            // If hiddenInput is used, we need to remove the name from the original input so it doesn't conflict
+            // We manually handle the hidden input to ensure it works with AJAX FormData
             if (inputName) {
                 input.removeAttribute('name');
+                var hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = inputName;
+                
+                var form = input.closest('form');
+                if (form) {
+                    form.appendChild(hiddenInput);
+                } else {
+                    input.parentNode.insertBefore(hiddenInput, input.nextSibling);
+                }
+
+                var updateHidden = function() {
+                    hiddenInput.value = iti.getNumber();
+                };
+                input.addEventListener('input', updateHidden);
+                input.addEventListener('countrychange', updateHidden);
+                updateHidden(); // populate initially
             }
             input.setAttribute('data-iti-id', index);
             window.kgPhoneInstances[index] = iti;
