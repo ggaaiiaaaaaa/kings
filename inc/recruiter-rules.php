@@ -309,7 +309,10 @@ add_action( 'transition_post_status', 'kg_notify_on_recruiter_job_publish', 20, 
  * 7. Disable Date fields in Quick Edit for recruiters.
  */
 function kg_disable_quick_edit_date_for_recruiters() {
-    if ( ! function_exists( 'kg_is_current_user_recruiter' ) || ! kg_is_current_user_recruiter() ) {
+    $is_recruiter = function_exists( 'kg_is_current_user_recruiter' ) && kg_is_current_user_recruiter();
+    $is_recruitment_admin = function_exists( 'kg_is_current_user_recruitment_admin' ) && kg_is_current_user_recruitment_admin();
+
+    if ( ! $is_recruiter && ! $is_recruitment_admin ) {
         return;
     }
     
@@ -333,6 +336,13 @@ function kg_auto_slug_in_quick_edit() {
     if ( $screen && $screen->id === 'edit-jobs' ) {
         echo '<script>
             jQuery(document).ready(function($){
+                // Lock the slug field immediately when quick edit is opened
+                $(document).on("click", ".editinline", function(){
+                    setTimeout(function(){
+                        $(".inline-edit-row input[name=\'post_name\']").prop("readonly", true).css({"background-color":"#f0f0f0", "color":"#666", "cursor":"not-allowed"});
+                    }, 50);
+                });
+
                 $(document).on("keyup", ".inline-edit-row input[name=\'post_title\']", function(){
                     var title = $(this).val();
                     var slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
@@ -340,6 +350,18 @@ function kg_auto_slug_in_quick_edit() {
                 });
             });
         </script>';
+        echo '<style>
+            /* Hide the slug editing box completely in the main Job Editor */
+            #edit-slug-box,
+            .components-panel__body.edit-post-post-url,
+            .edit-post-post-link,
+            .editor-post-link { display: none !important; }
+            
+            /* Hide Password and Private fields in Quick Edit for all users */
+            .inline-edit-row label:has(input[name="post_password"]),
+            .inline-edit-row label:has(input[name="keep_private"]),
+            .inline-edit-row .inline-edit-or { display: none !important; }
+        </style>';
     }
 }
 add_action( 'admin_head', 'kg_auto_slug_in_quick_edit' );

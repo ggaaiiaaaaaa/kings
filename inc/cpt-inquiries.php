@@ -58,7 +58,8 @@ function kg_save_inquiry_post( $data ) {
 function kg_inquiry_columns( $columns ) {
     return array(
         'cb'           => '<input type="checkbox">',
-        'title'        => 'Name — Subject',
+        'title'        => 'Name',
+        'kg_inq_subject'=> 'Subject',
         'kg_inq_email' => 'Email',
         'kg_inq_msg'   => 'Message',
         'kg_inq_status'=> 'Status',
@@ -67,8 +68,30 @@ function kg_inquiry_columns( $columns ) {
 }
 add_filter( 'manage_kg_inquiry_posts_columns', 'kg_inquiry_columns' );
 
+add_filter( 'the_title', function( $title, $id ) {
+    if ( is_admin() && function_exists('get_current_screen') ) {
+        $screen = get_current_screen();
+        if ( $screen && $screen->id === 'edit-kg_inquiry' ) {
+            $name = get_post_meta( $id, 'kg_inq_name', true );
+            if ( $name ) {
+                return $name;
+            }
+        } elseif ( $screen && $screen->id === 'edit-kg_quote_lead' ) {
+            $name = get_post_meta( $id, 'kg_quote_name', true );
+            if ( $name ) {
+                return $name;
+            }
+        }
+    }
+    return $title;
+}, 10, 2 );
+
 function kg_inquiry_column_content( $column, $post_id ) {
     switch ( $column ) {
+        case 'kg_inq_subject':
+            $subject = get_post_meta( $post_id, 'kg_inq_subject', true );
+            echo esc_html($subject);
+            break;
         case 'kg_inq_email':
             $e = get_post_meta( $post_id, 'kg_inq_email', true );
             echo $e ? '<a href="mailto:' . esc_attr($e) . '">' . esc_html($e) . '</a>' : '—';
@@ -338,7 +361,7 @@ function kg_save_quote_lead_post( $data ) {
 function kg_quote_lead_columns( $columns ) {
     return array(
         'cb'              => '<input type="checkbox">',
-        'title'           => 'Client — Est. Total',
+        'title'           => 'Client',
         'kg_quote_email'  => 'Email',
         'kg_quote_roles'  => 'Roles',
         'kg_quote_total'  => 'Est. Monthly',
@@ -553,3 +576,16 @@ add_action( 'pre_get_posts', function($query) {
         $query->set('meta_query', array(array('key'=>'kg_quote_status','value'=>$_GET['kg_quote_filter'])));
     }
 } );
+
+/**
+ * Disable Quick Edit for Inquiries and Quote Leads
+ */
+function kg_disable_quick_edit_for_inquiries_quotes( $actions, $post ) {
+    if ( $post->post_type === 'kg_inquiry' || $post->post_type === 'kg_quote_lead' ) {
+        if ( isset( $actions['inline hide-if-no-js'] ) ) {
+            unset( $actions['inline hide-if-no-js'] );
+        }
+    }
+    return $actions;
+}
+add_filter( 'post_row_actions', 'kg_disable_quick_edit_for_inquiries_quotes', 10, 2 );

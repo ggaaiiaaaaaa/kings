@@ -306,15 +306,21 @@ function kg_handle_application()
     }
 
     // 1. Single Active Application Check & 14-Day Cooldown Check
+    $meta_query = array('relation' => 'OR');
     if (!empty($email)) {
+        $meta_query[] = array('key' => 'kg_app_email', 'value' => $email);
+    }
+    if (!empty($phone)) {
+        $meta_query[] = array('key' => 'kg_app_phone', 'value' => $phone);
+    }
+
+    if (!empty($meta_query)) {
         $last_apps = get_posts(array(
             'post_type' => 'kg_application',
             'posts_per_page' => 1,
             'orderby' => 'date',
             'order' => 'DESC',
-            'meta_query' => array(
-                array('key' => 'kg_app_email', 'value' => $email)
-            )
+            'meta_query' => $meta_query
         ));
 
         if (!empty($last_apps)) {
@@ -516,8 +522,10 @@ function kg_handle_application()
 
     $headers = array(
         'Content-Type: text/html; charset=UTF-8',
-        'Reply-To: ' . $fullname . ' <' . $email . '>',
     );
+    if (!empty($email)) {
+        $headers[] = 'Reply-To: ' . $fullname . ' <' . $email . '>';
+    }
 
     /* — Respond to browser immediately, send emails after — */
     kg_flush_response(array('message' => 'Application submitted! Check your email for confirmation.'));
