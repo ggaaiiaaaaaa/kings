@@ -6,6 +6,24 @@ if (!defined('ABSPATH')) {
 $page_title = 'Our Jobs | Kings Group Careers';
 $page_description = 'Browse open positions at Kings Group Cooperative. Filter by Full-Time, Part-Time, Contract, and Remote roles across the Philippines.';
 
+// JSON-LD: WebPage schema
+$page_schema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'WebPage',
+    '@id' => 'https://kingsgroup.com.ph/our-jobs/#webpage',
+    'url' => 'https://kingsgroup.com.ph/our-jobs/',
+    'name' => 'Our Jobs | Kings Group Careers',
+    'description' => 'Browse open positions at Kings Group Cooperative. Filter by Full-Time, Part-Time, Contract, and Remote roles across the Philippines.',
+    'isPartOf' => ['@id' => 'https://kingsgroup.com.ph/#website'],
+    'breadcrumb' => [
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => 'https://kingsgroup.com.ph/'],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Our Jobs', 'item' => 'https://kingsgroup.com.ph/our-jobs/'],
+        ],
+    ],
+];
+
 if (!function_exists('kg_get_region_by_location')) {
     function kg_get_region_by_location($location)
     {

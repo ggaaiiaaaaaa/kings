@@ -6,52 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <?php
-  global $page_title, $page_description, $page_og_image, $page_hero_bg, $page_schema;
-
-  // --- SEO: Build page URL ---
-  // Use WordPress home_url() when available, else reconstruct from server vars.
+  global $page_hero_bg, $page_schema;
+  
+  // Site URL fallback (might still be used by schema)
   $kg_site_url = function_exists('get_bloginfo') ? get_bloginfo('url') : 'https://kingsgroup.com.ph';
-  $kg_current_url = function_exists('get_permalink') && get_the_ID()
-    ? get_permalink()
-    : rtrim($kg_site_url, '/') . (isset($_SERVER['REQUEST_URI']) ? strtok($_SERVER['REQUEST_URI'], '?') : '/');
-
-  // --- SEO: Resolve per-page values ---
-  if (!empty($page_title)) {
-      $kg_title = (strpos($page_title, 'Kings Group') === false) ? $page_title . ' | The Kings Group' : $page_title;
-  } else {
-      $kg_title = 'The Kings Group';
-  }
-  $kg_description = $page_description ?? 'Elite talent acquisition and ethical staffing solutions. Discover Kings Group\'s managed services and labor management for businesses.';
-  $kg_og_image = $page_og_image ?? kg_asset('img/[LOGO] Main Logo White.webp');
   ?>
 
-  <?php if (!function_exists('_wp_render_title_tag')): ?>
-    <title><?php echo esc_html($kg_title); ?></title>
-  <?php endif; ?>
-  <meta name="description" content="<?php echo esc_attr($kg_description); ?>">
-  <link rel="canonical" href="<?php echo esc_url($kg_current_url); ?>">
   <?php if (!empty($page_hero_bg)): ?>
     <link rel="preload" as="image" href="<?php echo esc_url($page_hero_bg); ?>" fetchpriority="high">
   <?php endif; ?>
-
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="<?php echo esc_url($kg_current_url); ?>">
-  <meta property="og:title" content="<?php echo esc_attr($kg_title); ?>">
-  <meta property="og:description" content="<?php echo esc_attr($kg_description); ?>">
-  <meta property="og:image" content="<?php echo esc_url($kg_og_image); ?>">
-  <meta property="og:site_name" content="Kings Group Cooperative">
-  <meta property="og:locale" content="en_PH">
-
-  <!-- Twitter / X -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@kingsgroup">
-  <meta name="twitter:title" content="<?php echo esc_attr($kg_title); ?>">
-  <meta name="twitter:description" content="<?php echo esc_attr($kg_description); ?>">
-  <meta name="twitter:image" content="<?php echo esc_url($kg_og_image); ?>">
-
-  <!-- Robots & Index -->
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 
   <link rel="icon" type="image/webp" href="<?php echo kg_asset('img/[LOGO] Main Logo White.webp'); ?>">
   <link rel="apple-touch-icon" href="<?php echo kg_asset('img/[LOGO] Main Logo White.webp'); ?>">
@@ -64,40 +27,7 @@
   </style>
   <?php wp_head(); ?>
 
-  <!-- SEO: Sitewide Organization Schema (on every page) -->
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "@id": "<?php echo esc_url($kg_site_url); ?>/#organization",
-      "name": "Kings Group Cooperative",
-      "url": "<?php echo esc_url($kg_site_url); ?>",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "<?php echo esc_url(kg_asset('img/[LOGO] Main Logo Black.webp')); ?>"
-      },
-      "sameAs": [
-        "https://www.linkedin.com/company/kings-group-cooperative",
-        "https://www.facebook.com/KingsCooperative"
-      ],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+63-2-8776-6712",
-        "contactType": "customer service",
-        "areaServed": "PH",
-        "availableLanguage": ["English", "Filipino"]
-      },
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "100 Doña Soledad Ave, Better Living Subdivision",
-        "addressLocality": "Parañaque",
-        "addressRegion": "Metro Manila",
-        "postalCode": "1711",
-        "addressCountry": "PH"
-      },
-      "description": "Elite talent acquisition and ethical staffing solutions since 1999. A worker-owned cooperative empowering global teams."
-    }
-    </script>
+  <!-- Note: Organization schema is now handled by RankMath -->
 
   <?php
   // --- SEO: Per-page schema injection ---

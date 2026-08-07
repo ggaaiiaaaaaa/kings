@@ -1,5 +1,32 @@
 <?php
 /* Template Name: Community */
+
+if (!defined('ABSPATH')) {
+    require_once 'functions.php';
+}
+
+$page_title = 'Community | Kings Group Cooperative';
+$page_description = 'Building a sustainable future through education, empowerment, and shared success with Kings Group Cooperative\'s community programs.';
+
+// JSON-LD: WebPage schema
+$page_schema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'WebPage',
+    '@id' => 'https://kingsgroup.com.ph/community/#webpage',
+    'url' => 'https://kingsgroup.com.ph/community/',
+    'name' => 'Community | Kings Group Cooperative',
+    'description' => 'Building a sustainable future through education, empowerment, and shared success with Kings Group Cooperative\'s community programs.',
+    'isPartOf' => ['@id' => 'https://kingsgroup.com.ph/#website'],
+    'about' => ['@id' => 'https://kingsgroup.com.ph/#organization'],
+    'breadcrumb' => [
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => 'https://kingsgroup.com.ph/'],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Community', 'item' => 'https://kingsgroup.com.ph/community/'],
+        ],
+    ],
+];
+
 $page_hero_bg = kg_get_field('comm_hero_bg', kg_asset('img/community/hero-community.png'));
 get_header();
 ?>
