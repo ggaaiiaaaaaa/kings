@@ -19,6 +19,8 @@ function kg_register_application_cpt()
             'singular_name' => 'Application',
             'menu_name' => 'Applications',
             'all_items' => 'All Applications',
+            'add_new' => 'Add New Applicant',
+            'add_new_item' => 'Add New Applicant',
             'edit_item' => 'View Application',
             'search_items' => 'Search Applications',
             'not_found' => 'No applications found.',
@@ -28,19 +30,32 @@ function kg_register_application_cpt()
         'show_ui' => true,
         'show_in_menu' => true,
         'show_in_rest' => false,
-        'supports' => array('title'),
+        'supports' => false,
         'has_archive' => false,
         'rewrite' => false,
         'menu_icon' => 'dashicons-id-alt',
         'menu_position' => 5,
         'capability_type' => 'application',
-        'capabilities' => array(
-            'create_posts' => 'do_not_allow', // no manual creation from admin
-        ),
         'map_meta_cap' => true,
     ));
 }
 add_action('init', 'kg_register_application_cpt');
+
+function kg_application_title_placeholder($title) {
+    $screen = get_current_screen();
+    if ($screen && $screen->post_type == 'kg_application') {
+        return 'Enter Applicant Full Name';
+    }
+    return $title;
+}
+add_filter('enter_title_here', 'kg_application_title_placeholder');
+
+function kg_add_enctype_to_application_form($post) {
+    if ($post->post_type === 'kg_application') {
+        echo ' enctype="multipart/form-data"';
+    }
+}
+add_action('post_edit_form_tag', 'kg_add_enctype_to_application_form');
 
 /* ─────────────────────────────────────────────
    Save application post (called from form handler)
@@ -381,88 +396,177 @@ function kg_application_details_box($post)
     $city_code = get_post_meta($post->ID, 'kg_app_city_code', true);
     $barangay_code = get_post_meta($post->ID, 'kg_app_barangay_code', true);
     ?>
+    <?php $is_editable = ($post->post_status === 'auto-draft' || $post->post_status === 'draft'); ?>
     <table style="width:100%;border-collapse:collapse;">
         <tr>
             <td style="padding:10px 8px;font-weight:600;width:140px;border-bottom:1px solid #f0f0f0;">Full Name</td>
             <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
-                <?php echo esc_html(get_the_title($post->ID)); ?>
-                <?php if (!empty($mname)): ?>
-                    <span style="color:#777;font-style:italic;">(Middle Name: <?php echo esc_html($mname); ?>)</span>
+                <?php if ($is_editable): ?>
+                    <label style="font-size: 11px; font-weight: 600;">Full Name (First & Last):</label><br>
+                    <?php $current_title = ($post->post_status === 'auto-draft') ? '' : $post->post_title; ?>
+                    <input type="text" name="kg_app_fullname" value="<?php echo esc_attr($current_title); ?>" style="width:100%; max-width:300px; padding:4px; margin-bottom:5px;" required /><br>
+                    <label style="font-size: 11px; font-weight: 600;">Middle Name:</label><br>
+                    <input type="text" name="kg_app_mname" value="<?php echo esc_attr($mname); ?>" style="width:100%; max-width:300px; padding:4px;" />
+                <?php else: ?>
+                    <span style="font-size:16px; font-weight:600;"><?php echo esc_html($post->post_title); ?></span><br>
+                    <span style="color:#666; font-size:12px;">Middle Name: <?php echo esc_html($mname ?: '—'); ?></span>
+                    <input type="hidden" name="kg_app_fullname" value="<?php echo esc_attr($post->post_title); ?>" />
+                    <input type="hidden" name="kg_app_mname" value="<?php echo esc_attr($mname); ?>" />
                 <?php endif; ?>
             </td>
         </tr>
         <tr>
             <td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Purpose</td>
             <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
-                <span
-                    style="text-transform:capitalize;font-weight:bold;"><?php echo esc_html($purpose ?: 'Job Application'); ?></span>
+                <?php if ($is_editable): ?>
+                    <select name="kg_app_purpose" style="width:100%; max-width:300px; padding:4px;">
+                        <option value="">— Select —</option>
+                        <option value="Job Application" <?php selected($purpose, 'Job Application'); ?>>Job Application</option>
+                        <option value="pooling" <?php selected($purpose, 'pooling'); ?>>Pooling</option>
+                    </select>
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var purposeSelect = document.querySelector('select[name="kg_app_purpose"]');
+                        var statusSelect = document.querySelector('select[name="kg_app_status"]');
+                        if (purposeSelect && statusSelect) {
+                            purposeSelect.addEventListener('change', function() {
+                                if (this.value === 'Job Application') {
+                                    statusSelect.value = 'screening';
+                                } else if (this.value === 'pooling') {
+                                    statusSelect.value = 'pooling';
+                                }
+                            });
+                        }
+                    });
+                    </script>
+                <?php else: ?>
+                    <?php echo esc_html($purpose ?: '—'); ?>
+                    <input type="hidden" name="kg_app_purpose" value="<?php echo esc_attr($purpose); ?>" />
+                <?php endif; ?>
             </td>
         </tr>
         <tr>
             <td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Gender</td>
-            <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;"><?php echo esc_html($gender ?: '—'); ?></td>
+            <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
+                <?php if ($is_editable): ?>
+                    <select name="kg_app_gender" style="width:100%; max-width:300px; padding:4px;">
+                        <option value="">— Select —</option>
+                        <option value="Male" <?php selected(strtolower($gender), 'male'); ?>>Male</option>
+                        <option value="Female" <?php selected(strtolower($gender), 'female'); ?>>Female</option>
+                    </select>
+                <?php else: ?>
+                    <?php echo esc_html($gender ?: '—'); ?>
+                    <input type="hidden" name="kg_app_gender" value="<?php echo esc_attr($gender); ?>" />
+                <?php endif; ?>
+            </td>
         </tr>
         <tr>
             <td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Birthdate</td>
             <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
-                <?php
-                if ($birthday) {
-                    echo esc_html(date_i18n(get_option('date_format'), strtotime($birthday)));
-                    $age = date_diff(date_create($birthday), date_create('now'))->y;
-                    echo ' <span style="color:#777;">(Age: ' . $age . ')</span>';
-                } else {
-                    echo '—';
-                }
-                ?>
+                <?php if ($is_editable): ?>
+                    <input type="date" name="kg_app_birthday" value="<?php echo esc_attr($birthday); ?>" style="width:100%; max-width:300px; padding:4px;" />
+                <?php else: ?>
+                    <?php echo esc_html($birthday ?: '—'); ?>
+                    <input type="hidden" name="kg_app_birthday" value="<?php echo esc_attr($birthday); ?>" />
+                <?php endif; ?>
             </td>
         </tr>
         <tr>
             <td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Address</td>
             <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
-                <?php if ($street || $barangay || $city || $region): ?>
-                    <?php if ($street)
-                        echo esc_html($street) . '<br>'; ?>
-                    <?php if ($barangay)
-                        echo 'Brgy. ' . esc_html($barangay) . '<br>'; ?>
-                    <?php if ($city)
-                        echo esc_html($city) . '<br>'; ?>
-                    <?php if ($region)
-                        echo esc_html($region); ?>
+                <?php if ($is_editable): ?>
+                    <input type="text" name="kg_app_street" value="<?php echo esc_attr($street); ?>" placeholder="Street" style="width:100%; max-width:300px; padding:4px; margin-bottom:4px;" /><br>
+                    <input type="text" name="kg_app_barangay" value="<?php echo esc_attr($barangay); ?>" placeholder="Barangay" style="width:100%; max-width:300px; padding:4px; margin-bottom:4px;" /><br>
+                    <input type="text" name="kg_app_city" value="<?php echo esc_attr($city); ?>" placeholder="City" style="width:100%; max-width:300px; padding:4px; margin-bottom:4px;" /><br>
+                    <input type="text" name="kg_app_region" value="<?php echo esc_attr($region); ?>" placeholder="Region" style="width:100%; max-width:300px; padding:4px;" />
                 <?php else: ?>
-                    —
+                    <?php 
+                    $addr_parts = array_filter(array($street, $barangay, $city, $region));
+                    echo !empty($addr_parts) ? esc_html(implode(', ', $addr_parts)) : '—'; 
+                    ?>
+                    <input type="hidden" name="kg_app_street" value="<?php echo esc_attr($street); ?>" />
+                    <input type="hidden" name="kg_app_barangay" value="<?php echo esc_attr($barangay); ?>" />
+                    <input type="hidden" name="kg_app_city" value="<?php echo esc_attr($city); ?>" />
+                    <input type="hidden" name="kg_app_region" value="<?php echo esc_attr($region); ?>" />
                 <?php endif; ?>
             </td>
         </tr>
         <tr>
             <td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Email</td>
             <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
-                <?php if ($email): ?>
-                    <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a>
-                <?php else: ?>—<?php endif; ?>
+                <?php if ($is_editable): ?>
+                    <input type="email" name="kg_app_email" value="<?php echo esc_attr($email); ?>" style="width:100%; max-width:300px; padding:4px;" />
+                <?php else: ?>
+                    <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email ?: '—'); ?></a>
+                    <input type="hidden" name="kg_app_email" value="<?php echo esc_attr($email); ?>" />
+                <?php endif; ?>
             </td>
         </tr>
         <tr>
             <td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Phone</td>
-            <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;"><?php echo esc_html($phone ?: '—'); ?></td>
+            <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
+                <?php if ($is_editable): ?>
+                    <input type="text" name="kg_app_phone" value="<?php echo esc_attr($phone); ?>" style="width:100%; max-width:300px; padding:4px;" />
+                <?php else: ?>
+                    <?php echo esc_html($phone ?: '—'); ?>
+                    <input type="hidden" name="kg_app_phone" value="<?php echo esc_attr($phone); ?>" />
+                <?php endif; ?>
+            </td>
         </tr>
         <tr>
             <td style="padding:10px 8px;font-weight:600;border-bottom:1px solid #f0f0f0;">Preferred Roles</td>
             <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;">
                 <?php
                 $preferred_roles = get_post_meta($post->ID, 'kg_app_preferred_roles', true);
-
                 if (is_array($preferred_roles)) {
                     $preferred_roles = array_filter(array_map('trim', $preferred_roles));
+                } else {
+                    $preferred_roles = array();
                 }
 
-                if (is_array($preferred_roles) && !empty($preferred_roles)) {
-                    foreach ($preferred_roles as $pref_role) {
-                        echo '<span style="background:#e0f2fe;color:#0369a1;padding:3px 8px;border-radius:4px;font-size:12px;font-weight:600;margin-right:6px;display:inline-block;">' . esc_html($pref_role) . '</span>';
+                if ($is_editable):
+                    $all_jobs_posts_for_roles = get_posts(array(
+                        'post_type' => 'jobs',
+                        'post_status' => 'publish',
+                        'posts_per_page' => -1,
+                        'orderby' => 'title',
+                        'order' => 'ASC',
+                        'tax_query' => array(
+                            array(
+                                'taxonomy' => 'job_type_tax',
+                                'field' => 'slug',
+                                'terms' => 'offshoring',
+                                'operator' => 'NOT IN',
+                            ),
+                        ),
+                    ));
+                    $available_roles = array();
+                    if ($all_jobs_posts_for_roles) {
+                        foreach ($all_jobs_posts_for_roles as $job_post) {
+                            $available_roles[$job_post->post_title] = $job_post->post_title;
+                        }
                     }
-                } else {
-                    echo '<span style="color:#777;font-style:italic;">No preferences selected</span>';
-                }
                 ?>
+                    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+                    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+                    <select name="kg_app_preferred_roles_arr[]" class="kg-select2-roles" multiple="multiple" style="width:100%; max-width:300px;">
+                        <?php foreach ($available_roles as $role_title): ?>
+                            <option value="<?php echo esc_attr($role_title); ?>" <?php echo in_array($role_title, $preferred_roles) ? 'selected' : ''; ?>><?php echo esc_html($role_title); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <script>
+                    jQuery(document).ready(function($) {
+                        $('.kg-select2-roles').select2({
+                            placeholder: 'Select preferred roles...'
+                        });
+                    });
+                    </script>
+                <?php else: ?>
+                    <?php echo !empty($preferred_roles) ? esc_html(implode(', ', $preferred_roles)) : '—'; ?>
+                    <?php foreach ($preferred_roles as $role_val): ?>
+                        <input type="hidden" name="kg_app_preferred_roles_arr[]" value="<?php echo esc_attr($role_val); ?>" />
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </td>
         </tr>
         <tr>
@@ -581,7 +685,12 @@ function kg_application_details_box($post)
                     <a href="<?php echo esc_url($preview_url); ?>" target="_blank" class="button button-primary"
                         style="margin-right:8px;">👁 View CV</a>
                     <a href="<?php echo esc_url($download_url); ?>" target="_blank" class="button">⬇ Download CV</a>
-                <?php else: ?>—<?php endif; ?>
+                    <br><br>
+                <?php endif; ?>
+                <?php if ($is_editable): ?>
+                    <label style="font-size: 11px; font-weight: 600;">Upload New CV (PDF/Word):</label><br>
+                    <input type="file" name="kg_app_cv_file" accept=".pdf,.doc,.docx" style="width:100%; max-width:300px; padding:4px;" />
+                <?php endif; ?>
             </td>
         </tr>
         <tr>
@@ -949,7 +1058,77 @@ function kg_save_application_status($post_id)
     $new_status = in_array($_POST['kg_app_status'], $allowed, true)
         ? $_POST['kg_app_status']
         : 'pooling';
-    $old_status = get_post_meta($post_id, 'kg_app_status', true) ?: 'pooling';
+    $old_status_raw = get_post_meta($post_id, 'kg_app_status', true);
+    $is_new_application = empty($old_status_raw);
+    $old_status = $old_status_raw ?: 'pooling';
+
+    // Save manual entry fields
+    if (isset($_POST['kg_app_mname'])) update_post_meta($post_id, 'kg_app_mname', sanitize_text_field($_POST['kg_app_mname']));
+    if (isset($_POST['kg_app_purpose'])) update_post_meta($post_id, 'kg_app_purpose', sanitize_text_field($_POST['kg_app_purpose']));
+    if (isset($_POST['kg_app_gender'])) update_post_meta($post_id, 'kg_app_gender', sanitize_text_field($_POST['kg_app_gender']));
+    if (isset($_POST['kg_app_birthday'])) update_post_meta($post_id, 'kg_app_birthday', sanitize_text_field($_POST['kg_app_birthday']));
+    if (isset($_POST['kg_app_street'])) update_post_meta($post_id, 'kg_app_street', sanitize_text_field($_POST['kg_app_street']));
+    if (isset($_POST['kg_app_barangay'])) update_post_meta($post_id, 'kg_app_barangay', sanitize_text_field($_POST['kg_app_barangay']));
+    if (isset($_POST['kg_app_city'])) update_post_meta($post_id, 'kg_app_city', sanitize_text_field($_POST['kg_app_city']));
+    if (isset($_POST['kg_app_region'])) update_post_meta($post_id, 'kg_app_region', sanitize_text_field($_POST['kg_app_region']));
+    if (isset($_POST['kg_app_email'])) {
+        update_post_meta($post_id, 'kg_app_email', sanitize_email($_POST['kg_app_email']));
+        update_post_meta($post_id, 'kg_app_email_normalized', preg_replace('/(\+.*)(?=@)/', '', strtolower(sanitize_email($_POST['kg_app_email']))));
+    }
+    if (isset($_POST['kg_app_phone'])) update_post_meta($post_id, 'kg_app_phone', sanitize_text_field($_POST['kg_app_phone']));
+    
+    if (isset($_POST['kg_app_preferred_roles_arr']) && is_array($_POST['kg_app_preferred_roles_arr'])) {
+        $roles_arr = array_filter(array_map('sanitize_text_field', $_POST['kg_app_preferred_roles_arr']));
+        update_post_meta($post_id, 'kg_app_preferred_roles', $roles_arr);
+    } else {
+        update_post_meta($post_id, 'kg_app_preferred_roles', array());
+    }
+
+    if (isset($_POST['kg_app_fullname'])) {
+        $fullname = sanitize_text_field($_POST['kg_app_fullname']);
+        if (!empty($fullname)) {
+            remove_action('save_post_kg_application', 'kg_save_application_status', 10);
+            wp_update_post(array('ID' => $post_id, 'post_title' => $fullname));
+            add_action('save_post_kg_application', 'kg_save_application_status', 10, 3);
+        }
+    }
+
+    if (!empty($_FILES['kg_app_cv_file']['name'])) {
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        $uploadedfile = $_FILES['kg_app_cv_file'];
+        
+        $raw_name = $uploadedfile['name'];
+        $clean_name = preg_replace('/[\s_]+/', '-', $raw_name);
+        $uploadedfile['name'] = sanitize_file_name($clean_name);
+
+        $upload_dir = wp_upload_dir();
+        $secure_dir = $upload_dir['basedir'] . '/secure-cvs';
+        if (!file_exists($secure_dir)) {
+            wp_mkdir_p($secure_dir);
+        }
+        $htaccess_file = $secure_dir . '/.htaccess';
+        if (!file_exists($htaccess_file)) {
+            @file_put_contents($htaccess_file, "Deny from all\n");
+        }
+
+        if (!function_exists('kg_secure_upload_directory_manual')) {
+            function kg_secure_upload_directory_manual($param) {
+                $param['path'] = $param['basedir'] . '/secure-cvs';
+                $param['url'] = $param['baseurl'] . '/secure-cvs';
+                return $param;
+            }
+        }
+        add_filter('upload_dir', 'kg_secure_upload_directory_manual');
+
+        $upload_overrides = array('test_form' => false);
+        $movefile = wp_handle_upload($uploadedfile, $upload_overrides);
+        
+        remove_filter('upload_dir', 'kg_secure_upload_directory_manual');
+
+        if ($movefile && !isset($movefile['error'])) {
+            update_post_meta($post_id, 'kg_app_cv_url', $movefile['url']);
+        }
+    }
 
     // Retrieve input interview fields first to validate them
     $new_int_date = isset($_POST['kg_interview_date']) ? sanitize_text_field($_POST['kg_interview_date']) : '';
@@ -979,9 +1158,9 @@ function kg_save_application_status($post_id)
 
     // 1b. Validate recruiter assignment when moving past pooling
     $new_recruiter_id = isset($_POST['kg_app_recruiter_id']) ? sanitize_text_field($_POST['kg_app_recruiter_id']) : get_post_meta($post_id, 'kg_app_recruiter_id', true);
-    if ($new_status !== 'pooling' && $new_status !== 'rejected' && empty($new_recruiter_id)) {
+    if ($new_status !== 'pooling' && $new_status !== 'screening' && $new_status !== 'rejected' && empty($new_recruiter_id)) {
         $new_status = 'pooling';
-        set_transient('kg_app_error_' . $post_id, 'You must assign a recruiter to move the applicant past the Pooling stage.', 30);
+        set_transient('kg_app_error_' . $post_id, 'You must assign a recruiter to move the applicant past the Screening stage.', 30);
     }
 
     // 2. Interviewing validation (requires schedule details)
@@ -1146,10 +1325,105 @@ function kg_save_application_status($post_id)
     }
 
     /* — Email applicant when status changes — */
-    if ($new_status !== $old_status) {
+    if ($new_status !== $old_status && !$is_new_application) {
         kg_notify_applicant_status($post_id, $new_status);
         kg_notify_recruiter_status_change($post_id, $old_status, $new_status);
     }
+
+    $is_manual_new = get_post_meta($post_id, '_kg_manual_new_email_sent', true) ? false : true;
+    if ($is_manual_new && get_post_status($post_id) === 'publish') {
+        update_post_meta($post_id, '_kg_manual_new_email_sent', 'yes');
+        if (function_exists('kg_send_manual_new_application_emails')) {
+            kg_send_manual_new_application_emails($post_id);
+        }
+    }
+}
+
+function kg_send_manual_new_application_emails($post_id) {
+    require_once get_template_directory() . '/inc/email-templates.php';
+    if (!function_exists('kg_send_mail')) {
+        require_once get_template_directory() . '/inc/form-handlers.php';
+    }
+
+    $fullname = get_the_title($post_id);
+    $email = get_post_meta($post_id, 'kg_app_email', true);
+    $phone = get_post_meta($post_id, 'kg_app_phone', true);
+    $preferred_roles = get_post_meta($post_id, 'kg_app_preferred_roles', true);
+    $role = get_post_meta($post_id, 'kg_app_role', true);
+    
+    $download_url = add_query_arg('kg_download_cv', $post_id, home_url('/'));
+    
+    $to_email = defined('KG_CAREER_EMAIL') ? KG_CAREER_EMAIL : (defined('KG_ADMIN_EMAIL') ? KG_ADMIN_EMAIL : 'hr@kingsgroup.com.ph');
+    
+    $recruiter_email = '';
+    $rec_id = get_post_meta($post_id, 'kg_app_recruiter_id', true);
+    if ($rec_id) {
+        $rec_user = get_userdata($rec_id);
+        if ($rec_user) {
+            $recruiter_email = $rec_user->user_email;
+        }
+    }
+
+    $mail_recipient = array($to_email);
+    if (!empty($recruiter_email) && $recruiter_email !== $to_email) {
+        $mail_recipient[] = $recruiter_email;
+    }
+    if (function_exists('kg_get_hr_emails')) {
+        $mail_recipient = array_merge($mail_recipient, kg_get_hr_emails());
+        $mail_recipient = array_unique($mail_recipient);
+    }
+    
+    $edit_url = get_edit_post_link($post_id);
+    
+    $submission_details = '<div style="border:1px solid #e8ecf0;border-radius:8px;padding:20px;margin-bottom:24px;background:#ffffff;">'
+        . kg_email_row('Full Name', $fullname)
+        . kg_email_row('Email', '<a href="mailto:' . esc_attr($email) . '" style="color:#0A2540;">' . esc_html($email) . '</a>')
+        . kg_email_row('Phone', $phone ?: '—')
+        . kg_email_row('Preferred Roles', !empty($preferred_roles) ? implode(', ', $preferred_roles) : ($role ?: 'Not specified'))
+        . kg_email_row('CV File', '<a href="' . esc_url($download_url) . '" style="color:#00D09C;font-weight:600;">Download CV (Secure)</a>')
+        . '</div>';
+
+    $parsed_admin = kg_get_parsed_email('admin_submission', array(
+        '{applicant_name}' => $fullname,
+        '{submission_details}' => $submission_details,
+        '{edit_url}' => $edit_url,
+    ));
+
+    $admin_subject = $parsed_admin ? $parsed_admin['subject'] : 'New Application: ' . $fullname . ($role ? ' — ' . $role : '');
+    $admin_body = kg_email_heading($parsed_admin ? $parsed_admin['heading'] : 'Applicant Application Notification') . ($parsed_admin ? $parsed_admin['body'] : '');
+    if ($parsed_admin && !empty($parsed_admin['banner'])) {
+        $admin_body .= kg_email_banner($parsed_admin['banner']);
+    }
+    if ($parsed_admin && !empty($parsed_admin['btn_text']) && !empty($parsed_admin['btn_link'])) {
+        $admin_body .= kg_email_button($parsed_admin['btn_text'], $parsed_admin['btn_link']);
+    }
+
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    if (!empty($email)) {
+        $headers[] = 'Reply-To: ' . $fullname . ' <' . $email . '>';
+    }
+
+    $attachments = array();
+    $cv_url = get_post_meta($post_id, 'kg_app_cv_url', true);
+    if ($cv_url) {
+        $upload_dir = wp_upload_dir();
+        $cv_path = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $cv_url);
+        if (file_exists($cv_path)) {
+            $attachments[] = $cv_path;
+        }
+    }
+
+    kg_send_mail(
+        $mail_recipient,
+        $admin_subject,
+        kg_email_wrap('New CV Application', $admin_body),
+        $headers,
+        $attachments
+    );
+
+    // Initial status email to applicant
+    $initial_status = get_post_meta($post_id, 'kg_app_status', true) ?: 'pooling';
+    kg_notify_applicant_status($post_id, $initial_status);
 }
 add_action('save_post_kg_application', 'kg_save_application_status');
 
@@ -1611,9 +1885,7 @@ function kg_application_admin_scripts()
         return;
     ?>
     <style>
-        .page-title-action {
-            display: none !important;
-        }
+
 
         .kg-inline-status {
             appearance: none;
