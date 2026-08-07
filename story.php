@@ -189,7 +189,7 @@ $mission_text_2 = kg_get_field('story_mission_text_2', '');
                     <?php echo esc_html(kg_get_field('story_mission_heading', 'Mission')); ?>
                 </h2>
                 <div class="vm-editorial-content">
-                    <p class="vm-main-paragraph"><?php echo nl2br(esc_html($mission_text_1)); ?></p>
+                    <p class="vm-main-paragraph"><?php echo esc_html(str_replace(array("\r\n", "\r", "\n"), ' ', $mission_text_1)); ?></p>
                 </div>
             </div>
 
@@ -201,7 +201,7 @@ $mission_text_2 = kg_get_field('story_mission_text_2', '');
                 <h2 class="vm-editorial-heading"><?php echo esc_html(kg_get_field('story_vision_heading', 'Vision')); ?>
                 </h2>
                 <div class="vm-editorial-content">
-                    <p class="vm-main-paragraph"><?php echo nl2br(esc_html($vision_text)); ?></p>
+                    <p class="vm-main-paragraph"><?php echo esc_html(str_replace(array("\r\n", "\r", "\n"), ' ', $vision_text)); ?></p>
                 </div>
             </div>
         </div>

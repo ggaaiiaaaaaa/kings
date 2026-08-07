@@ -8829,6 +8829,7 @@ input:checked+.slider:before {
     font-size: 1.08rem;
     line-height: 1.85;
     color: var(--text-body);
+    text-align: justify;
 }
 
 /* Responsive design */
@@ -10077,6 +10078,15 @@ input:checked+.slider:before {
     .snake-timeline-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 3.5rem 2rem;
+    }
+
+    .snake-node-card {
+        grid-row: auto !important;
+        grid-column: auto !important;
+    }
+
+    .snake-node-card::after {
+        display: none !important;
     }
 
     .snake-node-header::before,
