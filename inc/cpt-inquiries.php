@@ -61,6 +61,7 @@ function kg_inquiry_columns( $columns ) {
         'title'        => 'Name',
         'kg_inq_subject'=> 'Subject',
         'kg_inq_email' => 'Email',
+        'kg_inq_phone' => 'Phone',
         'kg_inq_msg'   => 'Message',
         'kg_inq_status'=> 'Status',
         'date'         => 'Received',
@@ -95,6 +96,10 @@ function kg_inquiry_column_content( $column, $post_id ) {
         case 'kg_inq_email':
             $e = get_post_meta( $post_id, 'kg_inq_email', true );
             echo $e ? '<a href="mailto:' . esc_attr($e) . '">' . esc_html($e) . '</a>' : '—';
+            break;
+        case 'kg_inq_phone':
+            $p = get_post_meta( $post_id, 'kg_inq_phone', true );
+            echo $p ? esc_html($p) : '—';
             break;
         case 'kg_inq_msg':
             $msg = get_post_meta( $post_id, 'kg_inq_message', true );
@@ -384,6 +389,7 @@ function kg_quote_lead_columns( $columns ) {
         'cb'              => '<input type="checkbox">',
         'title'           => 'Client',
         'kg_quote_email'  => 'Email',
+        'kg_quote_phone'  => 'Phone',
         'kg_quote_roles'  => 'Roles',
         'kg_quote_total'  => 'Est. Monthly',
         'kg_quote_status' => 'Status',
@@ -397,6 +403,10 @@ function kg_quote_lead_column_content( $column, $post_id ) {
         case 'kg_quote_email':
             $e = get_post_meta( $post_id, 'kg_quote_email', true );
             echo $e ? '<a href="mailto:' . esc_attr($e) . '">' . esc_html($e) . '</a>' : '—';
+            break;
+        case 'kg_quote_phone':
+            $p = get_post_meta( $post_id, 'kg_quote_phone', true );
+            echo $p ? esc_html($p) : '—';
             break;
         case 'kg_quote_roles':
             $roles = json_decode( get_post_meta($post_id,'kg_quote_roles',true), true );

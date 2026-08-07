@@ -2107,26 +2107,6 @@ function kg_is_current_user_recruitment_admin()
 
 
 /**
- * Programmatically create a sample recruiter account on init if it doesn't exist.
- */
-if (function_exists('add_action')) {
-    add_action('init', 'kg_create_sample_recruiter_account');
-}
-
-function kg_create_sample_recruiter_account()
-{
-    if (function_exists('username_exists') && function_exists('wp_create_user')) {
-        if (!username_exists('samplerecruiter') && !email_exists('recruiter@kingsgroup.com')) {
-            $user_id = wp_create_user('samplerecruiter', 'recruiter123', 'recruiter@kingsgroup.com');
-            if (!is_wp_error($user_id)) {
-                $user = new WP_User($user_id);
-                $user->set_role('recruiter');
-            }
-        }
-    }
-}
-
-/**
  * Define the dynamic locations/branches based on the job_location_tax taxonomy
  */
 function kg_get_locations()

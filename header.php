@@ -33,6 +33,13 @@
                 </div>
             </div>
         </div>
+        <noscript>
+            <style>
+                #kg-consent-banner { display: block !important; transform: translateY(0) !important; }
+                #kg-consent-actions { display: none !important; }
+                #kg-consent-text::after { content: " (Please enable JavaScript to dismiss this banner)"; color: #ffdc85; font-size: 0.8rem; }
+            </style>
+        </noscript>
         <style>
             #kg-consent-banner {
                 position: fixed;
@@ -375,7 +382,7 @@
 
             <div class="nav-section applicant">
                 <?php $geo_region = kg_get_user_geo(); ?>
-                <div class="nav-region-indicator" style="display: flex; align-items: center; gap: 0.4rem; color: #fff; margin-right: 0.5rem; font-size: 0.85rem; font-weight: 600;">
+                <div class="nav-region-indicator" style="display: flex; align-items: center; gap: 0.4rem; margin-right: 0.5rem; font-size: 0.85rem; font-weight: 600;">
                     <?php if ($geo_region === 'PH'): ?>
                         <img src="https://flagcdn.com/w20/ph.png" alt="PH Flag" width="20" height="15" style="border-radius: 2px; box-shadow: 0 0 2px rgba(0,0,0,0.3);">
                         <span style="letter-spacing: 0.5px;">PH</span>

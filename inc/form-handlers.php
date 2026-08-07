@@ -30,7 +30,7 @@ function kg_check_honeypot()
 function kg_verify_turnstile()
 {
     if (!defined('CF_TURNSTILE_SECRET_KEY') || empty(CF_TURNSTILE_SECRET_KEY)) {
-        return;
+        wp_send_json_error(array('message' => 'Security configuration error. CAPTCHA is missing.'), 500);
     }
 
     $token = $_POST['cf-turnstile-response'] ?? '';
@@ -149,6 +149,10 @@ function kg_handle_contact()
     $phone = sanitize_text_field($_POST['contact_phone'] ?? '');
     $subject = sanitize_text_field($_POST['contact_subject'] ?? 'General Inquiry');
     $message = sanitize_textarea_field($_POST['contact_message'] ?? '');
+
+    if (strlen($name) > 100 || strlen($subject) > 150 || strlen($message) > 5000) {
+        wp_send_json_error(array('message' => 'Input exceeds maximum allowed length.'), 422);
+    }
 
     if (!$name || !is_email($email) || !$message) {
         wp_send_json_error(array('message' => 'Please fill in all required fields.'), 422);
@@ -276,6 +280,10 @@ function kg_handle_application()
     $phone = sanitize_text_field($_POST['app_phone'] ?? '');
     $fullname = trim($fname . ' ' . $lname);
 
+    if (strlen($fname) > 100 || strlen($lname) > 100) {
+        wp_send_json_error(array('message' => 'Name exceeds maximum allowed length.'), 422);
+    }
+
     if (!$fname || !$lname || (empty($email) && empty($phone)) || (!empty($email) && !is_email($email))) {
         wp_send_json_error(array('message' => 'Please fill in your name and email or phone number.'), 422);
     }
@@ -309,6 +317,8 @@ function kg_handle_application()
     $meta_query = array('relation' => 'OR');
     if (!empty($email)) {
         $meta_query[] = array('key' => 'kg_app_email', 'value' => $email);
+        $normalized_email = preg_replace('/(\+.*)(?=@)/', '', strtolower($email));
+        $meta_query[] = array('key' => 'kg_app_email_normalized', 'value' => $normalized_email);
     }
     if (!empty($phone)) {
         $meta_query[] = array('key' => 'kg_app_phone', 'value' => $phone);
@@ -390,6 +400,16 @@ function kg_handle_application()
         $file_info = wp_check_filetype($_FILES['app_cv']['name']);
         $file_type = $file_info['type'];
     }
+    
+    if (function_exists('finfo_open')) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $real_mime = finfo_file($finfo, $_FILES['app_cv']['tmp_name']);
+        finfo_close($finfo);
+        if ($real_mime && $real_mime !== $file_type && !in_array($real_mime, $allowed_types, true)) {
+            wp_send_json_error(array('message' => 'File signature validation failed. Please upload a genuine PDF or DOCX.'), 422);
+        }
+    }
+
     $file_size = $_FILES['app_cv']['size'];
 
     if (!in_array($file_type, $allowed_types, true)) {
@@ -577,6 +597,10 @@ function kg_handle_quote()
         'PHP' => '₱'
     );
     $sym = $currency_symbols[$currency] ?? '$';
+
+    if (strlen($name) > 100) {
+        wp_send_json_error(array('message' => 'Name exceeds maximum allowed length.'), 422);
+    }
 
     if (!$name || !is_email($email)) {
         wp_send_json_error(array('message' => 'Please enter your name and work email.'), 422);

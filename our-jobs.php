@@ -310,7 +310,7 @@ $hero_bg = kg_get_field('jobs_hero_bg', 'https://images.unsplash.com/photo-15217
 $jobs_query = new WP_Query(array(
     'post_type' => 'jobs',
     'post_status' => 'publish',
-    'posts_per_page' => -1,
+    'posts_per_page' => 200,
     'tax_query' => array(
         array(
             'taxonomy' => 'job_type_tax',

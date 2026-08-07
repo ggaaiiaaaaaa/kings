@@ -59,6 +59,8 @@ function kg_save_application_post($data)
         return false;
 
     update_post_meta($post_id, 'kg_app_email', sanitize_email($data['email']));
+    $normalized_email = preg_replace('/(\+.*)(?=@)/', '', strtolower(sanitize_email($data['email'])));
+    update_post_meta($post_id, 'kg_app_email_normalized', $normalized_email);
     update_post_meta($post_id, 'kg_app_phone', sanitize_text_field($data['phone']));
     update_post_meta($post_id, 'kg_app_role', sanitize_text_field($data['role']));
     if (!empty($data['job_id'])) {
@@ -74,6 +76,9 @@ function kg_save_application_post($data)
     // Pooling applicants start in the talent pool; active job-seekers go to screening
     $initial_status = (isset($data['purpose']) && $data['purpose'] === 'pooling') ? 'pooling' : 'screening';
     update_post_meta($post_id, 'kg_app_status', $initial_status);
+    if ($initial_status === 'screening') {
+        update_post_meta($post_id, 'kg_app_screening_start_date', current_time('timestamp'));
+    }
     update_post_meta($post_id, 'kg_app_client', '');
 
     // Save dynamic demographic and cascading address metadata
@@ -160,8 +165,11 @@ function kg_application_append_sla_badge_to_title($title, $id)
         if ($status === 'screening') {
             $post = get_post($id);
             if ($post) {
-                $last_modified = strtotime($post->post_modified);
-                $days_stuck = floor((current_time('timestamp') - $last_modified) / (60 * 60 * 24));
+                $start_date = get_post_meta($id, 'kg_app_screening_start_date', true);
+                if (!$start_date) {
+                    $start_date = strtotime($post->post_modified);
+                }
+                $days_stuck = floor((current_time('timestamp') - $start_date) / (60 * 60 * 24));
 
                 if ($days_stuck >= 10) {
                     $title .= ' <span style="background:#fecaca;color:#dc2626;border:1px solid #fca5a5;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:bold;margin-left:8px;vertical-align:middle;display:inline-block;" title="Stuck in Screening for ' . $days_stuck . ' days">🚨 SLA BREACH (' . $days_stuck . 'd)</span>';
@@ -1002,6 +1010,9 @@ function kg_save_application_status($post_id)
     }
 
     update_post_meta($post_id, 'kg_app_status', $new_status);
+    if ($new_status === 'screening' && $old_status !== 'screening') {
+        update_post_meta($post_id, 'kg_app_screening_start_date', current_time('timestamp'));
+    }
 
     // Automatically unlock when moved to Pooling, lock otherwise if job is assigned
     // ONLY if the application originated from a direct job apply
@@ -1535,6 +1546,9 @@ function kg_ajax_inline_status()
     }
 
     update_post_meta($post_id, 'kg_app_status', $new_status);
+    if ($new_status === 'screening' && $old_status !== 'screening') {
+        update_post_meta($post_id, 'kg_app_screening_start_date', current_time('timestamp'));
+    }
 
     if ($new_status !== $old_status) {
         kg_notify_applicant_status($post_id, $new_status);

@@ -30,7 +30,7 @@ function kg_handle_kpi_csv_export() {
     $output = fopen('php://output', 'w');
     
     // Column headings
-    fputcsv($output, array('Recruiter Name', 'Location', 'Applications Received', 'Hired / Deployed', 'Conversion Rate (%)', 'Avg. Time-to-Deploy (Days)'));
+    fputcsv($output, array('Recruiter Name', 'Location', 'Applications Received', 'Deployed', 'Conversion Rate (%)', 'Avg. Time-to-Deploy (Days)'));
 
     $recruiters = get_users(array('role__in' => array('recruiter')));
 
@@ -70,7 +70,7 @@ function kg_handle_kpi_csv_export() {
         $apps_query = new WP_Query($apps_args);
         $total_apps = $apps_query->found_posts;
 
-        // 2. Hired / Deployed
+        // 2. Deployed
         $hired_args = [
             'post_type' => 'kg_application',
             'post_status' => 'publish',
@@ -81,7 +81,7 @@ function kg_handle_kpi_csv_export() {
             ]],
             'meta_query' => [
                 'relation' => 'AND',
-                ['key' => 'kg_app_status', 'value' => ['hired', 'deployed'], 'compare' => 'IN']
+                ['key' => 'kg_app_status', 'value' => 'deployed']
             ]
         ];
         $hired_meta_sub = [
@@ -422,7 +422,7 @@ function kg_render_kpi_dashboard_page()
     $apps_query = new WP_Query($apps_args);
     $total_apps_in_month = $apps_query->found_posts;
 
-    // Hired/Deployed Applications in Selected Month
+    // Deployed Applications in Selected Month
     $hired_args = [
         'post_type' => 'kg_application',
         'post_status' => 'publish',
@@ -437,8 +437,7 @@ function kg_render_kpi_dashboard_page()
             'relation' => 'AND',
             [
                 'key' => 'kg_app_status',
-                'value' => ['hired', 'deployed'],
-                'compare' => 'IN'
+                'value' => 'deployed'
             ]
         ]
     ];
@@ -587,6 +586,7 @@ function kg_render_kpi_dashboard_page()
     // Current general workforce status
     $pooling_count = 0;
     $deployed_count = 0;
+    $processing_count = 0;
     $status_args = [
         'post_type' => 'kg_application',
         'post_status' => 'publish',
@@ -629,11 +629,13 @@ function kg_render_kpi_dashboard_page()
                 $pooling_count++;
             } elseif ($status === 'deployed') {
                 $deployed_count++;
+            } elseif ($status === 'processing') {
+                $processing_count++;
             }
         }
         wp_reset_postdata();
     }
-    $utilization_rate = ($deployed_count + $pooling_count) > 0 ? round(($deployed_count / ($deployed_count + $pooling_count)) * 100, 1) : 0;
+    $utilization_rate = ($deployed_count + $pooling_count + $processing_count) > 0 ? round(($deployed_count / ($deployed_count + $pooling_count + $processing_count)) * 100, 1) : 0;
 
     /* ── 3. QUOTE LEADS & REVENUE ── */
     if ($is_filtered) {
@@ -977,7 +979,7 @@ function kg_render_kpi_dashboard_page()
 
                     <div>
                         <div class="kg-kpi-metric-item">
-                            <span class="kg-kpi-label">Hired / Deployed</span>
+                            <span class="kg-kpi-label">Deployed</span>
                             <span class="kg-kpi-value"><?php echo $hired_apps_in_month; ?></span>
                         </div>
                     </div>
@@ -1055,6 +1057,7 @@ function kg_render_kpi_dashboard_page()
                             style="font-size: 11px; color: #94a3b8; margin-top: 4px; display: flex; justify-content: space-between;">
                             <span>Deployed: <?php echo $deployed_count; ?></span>
                             <span>Pooling: <?php echo $pooling_count; ?></span>
+                            <span>Processing: <?php echo $processing_count; ?></span>
                         </div>
                     </div>
                 </div>
@@ -1116,7 +1119,7 @@ function kg_render_kpi_dashboard_page()
             new Chart(funnelCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Applications', 'Hired / Deployed'],
+                    labels: ['Applications', 'Deployed'],
                     datasets: [{
                         label: 'Candidates',
                         data: [<?php echo $total_apps_in_month; ?>, <?php echo $hired_apps_in_month; ?>],
@@ -1172,12 +1175,25 @@ function kg_render_kpi_dashboard_page()
             
             let depCount = <?php echo (int)$deployed_count; ?>;
             let poolCount = <?php echo (int)$pooling_count; ?>;
+            let procCount = <?php echo (int)$processing_count; ?>;
             
-            let wfLabels = ['Deployed', 'Pooling'];
-            let wfData = [depCount, poolCount];
-            let wfBg = ['#00d09c', '#ffd166'];
+            let allLabels = ['Deployed', 'Pooling', 'Processing'];
+            let allData = [depCount, poolCount, procCount];
+            let allBg = ['#00d09c', '#ffd166', '#38bdf8'];
             
-            if (depCount === 0 && poolCount === 0) {
+            let wfLabels = [];
+            let wfData = [];
+            let wfBg = [];
+            
+            for (let i = 0; i < allData.length; i++) {
+                if (allData[i] > 0) {
+                    wfLabels.push(allLabels[i]);
+                    wfData.push(allData[i]);
+                    wfBg.push(allBg[i]);
+                }
+            }
+            
+            if (wfData.length === 0) {
                 wfLabels = ['No Data Yet'];
                 wfData = [1]; // Dummy value to render a full circle
                 wfBg = ['#e2e8f0']; // Grey color for empty state
@@ -1213,7 +1229,7 @@ function kg_render_kpi_dashboard_page()
                             callbacks: {
                                 label: function(context) {
                                     let value = context.raw;
-                                    let total = <?php echo ($deployed_count + $pooling_count); ?>;
+                                    let total = <?php echo ($deployed_count + $pooling_count + $processing_count); ?>;
                                     let percentage = total > 0 ? Math.round((value / total) * 100) : 0;
                                     return ' ' + context.label + ': ' + value + ' (' + percentage + '%)';
                                 }

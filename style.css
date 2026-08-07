@@ -293,6 +293,15 @@ header.scrolled .nav-link {
     color: var(--text-muted);
 }
 
+.nav-region-indicator {
+    color: #fff;
+    transition: color 0.3s ease;
+}
+
+header.scrolled .nav-region-indicator {
+    color: var(--text-muted);
+}
+
 .nav-link::after {
     content: '';
     position: absolute;

@@ -447,7 +447,8 @@ if ( ! kg_is_current_user_recruiter() ) :
                 <th>Date & Time</th>
                 <th>Activity Details</th>
                 <th>Applicant</th>
-                <th>Done By</th>
+                <th>Assigned To</th>
+                <th>Action By</th>
             </tr>
         </thead>
         <tbody>
@@ -455,9 +456,15 @@ if ( ! kg_is_current_user_recruiter() ) :
                 $app_title = get_the_title($log->post_id) ?: 'Unknown Applicant';
                 
                 $activity = esc_html($log->action);
-                // For backwards compatibility with older logs that didn't embed the name in the action string
-                if ($log->action === 'Assigned to Recruiter' && !empty($log->assignee)) {
-                    $activity = 'Assigned to ' . esc_html($log->assignee);
+                $assigned_to = '—';
+                
+                // For backward compatibility and neat formatting
+                if (strpos($activity, 'Assigned to ') === 0) {
+                    $assigned_to_name = str_replace('Assigned to ', '', $activity);
+                    $assigned_to = ($assigned_to_name === 'Recruiter' && !empty($log->assignee)) ? esc_html($log->assignee) : esc_html($assigned_to_name);
+                    $activity = 'Applicant Assigned';
+                } elseif (!empty($log->assignee)) {
+                    $assigned_to = esc_html($log->assignee);
                 }
             ?>
             <tr>
@@ -468,10 +475,11 @@ if ( ! kg_is_current_user_recruiter() ) :
                         <?php echo esc_html($app_title); ?>
                     </a>
                 </td>
+                <td><?php echo $assigned_to; ?></td>
                 <td><strong><?php echo esc_html($log->actor); ?></strong></td>
             </tr>
             <?php endforeach; else: ?>
-            <tr><td colspan="4" style="text-align:center; padding:24px; color:#64748b;">No routing activity found for this period.</td></tr>
+            <tr><td colspan="5" style="text-align:center; padding:24px; color:#64748b;">No routing activity found for this period.</td></tr>
             <?php endif; ?>
         </tbody>
     </table>
