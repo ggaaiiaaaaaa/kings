@@ -1224,6 +1224,12 @@ function kg_save_application_status($post_id)
         } elseif (isset($_POST['kg_app_role_legacy']) && !empty($_POST['kg_app_role_legacy'])) {
             // Keep legacy role if job_id is empty but they had a legacy role
             update_post_meta($post_id, 'kg_app_role', sanitize_text_field($_POST['kg_app_role_legacy']));
+        } elseif (isset($_POST['kg_app_preferred_roles_arr']) && is_array($_POST['kg_app_preferred_roles_arr'])) {
+            // Fallback: Use the first preferred role as the primary role for manual entries
+            $roles_arr = array_filter(array_map('sanitize_text_field', $_POST['kg_app_preferred_roles_arr']));
+            if (!empty($roles_arr)) {
+                update_post_meta($post_id, 'kg_app_role', reset($roles_arr));
+            }
         }
     }
 

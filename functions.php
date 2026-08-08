@@ -2483,9 +2483,15 @@ function kg_render_job_analytics_metabox($post)
         'post_status' => 'publish',
         'posts_per_page' => -1,
         'meta_query' => array(
+            'relation' => 'OR',
             array(
                 'key' => 'kg_app_role',
                 'value' => $post->post_title,
+            ),
+            array(
+                'key' => 'kg_app_preferred_roles',
+                'value' => '"' . $post->post_title . '"',
+                'compare' => 'LIKE'
             )
         )
     ));
@@ -2503,9 +2509,15 @@ function kg_render_job_analytics_metabox($post)
             )
         ),
         'meta_query' => array(
+            'relation' => 'OR',
             array(
                 'key' => 'kg_app_role',
                 'value' => $post->post_title,
+            ),
+            array(
+                'key' => 'kg_app_preferred_roles',
+                'value' => '"' . $post->post_title . '"',
+                'compare' => 'LIKE'
             )
         )
     ));
