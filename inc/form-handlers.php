@@ -514,7 +514,7 @@ function kg_handle_application()
         $mail_recipient = array_merge($mail_recipient, kg_get_hr_emails());
         $mail_recipient = array_unique($mail_recipient);
     }
-    $edit_url = $app_post_id ? get_edit_post_link($app_post_id) : '';
+    $edit_url = $app_post_id ? admin_url('post.php?post=' . $app_post_id . '&action=edit') : '';
 
     $submission_details = '<div style="border:1px solid #e8ecf0;border-radius:8px;padding:20px;margin-bottom:24px;background:#ffffff;">'
         . kg_email_row('Full Name', $fullname)
