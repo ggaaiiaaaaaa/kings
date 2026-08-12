@@ -17,6 +17,7 @@ function kg_register_ats_dashboard_widget()
     // Remove unnecessary default widgets
     remove_meta_box('dashboard_site_health', 'dashboard', 'normal');
     remove_meta_box('dashboard_right_now', 'dashboard', 'normal'); // At a Glance
+    remove_meta_box('dashboard_activity', 'dashboard', 'normal'); // Activity
     remove_meta_box('dashboard_quick_press', 'dashboard', 'side'); // Quick Draft
     remove_meta_box('dashboard_primary', 'dashboard', 'side'); // WordPress News
     $is_recruiter = function_exists( 'kg_is_current_user_recruiter' ) && kg_is_current_user_recruiter();
@@ -30,6 +31,13 @@ function kg_register_ats_dashboard_widget()
             'kg_ats_recruiter_directory_render'
         );
     }
+    
+    // SLA Tracker should be visible to everyone (Recruiters, HR, Admins)
+    wp_add_dashboard_widget(
+        'kg_ats_sla_status',
+        'ATS SLA Tracker (Action Required)',
+        'kg_ats_sla_status_render'
+    );
 
     wp_add_dashboard_widget(
         'kg_ats_overview',
@@ -48,9 +56,72 @@ function kg_register_ats_dashboard_widget()
     );
 }
 
+function kg_ats_sla_status_render() {
+    $args = array(
+        'post_type'      => 'kg_application',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'meta_query'     => array(
+            array(
+                'key'   => 'kg_app_status',
+                'value' => 'screening',
+            ),
+        ),
+    );
+    $query = new WP_Query( $args );
+
+    $healthy = 0;
+    $warnings = 0;
+    $breaches = 0;
+    $now = current_time( 'timestamp' );
+
+    if ( $query->have_posts() ) {
+        foreach ( $query->posts as $post ) {
+            $start_date = get_post_meta( $post->ID, 'kg_app_screening_start_date', true );
+            if ( ! $start_date ) {
+                $start_date = strtotime( $post->post_modified );
+            }
+            $days_stuck = floor( ( $now - $start_date ) / ( 60 * 60 * 24 ) );
+
+            if ( $days_stuck >= 10 ) {
+                $breaches++;
+            } elseif ( $days_stuck >= 5 ) {
+                $warnings++;
+            } else {
+                $healthy++;
+            }
+        }
+    }
+
+    echo '<div style="display:flex;gap:15px;margin-top:10px;">';
+    echo '<div style="flex:1;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:15px;text-align:center;">';
+    echo '<h3 style="margin:0;font-size:24px;color:#dc2626;">' . intval($breaches) . '</h3>';
+    echo '<p style="margin:5px 0 0;color:#991b1b;font-weight:600;font-size:12px;">SLA BREACHES<br>(10+ Days)</p>';
+    echo '</div>';
+
+    echo '<div style="flex:1;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:15px;text-align:center;">';
+    echo '<h3 style="margin:0;font-size:24px;color:#ea580c;">' . intval($warnings) . '</h3>';
+    echo '<p style="margin:5px 0 0;color:#9a3412;font-weight:600;font-size:12px;">SLA WARNINGS<br>(5-9 Days)</p>';
+    echo '</div>';
+
+    echo '<div style="flex:1;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:15px;text-align:center;">';
+    echo '<h3 style="margin:0;font-size:24px;color:#16a34a;">' . intval($healthy) . '</h3>';
+    echo '<p style="margin:5px 0 0;color:#166534;font-weight:600;font-size:12px;">ON TRACK<br>(&lt; 5 Days)</p>';
+    echo '</div>';
+    echo '</div>';
+
+    if ($breaches > 0 || $warnings > 0) {
+        $url = admin_url('edit.php?post_type=kg_application');
+        echo '<div style="margin-top:15px;text-align:center;">';
+        echo '<a href="' . esc_url($url) . '" class="button button-primary">View Applications</a>';
+        echo '</div>';
+    } else {
+        echo '<p style="text-align:center;margin-top:15px;color:#64748b;font-style:italic;">All applications are currently meeting SLA targets. Great job!</p>';
+    }
+}
+
 function kg_ats_dashboard_widget_render()
 {
-
     /* ── 1. Headcount Metrics ─────────────────────────── */
     $is_recruiter = kg_is_current_user_recruiter();
     
@@ -133,13 +204,6 @@ function kg_ats_dashboard_widget_render()
                     array('key' => 'kg_app_status', 'value' => $stage)
                 ),
             );
-            if ($is_recruiter || ! empty($active_locations)) {
-                $q_args['meta_query'][] = array(
-                    'key' => 'kg_app_role',
-                    'value' => $location_job_titles,
-                    'compare' => 'IN'
-                );
-            }
             $q = new WP_Query($q_args);
             $pipeline_counts[$stage] = $q->found_posts;
         }

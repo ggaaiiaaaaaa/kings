@@ -171,33 +171,8 @@ function kg_application_columns($columns)
 }
 add_filter('manage_kg_application_posts_columns', 'kg_application_columns');
 
-// Append SLA Badges to Title in the admin list
-function kg_application_append_sla_badge_to_title($title, $id)
-{
-    if (is_admin() && get_post_type($id) === 'kg_application') {
-        // SLA Warning/Breach Check (Only if status is screening)
-        $status = get_post_meta($id, 'kg_app_status', true) ?: 'pooling';
-        if ($status === 'screening') {
-            $post = get_post($id);
-            if ($post) {
-                $start_date = get_post_meta($id, 'kg_app_screening_start_date', true);
-                if (!$start_date) {
-                    $start_date = strtotime($post->post_modified);
-                }
-                $days_stuck = floor((current_time('timestamp') - $start_date) / (60 * 60 * 24));
-
-                if ($days_stuck >= 10) {
-                    $title .= ' <span style="background:#fecaca;color:#dc2626;border:1px solid #fca5a5;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:bold;margin-left:8px;vertical-align:middle;display:inline-block;" title="Stuck in Screening for ' . $days_stuck . ' days">🚨 SLA BREACH (' . $days_stuck . 'd)</span>';
-                } elseif ($days_stuck >= 5) {
-                    $title .= ' <span style="background:#ffedd5;color:#ea580c;border:1px solid #fed7aa;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:bold;margin-left:8px;vertical-align:middle;display:inline-block;" title="Stuck in Screening for ' . $days_stuck . ' days">⚠️ SLA WARNING (' . $days_stuck . 'd)</span>';
-                }
-            }
-        }
-    }
-    return $title;
-}
-add_filter('the_title', 'kg_application_append_sla_badge_to_title', 10, 2);
-
+// Removed SLA Badge from Title because WP escapes HTML in title attributes.
+// The SLA badge logic is now moved to the kg_status column.
 function kg_application_column_content($column, $post_id)
 {
     switch ($column) {
@@ -252,6 +227,21 @@ function kg_application_column_content($column, $post_id)
                 echo '<option value="' . esc_attr($val) . '"' . selected($status, $val, false) . '>' . esc_html($lbl) . '</option>';
             }
             echo '</select>';
+
+            // SLA Warning/Breach Check (Only if status is screening)
+            if ($status === 'screening') {
+                $start_date = get_post_meta($post_id, 'kg_app_screening_start_date', true);
+                if (!$start_date) {
+                    $start_date = strtotime(get_post($post_id)->post_modified);
+                }
+                $days_stuck = floor((current_time('timestamp') - $start_date) / (60 * 60 * 24));
+
+                if ($days_stuck >= 10) {
+                    echo '<div style="margin-top:8px;"><span style="background:#fecaca;color:#dc2626;border:1px solid #fca5a5;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:bold;display:inline-block;" title="Stuck in Screening for ' . $days_stuck . ' days">🚨 SLA BREACH (' . $days_stuck . 'd)</span></div>';
+                } elseif ($days_stuck >= 5) {
+                    echo '<div style="margin-top:8px;"><span style="background:#ffedd5;color:#ea580c;border:1px solid #fed7aa;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:bold;display:inline-block;" title="Stuck in Screening for ' . $days_stuck . ' days">⚠️ SLA WARNING (' . $days_stuck . 'd)</span></div>';
+                }
+            }
             break;
 
         case 'kg_cv':
@@ -274,6 +264,67 @@ function kg_application_sortable_columns($columns)
     return $columns;
 }
 add_filter('manage_edit-kg_application_sortable_columns', 'kg_application_sortable_columns');
+
+// SLA Quick Filter for Applications List
+add_action('restrict_manage_posts', 'kg_application_sla_filter');
+function kg_application_sla_filter($post_type) {
+    if ($post_type === 'kg_application') {
+        $selected = isset($_GET['kg_sla_filter']) ? $_GET['kg_sla_filter'] : '';
+        echo '<select name="kg_sla_filter">';
+        echo '<option value="">All SLA Statuses</option>';
+        echo '<option value="warning" ' . selected($selected, 'warning', false) . '>SLA Warning (5-9 days)</option>';
+        echo '<option value="breach" ' . selected($selected, 'breach', false) . '>SLA Breach (10+ days)</option>';
+        echo '</select>';
+    }
+}
+
+add_action('pre_get_posts', 'kg_application_sla_filter_query');
+function kg_application_sla_filter_query($query) {
+    global $pagenow;
+    if (is_admin() && $pagenow === 'edit.php' && isset($_GET['post_type']) && $_GET['post_type'] === 'kg_application' && $query->is_main_query()) {
+        if (!empty($_GET['kg_sla_filter'])) {
+            $filter = $_GET['kg_sla_filter'];
+            
+            // Find posts in screening that match the SLA criteria
+            $args = array(
+                'post_type' => 'kg_application',
+                'post_status' => 'any',
+                'posts_per_page' => -1,
+                'fields' => 'ids',
+                'meta_query' => array(
+                    array(
+                        'key' => 'kg_app_status',
+                        'value' => 'screening',
+                    )
+                )
+            );
+            $screening_posts = get_posts($args);
+            $matched_ids = array();
+            $now = current_time('timestamp');
+
+            if (!empty($screening_posts)) {
+                foreach ($screening_posts as $pid) {
+                    $start_date = get_post_meta($pid, 'kg_app_screening_start_date', true);
+                    if (!$start_date) {
+                        $start_date = strtotime(get_post($pid)->post_modified);
+                    }
+                    $days_stuck = floor(($now - $start_date) / (60 * 60 * 24));
+                    
+                    if ($filter === 'breach' && $days_stuck >= 10) {
+                        $matched_ids[] = $pid;
+                    } elseif ($filter === 'warning' && $days_stuck >= 5 && $days_stuck < 10) {
+                        $matched_ids[] = $pid;
+                    }
+                }
+            }
+
+            if (empty($matched_ids)) {
+                $matched_ids = array(0); // force no results
+            }
+            $query->set('post__in', $matched_ids);
+        }
+    }
+}
 
 /* ─────────────────────────────────────────────
    Meta boxes on edit screen
@@ -2431,6 +2482,16 @@ function kg_email_templates_settings_render()
             'fallback_btn_text' => 'Review & Publish Job',
             'fallback_btn_link' => '{edit_link}',
             'tokens' => array('{site_name}', '{job_title}', '{author_name}', '{job_details}', '{edit_link}', '{site_url}')
+        ),
+        'sla_digest_email' => array(
+            'label' => 'Daily SLA Digest (Admin)',
+            'desc' => 'Sent daily to administrators summarizing applications that have breached SLA or are near breach.',
+            'fallback_subj' => 'SLA Daily Digest: Applicant Warnings & Breaches — Kings Manpower',
+            'fallback_body' => "Hi {admin_name},\n\nThis is your automated daily digest regarding Applicant Tracking SLAs. The following applications are currently stuck in the Screening phase and require immediate attention.\n\n{sla_table}\n\nPlease review these applicants in the system and update their status to prevent further delays.",
+            'fallback_banner' => 'Timely processing of applicants ensures a high-quality candidate experience and meets our Service Level Agreements.',
+            'fallback_btn_text' => 'View Applications in WP Admin',
+            'fallback_btn_link' => '{site_url}/wp-admin/edit.php?post_type=kg_application',
+            'tokens' => array('{admin_name}', '{sla_table}', '{site_url}')
         )
     );
 
@@ -2483,6 +2544,7 @@ function kg_email_templates_settings_render()
         'quote_admin' => 'Service Proposal Request Notification',
         'quote_client' => 'Proposal Request Acknowledgment',
         'recruiter_job_review' => 'Job Pending Review',
+        'sla_digest_email' => 'SLA Daily Digest: Action Required',
     );
 
     if ($active_key === 'global_branding') {
@@ -2523,7 +2585,7 @@ function kg_email_templates_settings_render()
                     ),
                     'apps' => array(
                         'label' => 'Applications Emails',
-                        'keys' => array('pooling', 'screening', 'processing', 'interviewing_online', 'interviewing_face_to_face', 'hired', 'deployed', 'rejected', 'recruiter_change', 'admin_submission', 'recruiter_job_review')
+                        'keys' => array('pooling', 'screening', 'processing', 'interviewing_online', 'interviewing_face_to_face', 'hired', 'deployed', 'rejected', 'recruiter_change', 'admin_submission', 'recruiter_job_review', 'sla_digest_email')
                     ),
                     'quotes' => array(
                         'label' => 'Quote Emails',
@@ -2932,4 +2994,116 @@ function kg_get_parsed_email($template_key, $replacements = array())
         'btn_text' => $btn_text,
         'btn_link' => $btn_link,
     );
+}
+
+// --- SLA Email Digest Cron ---
+
+if ( ! wp_next_scheduled( 'kg_daily_sla_check' ) ) {
+    wp_schedule_event( time(), 'daily', 'kg_daily_sla_check' );
+}
+
+add_action( 'kg_daily_sla_check', 'kg_process_daily_sla_digest' );
+
+function kg_process_daily_sla_digest() {
+    $args = array(
+        'post_type'      => 'kg_application',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'meta_query'     => array(
+            array(
+                'key'   => 'kg_app_status',
+                'value' => 'screening',
+            ),
+        ),
+    );
+
+    $query = new WP_Query( $args );
+    if ( ! $query->have_posts() ) return;
+
+    $breaches = array();
+    $warnings = array();
+
+    $now = current_time( 'timestamp' );
+
+    foreach ( $query->posts as $post ) {
+        $start_date = get_post_meta( $post->ID, 'kg_app_screening_start_date', true );
+        if ( ! $start_date ) {
+            $start_date = strtotime( $post->post_modified );
+        }
+        $days_stuck = floor( ( $now - $start_date ) / ( 60 * 60 * 24 ) );
+
+        if ( $days_stuck >= 10 ) {
+            $breaches[] = array( 'post' => $post, 'days' => $days_stuck );
+        } elseif ( $days_stuck >= 5 ) {
+            $warnings[] = array( 'post' => $post, 'days' => $days_stuck );
+        }
+    }
+
+    if ( empty( $breaches ) && empty( $warnings ) ) return;
+
+    // Build Table
+    $table_html = '<table style="width:100%;border-collapse:collapse;margin-top:10px;">';
+    $table_html .= '<thead><tr><th style="border-bottom:1px solid #ddd;text-align:left;padding:8px;">Applicant</th><th style="border-bottom:1px solid #ddd;text-align:left;padding:8px;">Role</th><th style="border-bottom:1px solid #ddd;text-align:left;padding:8px;">SLA Status</th></tr></thead>';
+    $table_html .= '<tbody>';
+
+    foreach ( $breaches as $b ) {
+        $role = get_post_meta( $b['post']->ID, 'kg_app_role', true ) ?: 'Not assigned';
+        $table_html .= '<tr>';
+        $table_html .= '<td style="border-bottom:1px solid #eee;padding:8px;"><strong>' . esc_html( $b['post']->post_title ) . '</strong></td>';
+        $table_html .= '<td style="border-bottom:1px solid #eee;padding:8px;">' . esc_html( $role ) . '</td>';
+        $table_html .= '<td style="border-bottom:1px solid #eee;padding:8px;"><span style="color:#dc2626;font-weight:bold;">🚨 BREACH (' . $b['days'] . 'd)</span></td>';
+        $table_html .= '</tr>';
+    }
+    
+    foreach ( $warnings as $w ) {
+        $role = get_post_meta( $w['post']->ID, 'kg_app_role', true ) ?: 'Not assigned';
+        $table_html .= '<tr>';
+        $table_html .= '<td style="border-bottom:1px solid #eee;padding:8px;"><strong>' . esc_html( $w['post']->post_title ) . '</strong></td>';
+        $table_html .= '<td style="border-bottom:1px solid #eee;padding:8px;">' . esc_html( $role ) . '</td>';
+        $table_html .= '<td style="border-bottom:1px solid #eee;padding:8px;"><span style="color:#ea580c;font-weight:bold;">⚠️ WARNING (' . $w['days'] . 'd)</span></td>';
+        $table_html .= '</tr>';
+    }
+
+    $table_html .= '</tbody></table>';
+
+    $parsed = kg_get_parsed_email( 'sla_digest_email', array(
+        '{admin_name}' => 'Admin Team',
+        '{sla_table}'  => $table_html,
+        '{site_url}'   => home_url(),
+    ) );
+
+    if ( ! empty( $parsed ) ) {
+        $subject = $parsed['subject'];
+        $body = kg_email_heading( $parsed['heading'] ) . $parsed['body'];
+
+        if ( ! empty( $parsed['banner'] ) ) {
+            $body .= kg_email_banner( $parsed['banner'] );
+        }
+        if ( ! empty( $parsed['btn_text'] ) && ! empty( $parsed['btn_link'] ) ) {
+            $body .= kg_email_button( $parsed['btn_text'], $parsed['btn_link'] );
+        }
+
+        $recipient_emails = array();
+        
+        $admin_users = get_users(array(
+            'role__in' => array('administrator', 'hr', 'recruitment_admin')
+        ));
+        
+        foreach ($admin_users as $user) {
+            if (is_email($user->user_email)) {
+                $recipient_emails[] = $user->user_email;
+            }
+        }
+
+        if (empty($recipient_emails)) {
+            $recipient_emails = get_option('admin_email');
+        }
+
+        wp_mail(
+            $recipient_emails,
+            $subject,
+            kg_email_wrap( $subject, $body, 'Admin Team', '', date_i18n( get_option( 'date_format' ) ) ),
+            array( 'Content-Type: text/html; charset=UTF-8' )
+        );
+    }
 }
