@@ -66,7 +66,7 @@ function kg_ats_dashboard_widget_render()
 
     $jobs_args = array(
         'post_type' => 'jobs',
-        'post_status' => array('publish', 'draft'),
+        'post_status' => 'publish',
         'posts_per_page' => -1,
         'fields' => 'ids',
         'tax_query' => array(
@@ -183,12 +183,8 @@ function kg_ats_dashboard_widget_render()
 
         $loc_meta = get_post_meta($jid, 'job_location', true);
 
-        if ($is_recruiter) {
-            $loc_name = isset($locations_map[$loc_meta]) ? $locations_map[$loc_meta] : ($loc_meta ?: 'Unassigned');
-            $breakdown_counts[$loc_name] = ($breakdown_counts[$loc_name] ?? 0) + 1;
-        } else {
-            // mb_strtoupper properly uppercases ñ → Ñ and other special chars
-            $loc = mb_strtoupper(trim($loc_meta), 'UTF-8');
+        // mb_strtoupper properly uppercases ñ → Ñ and other special chars
+        $loc = mb_strtoupper(trim($loc_meta), 'UTF-8');
 
             // ── Priority 1: use the explicit Region field if admin set it ──────────
             $saved_region = trim(get_post_meta($jid, 'job_region', true));
@@ -237,8 +233,7 @@ function kg_ats_dashboard_widget_render()
                 // Fallback: show the raw location so you know exactly what needs to be added
                 $region = 'Other: ' . (mb_strlen($loc, 'UTF-8') > 20 ? mb_substr($loc, 0, 20, 'UTF-8') . '…' : $loc);
             }
-            $breakdown_counts[$region] = ($breakdown_counts[$region] ?? 0) + 1;
-        }
+        $breakdown_counts[$region] = ($breakdown_counts[$region] ?? 0) + 1;
     }
     arsort($breakdown_counts);
 
@@ -421,7 +416,7 @@ function kg_ats_dashboard_widget_render()
 
     <!-- Jobs by Region/Location Breakdown -->
     <?php
-    $breakdown_title = $is_recruiter ? 'Active Openings by Location' : 'Active Openings by Region';
+    $breakdown_title = 'Active Openings by Region';
     ?>
     <p class="kg-section-title"><?php echo esc_html($breakdown_title); ?> (<?php echo $active_jobs; ?> total)</p>
     <div class="kg-pipeline">
@@ -649,7 +644,7 @@ function kg_ats_job_listings_overview_render()
 {
     $jobs = get_posts(array(
         'post_type'      => 'jobs',
-        'post_status'    => array('publish', 'draft'),
+        'post_status'    => 'publish',
         'posts_per_page' => -1,
         'tax_query'      => array(
             array(

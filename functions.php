@@ -513,22 +513,36 @@ add_filter('editable_roles', 'kg_filter_editable_roles');
  */
 function kg_add_user_location_field($user)
 {
+    $saved_locations = array();
+    $is_recruiter = false;
+    if ( is_object($user) && isset($user->ID) ) {
+        $saved = get_user_meta($user->ID, 'kg_recruiter_location', true);
+        if ( is_array($saved) ) {
+            $saved_locations = $saved;
+        }
+        if ( isset($user->roles) && in_array('recruiter', (array)$user->roles) ) {
+            $is_recruiter = true;
+        }
+    }
     ?>
-    <table class="form-table" id="kg-recruiter-location-row" style="display:none;">
+    <table class="form-table" id="kg-recruiter-location-row" style="<?php echo $is_recruiter ? '' : 'display:none;'; ?>">
         <tr>
             <th><label>Assigned Branch / Location</label></th>
             <td>
+                <div style="margin-bottom: 8px;">
+                    <button type="button" class="button" id="kg-select-all-locations">Select All</button>
+                    <button type="button" class="button" id="kg-deselect-all-locations">Deselect All</button>
+                </div>
                 <div
-                    style="height: 150px; overflow-y: auto; border: 1px solid #8c8f94; border-radius: 4px; padding: 10px; min-width: 300px; max-width: 400px; background: #fff;">
+                    style="height: 150px; overflow-y: auto; border: 1px solid #8c8f94; border-radius: 4px; padding: 10px; min-width: 300px; max-width: 400px; background: #fff;" id="kg-recruiter-locations-container">
                     <?php foreach (kg_get_locations() as $key => $label): ?>
                         <label style="display:block; margin-bottom:5px;">
-                            <input type="checkbox" name="kg_recruiter_location[]" value="<?php echo esc_attr($key); ?>">
+                            <input type="checkbox" name="kg_recruiter_location[]" value="<?php echo esc_attr($key); ?>" <?php checked(in_array($key, $saved_locations)); ?>>
                             <?php echo esc_html($label); ?>
                         </label>
                     <?php endforeach; ?>
                 </div>
-                <p class="description">Check the boxes to assign multiple locations.<br>Recruiters will only be allowed to
-                    view and manage job posts and applicants matching these branch locations.</p>
+                <p class="description">Check the boxes to assign multiple locations.</p>
             </td>
         </tr>
     </table>
@@ -581,8 +595,6 @@ function kg_user_location_js()
                 if (roleSelect && locationRow) {
                     roleSelect.addEventListener('change', toggleLocationField);
                     toggleLocationField(); // trigger on load
-                } else if (!roleSelect && locationRow) {
-                    locationRow.style.display = 'none';
                 }
 
                 // Hide the Website field
@@ -592,6 +604,31 @@ function kg_user_location_js()
                     if (urlRow) {
                         urlRow.style.display = 'none';
                     }
+                }
+
+                // Select All / Deselect All logic
+                var selectAllBtn = document.getElementById('kg-select-all-locations');
+                var deselectAllBtn = document.getElementById('kg-deselect-all-locations');
+                var locationsContainer = document.getElementById('kg-recruiter-locations-container');
+
+                if (selectAllBtn && locationsContainer) {
+                    selectAllBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        var checkboxes = locationsContainer.querySelectorAll('input[type="checkbox"]');
+                        checkboxes.forEach(function(cb) {
+                            cb.checked = true;
+                        });
+                    });
+                }
+
+                if (deselectAllBtn && locationsContainer) {
+                    deselectAllBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        var checkboxes = locationsContainer.querySelectorAll('input[type="checkbox"]');
+                        checkboxes.forEach(function(cb) {
+                            cb.checked = false;
+                        });
+                    });
                 }
             });
         </script>
@@ -2307,8 +2344,12 @@ function kg_add_recruiter_profile_location_field($user)
         <tr>
             <th><label>Assigned Branch / Location</label></th>
             <td>
+                <div style="margin-bottom: 8px;">
+                    <button type="button" class="button" id="kg-select-all-locations">Select All</button>
+                    <button type="button" class="button" id="kg-deselect-all-locations">Deselect All</button>
+                </div>
                 <div
-                    style="height: 150px; overflow-y: auto; border: 1px solid #8c8f94; border-radius: 4px; padding: 10px; min-width: 300px; max-width: 400px; background: #fff;">
+                    style="height: 150px; overflow-y: auto; border: 1px solid #8c8f94; border-radius: 4px; padding: 10px; min-width: 300px; max-width: 400px; background: #fff;" id="kg-recruiter-locations-container">
                     <?php foreach (kg_get_locations() as $key => $label): ?>
                         <label style="display:block; margin-bottom:5px;">
                             <input type="checkbox" name="kg_recruiter_location[]" value="<?php echo esc_attr($key); ?>" <?php checked(in_array($key, $current_locations, true)); ?>>
@@ -2316,8 +2357,7 @@ function kg_add_recruiter_profile_location_field($user)
                         </label>
                     <?php endforeach; ?>
                 </div>
-                <p class="description">Check the boxes to assign multiple locations.<br>Recruiters will only be allowed to
-                    view and manage job posts and applicants matching these branch locations.</p>
+                <p class="description">Check the boxes to assign multiple locations.</p>
             </td>
         </tr>
     </table>
